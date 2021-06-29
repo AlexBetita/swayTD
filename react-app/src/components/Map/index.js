@@ -4,6 +4,40 @@ import './Map.css';
 
 const Map = () => {
 
+    class Node{
+        constructor(data) {
+            this.data = data;
+            this.north = null;
+            this.south = null;
+            this.east = null;
+            this.west = null;
+        }
+    }
+
+    class LinkedList {
+        constructor(head = null, end= null){
+            this.start = start
+            this.end = end
+        }
+    }
+
+    const dictionaryMatrix = {
+
+    }
+
+    const nodeMatrix = [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    ]
+
     const matrix = [
         [0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -33,6 +67,9 @@ const Map = () => {
     const [layerX10, setLayerX] = useState('')
     const [layerY10, setLayerY] = useState('')
     const [stateMatrix, setStateMatrix] = useState(matrix)
+    const [matrixDictionary, setMatrixDictionary] = useState(dictionaryMatrix)
+    const [nodeMatrixState, setNodeMatrixState] = useState(nodeMatrix)
+
     const start = [0,0]
     const end = [10,10]
     const path = []
@@ -80,10 +117,59 @@ const Map = () => {
         if (e.target.tagName === 'CANVAS'){
             console.log(e)
             console.log(e.target)
+            const yC = Math.ceil(e.layerY / (window.innerHeight / 10)) - 1
+            const xC = Math.ceil(e.layerX / (window.innerWidth / 10)) - 1
             setX(e.layerX)
             setY(e.layerY)
-            setSquareX(Math.ceil(e.layerX / (window.innerWidth / 10)) - 1)
-            setSquareY(Math.ceil(e.layerY / (window.innerHeight / 10)) - 1)
+            setSquareX(xC)
+            setSquareY(yC)
+
+            let data = (yC * 10) + (xC + 1)
+            const node = new Node(data)
+
+            const directions = {
+                0 : [0,1],
+                1 : [1,0],
+                2 : [-1,0],
+                3 : [0,-1]
+            }
+
+            nodeMatrixState[yC][xC] = node
+            for (let i = 0; i < 4; i++){
+                let x = yC + directions[i][0]
+                let y = xC + directions[i][1]
+                if(x >= 0 && x < nodeMatrix.length && y >= 0 && y < nodeMatrix[x].length){
+
+                    if (i === 0){
+                        node.east = nodeMatrix[x][y]
+                        if(nodeMatrix[x][y] instanceof Node){
+                            nodeMatrix[x][y].west = nodeMatrix[yC][xC]
+                            console.log(nodeMatrix[x][y])
+                        }
+                    } else if(i === 1){
+                        node.south = nodeMatrix[x][y]
+                        if(nodeMatrix[x][y] instanceof Node){
+                            nodeMatrix[x][y].north = nodeMatrix[yC][xC]
+                            console.log(nodeMatrix[x][y])
+                        }
+                    } else if(i === 2){
+                        node.north = nodeMatrix[x][y]
+                        if(nodeMatrix[x][y] instanceof Node){
+                            nodeMatrix[x][y].south = nodeMatrix[yC][xC]
+                            console.log(nodeMatrix[x][y])
+                        }
+                    } else {
+                        node.west = nodeMatrix[x][y]
+                        if(nodeMatrix[x][y] instanceof Node){
+                            nodeMatrix[x][y].east = nodeMatrix[yC][xC]
+                            console.log(nodeMatrix[x][y])
+                        }
+                    }
+                }
+            }
+
+            console.log(nodeMatrixState)
+            console.log(node)
         }
     }
 
@@ -172,7 +258,19 @@ const Map = () => {
         context.fillStyle = `rgba(255, 0, 0, 0.50)`;
         context.fillRect(squareX * layerX10, squareY * layerY10, layerX10, layerY10)
     }
-    
+
+
+    const matrixDictionaryGen = () => {
+        let count = 1
+        for (let i = 0; i < 10; i++){
+            for (let j= 0; j < 10; j++){
+                matrixDictionary[count] = [i, j]
+                count += 1
+            }
+        }
+        console.log(matrixDictionary)
+    }
+
     return (
     <>
         <button onClick={fillRect}>
@@ -210,6 +308,9 @@ const Map = () => {
         </button>
         <button onClick={addEnd}>
             Add End Point
+        </button>
+        <button onClick={matrixDictionaryGen}>
+            Node Matrix
         </button>
         <input
             type='text'
