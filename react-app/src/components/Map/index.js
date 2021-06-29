@@ -172,7 +172,7 @@ const Map = () => {
         context.fillStyle = `rgba(255, 0, 0, 0.50)`;
         context.fillRect(squareX * layerX10, squareY * layerY10, layerX10, layerY10)
     }
-
+    
     return (
     <>
         <button onClick={fillRect}>
