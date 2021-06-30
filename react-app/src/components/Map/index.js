@@ -59,6 +59,7 @@ const Map = () => {
 
     const visited = {}
     const llVisited = {}
+    let foundEnd = false
 
     const canvas = useRef();
     const startB = useRef();
@@ -139,26 +140,26 @@ const Map = () => {
                     if(x >= 0 && x < nodeMatrixState.length && y >= 0 && y < nodeMatrixState[x].length){
 
                         if (i === 0){
-                            node.east = nodeMatrixState[x][y]
                             if(nodeMatrixState[x][y] instanceof Node){
+                                node.east = nodeMatrixState[x][y]
                                 nodeMatrixState[x][y].west = nodeMatrixState[yC][xC]
                                 console.log(nodeMatrixState[x][y])
                             }
                         } else if(i === 1){
-                            node.south = nodeMatrixState[x][y]
                             if(nodeMatrixState[x][y] instanceof Node){
+                                node.south = nodeMatrixState[x][y]
                                 nodeMatrixState[x][y].north = nodeMatrixState[yC][xC]
                                 console.log(nodeMatrixState[x][y])
                             }
                         } else if(i === 2){
-                            node.north = nodeMatrixState[x][y]
                             if(nodeMatrixState[x][y] instanceof Node){
+                                node.north = nodeMatrixState[x][y]
                                 nodeMatrixState[x][y].south = nodeMatrixState[yC][xC]
                                 console.log(nodeMatrixState[x][y])
                             }
                         } else {
-                            node.west = nodeMatrixState[x][y]
                             if(nodeMatrixState[x][y] instanceof Node){
+                                node.west = nodeMatrixState[x][y]
                                 nodeMatrixState[x][y].east = nodeMatrixState[yC][xC]
                                 console.log(nodeMatrixState[x][y])
                             }
@@ -370,46 +371,109 @@ const Map = () => {
 
     const traverseLL = () => {
         llVisited[linkedList.start.data] = true
-        dfsLL(linkedList.start, llVisited)
+        const res = dfsLL(linkedList.start, llVisited)
+        console.log(res.reverse(), 'result')
     }
 
-    const dfsLL = (current, llVisited) =>{
+    const dfsLL = (current, llVisited, result = []) =>{
         if(current === linkedList.end){
-            llVisited[current.data] = true
-            llPath.push(current.data)
-            setLLPath(llPath)
-            return true
+            foundEnd = true
+            return result.push(current.data)
         }
+
         if(current.north){
             if(!llVisited[current.north.data]){
                 llVisited[current.north.data] = true
                 llPath.push(current.north.data)
-                dfsLL(current.north, llVisited)
+                if (dfsLL(current.north, llVisited, result)){
+                    result.push(current.data)
+                    return [...result]
+                }
             }
         }
         if(current.east){
             if(!llVisited[current.east.data]){
                 llVisited[current.east.data] = true
                 llPath.push(current.east.data)
-                dfsLL(current.east, llVisited)
+                if (dfsLL(current.east, llVisited, result)){
+                    result.push(current.data)
+                    return [...result]
+                }
             }
         }
         if(current.west){
             if(!llVisited[current.west.data]){
                 llVisited[current.west.data] = true
                 llPath.push(current.west.data)
-                dfsLL(current.west, llVisited)
+                if (dfsLL(current.west, llVisited, result)){
+                    result.push(current.data)
+                    return [...result]
+                }
             }
         }
         if(current.south){
             if(!llVisited[current.south.data]){
                 llVisited[current.south.data] = true
                 llPath.push(current.south.data)
-                dfsLL(current.south, llVisited)
+                if (dfsLL(current.south, llVisited, result)){
+                    result.push(current.data)
+                    return [...result]
+                }
             }
         }
+
         return false
     }
+
+    // const dfsLL = (current, llVisited, result = []) =>{
+    //     if(current === linkedList.end){
+    //         foundEnd = true
+    //         return result.push(current.data)
+    //     }
+
+    //     if(current.north){
+    //         if(!llVisited[current.north.data]){
+    //             llVisited[current.north.data] = true
+    //             llPath.push(current.north.data)
+    //             current.north.south = null
+    //             if (dfsLL(current.north, llVisited, result)){
+    //                 return [...result, current.data]
+    //             }
+    //         }
+    //     }
+    //     if(current.east){
+    //         if(!llVisited[current.east.data]){
+    //             llVisited[current.east.data] = true
+    //             llPath.push(current.east.data)
+    //             current.east.west = null
+    //             if (dfsLL(current.east, llVisited, result)){
+    //                 return [...result, current.data]
+    //             }
+    //         }
+    //     }
+    //     if(current.west){
+    //         if(!llVisited[current.west.data]){
+    //             llVisited[current.west.data] = true
+    //             llPath.push(current.west.data)
+    //             current.west.east = null
+    //             if (dfsLL(current.west, llVisited, result)){
+    //                 return [...result, current.data]
+    //             }
+    //         }
+    //     }
+    //     if(current.south){
+    //         if(!llVisited[current.south.data]){
+    //             llVisited[current.south.data] = true
+    //             llPath.push(current.south.data)
+    //             current.south.north = null
+    //             if (dfsLL(current.south, llVisited, result)){
+    //                 return [...result, current.data]
+    //             }
+    //         }
+    //     }
+
+    //     return false
+    // }
 
     const showLLPath = () => {
         console.log(llPath)
