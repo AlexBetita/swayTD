@@ -137,38 +137,10 @@ const Map_ = () => {
         return x >= 0 && x < stateMatrix.length && y >= 0 && y < stateMatrix[x].length && !visited[`${neighbors[0]}, ${neighbors[1]}`] && stateMatrix[x][y] !== 0;
     }
 
-    const dfs = (stateMatrix, current, visited) => {
-        console.log(current)
-        if(stateMatrix[current[0]][current[1]] === 'end'){
-            return true
-        }
-
-        const directions = {
-            0 : [0,1],
-            1 : [1,0],
-            2 : [-1,0],
-            3 : [0,-1]
-        }
-
-        let neighbors;
-
-        for (let i = 0; i < 4; i ++){
-            neighbors = [current[0] + directions[i][0], current[1]  + directions[i][1]];
-            if (checkBoundary(stateMatrix, neighbors, visited)){
-                visited[`${neighbors[0]}, ${neighbors[1]}`] = true
-                pathDFS.push(neighbors)
-                setPathDFS(pathDFS)
-                if (dfs(stateMatrix, neighbors, visited)){
-                    return true
-                }
-            }
-        }
-        return false
-    }
-
     const startDfs = () =>{
         canvas.startDFS()
         let type = 'dfs'
+        // canvas.drawPath(type)
         canvas.drawPaths()
     }
 
@@ -205,12 +177,9 @@ const Map_ = () => {
     }
 
     const startBfs = () => {
-        let current = start
-        visited[`${current[0]}, ${current[1]}`] = true
-        pathBFS.push(current)
-        setPathBFS(pathBFS)
-        bfs(stateMatrix, current, visited)
-        drawPath(pathBFS)
+        canvas.startBFS()
+        let type = 'bfs'
+        canvas.drawPath(type)
     }
 
     // const matrixGen = () => {
@@ -325,20 +294,6 @@ const Map_ = () => {
 
     const showLLPath = () => {
         console.log(llPath)
-    }
-
-    const drawPath = (path, type) => {
-        // if (type === 'dfs'){
-        //     path = path.splice(1, path.length - 1)
-        //     context.fillStyle = `rgba(194, 246, 248, 1)`;
-        // } else {
-        //     path = path.splice(1, path.length - 1)
-        //     context.fillStyle = `rgba(238, 101, 165, 0.7)`;
-        // }
-        // for (let i = 0; i < path.length; i++){
-
-        //     context.fillRect(path[i][1] * canvas.tileWidth, path[i][0] * canvas.tileHeight, canvas.tileWidth, canvas.tileHeight)
-        // }
     }
 
     const drawLinkedListPath = (path) =>{

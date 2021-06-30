@@ -124,7 +124,7 @@ export default class Map{
                 this.fillRect(pathBFS[i][1], pathBFS[i][0])
             }
         } else if(type === 'dfs'){
-            let pathLL = this.pathLL.slice(1, this.pathLL.length - 1)
+            let pathLL = this.pathLL.slice(1, this.pathLL.length - 2)
 
             for (let i = 0; i < pathLL.length; i++){
                 this.context.fillStyle = this.tiles[6]
@@ -139,22 +139,22 @@ export default class Map{
 
         for (let i = 0; i < pathBFS.length; i++){
             this.context.fillStyle = this.tiles[2]
-            this.fillRect(pathBFS[i][1], pathBFS[i][0])
+            this.fillRect(pathBFS[i][0], pathBFS[i][1])
         }
 
         let pathDFS = this.pathDFS.slice(1, this.pathDFS.length - 1)
 
         for (let i = 0; i < pathDFS.length; i++){
             this.context.fillStyle = this.tiles[3]
-            this.fillRect(pathDFS[i][1], pathDFS[i][0])
+            this.fillRect(pathDFS[i][0], pathDFS[i][1])
         }
 
 
-        let pathLL = this.pathLL.slice(1, this.pathLL.length - 1)
+        let pathLL = this.pathLL.slice(1, this.pathLL.length - 2)
 
         for (let i = 0; i < pathLL.length; i++){
             this.context.fillStyle = this.tiles[6]
-            this.fillRect(pathLL[i][1], pathLL[i][0])
+            this.fillRect(pathLL[i][0], pathLL[i][1])
         }
     }
 
@@ -245,13 +245,14 @@ export default class Map{
         let x = current[0]
         let y = current[1]
 
-        return x >= 0 && x < this.matrix.length && y >= 0 && y < this.matrix[x].length &&
-               !visited[`${current[0]}, ${current[1]}`] && this.matrix[x][y] !== undefined;
+        return y >= 0 && y < this.matrix.length && x >= 0 && x < this.matrix[y].length &&
+              !visited[`${current[0]}, ${current[1]}`] && this.matrix[y][x] !== undefined;
     }
 
     //start dfs
     startDFS(){
         let current = this.start
+        console.log(current)
         let visited = {}
         visited[`${current[0]}, ${current[1]}`] = true
         this.pathDFS.push(current)
@@ -268,6 +269,7 @@ export default class Map{
 
         for (let i = 0; i < 4; i ++){
             neighbors = [current[0] + this.directions[i][0], current[1]  + this.directions[i][1]];
+
             if (this.checkBoundary(neighbors, visited)){
                 visited[`${neighbors[0]}, ${neighbors[1]}`] = true
                 this.pathDFS.push(neighbors)
@@ -279,4 +281,38 @@ export default class Map{
         return false
     }
 
+
+    //start bfs
+    startBFS(){
+        let current = this.start
+        let visited = {}
+        visited[`${current[0]}, ${current[1]}`] = true
+        this.pathBFS.push(current)
+        this.BFS(current, visited)
+    }
+
+    //bfs
+    BFS(current, visited){
+        const queue = [current];
+
+        while (queue.length != 0) {
+
+            current = queue[0]
+            let neighbors;
+
+            queue.shift();
+
+            for (let i = 0; i < 4; i ++ ){
+
+                neighbors = [current[0] + this.directions[i][0], current[1]  + this.directions[i][1]];
+
+                if(this.checkBoundary(neighbors, visited)) {
+                    visited[`${neighbors[0]}, ${neighbors[1]}`] = true
+                    this.pathBFS.push(neighbors)
+                    queue.push(neighbors)
+                }
+
+            }
+        }
+    }
 }
