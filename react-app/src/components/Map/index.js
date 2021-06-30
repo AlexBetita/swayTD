@@ -89,7 +89,8 @@ const Map = () => {
 
     const [start, setStart] = useState([0,0])
     const [end, setEnd] = useState([10,10])
-    const [path, setPath] = useState([])
+    const [pathDFS, setPathDFS] = useState([])
+    const [pathBFS, setPathBFS] = useState([])
     const [llPath, setLLPath] = useState([])
 
     useEffect(() =>{
@@ -251,7 +252,7 @@ const Map = () => {
         let x = neighbors[0]
         let y = neighbors[1]
 
-        return x >= 0 && x < stateMatrix.length && y >= 0 && y < stateMatrix[x].length && !visited[`${neighbors[0]}, ${neighbors[1]}`] && stateMatrix[x][y] !== 1;
+        return x >= 0 && x < stateMatrix.length && y >= 0 && y < stateMatrix[x].length && !visited[`${neighbors[0]}, ${neighbors[1]}`] && stateMatrix[x][y] !== 0;
     }
 
     const dfs = (stateMatrix, current, visited) => {
@@ -273,9 +274,8 @@ const Map = () => {
             neighbors = [current[0] + directions[i][0], current[1]  + directions[i][1]];
             if (checkBoundary(stateMatrix, neighbors, visited)){
                 visited[`${neighbors[0]}, ${neighbors[1]}`] = true
-                // path.push(neighbors)
-                path.push(neighbors)
-                setPath(path)
+                pathDFS.push(neighbors)
+                setPathDFS(pathDFS)
                 if (dfs(stateMatrix, neighbors, visited)){
                     return true
                 }
@@ -288,10 +288,52 @@ const Map = () => {
         let current = start
         console.log('start', start)
         visited[`${current[0]}, ${current[1]}`] = true
-        path.push(current)
-        setPath(path)
+        pathDFS.push(current)
+        setPathDFS(pathDFS)
         dfs(stateMatrix, current, visited)
-        drawPath(path)
+        let type = 'dfs'
+        drawPath(pathDFS, type)
+    }
+
+    const bfs = (stateMatrix, current, visited) => {
+        const queue = [current];
+
+        while (queue.length != 0) {
+
+            current = queue[0]
+
+            queue.shift();
+
+            const directions = {
+                0 : [0,1],
+                1 : [1,0],
+                2 : [-1,0],
+                3 : [0,-1]
+            }
+
+            for (let i = 0; i < 4; i ++ ){
+
+                let neighbors = [current[0] + directions[i][0], current[1]  + directions[i][1]];
+
+                if(checkBoundary(stateMatrix, neighbors, visited)) {
+                    visited[`${neighbors[0]}, ${neighbors[1]}`] = true
+                    pathBFS.push(neighbors)
+                    setPathBFS(pathBFS)
+                    queue.push(neighbors)
+                }
+
+            }
+        }
+
+    }
+
+    const startBfs = () => {
+        let current = start
+        visited[`${current[0]}, ${current[1]}`] = true
+        pathBFS.push(current)
+        setPathBFS(pathBFS)
+        bfs(stateMatrix, current, visited)
+        drawPath(pathBFS)
     }
 
     const drawEnd = (squareY, squareX) => {
@@ -495,10 +537,16 @@ const Map = () => {
         console.log(llPath)
     }
 
-    const drawPath = (path) => {
-        path = path.splice(1, path.length - 2)
-        for (let i = 0; i < path.length; i++){
+    const drawPath = (path, type) => {
+        if (type === 'dfs'){
+            path = path.splice(1, path.length - 2)
             context.fillStyle = `rgba(194, 246, 248, 1)`;
+        } else {
+            path = path.splice(1, path.length - 1)
+            context.fillStyle = `rgba(238, 101, 165, 0.7)`;
+        }
+        for (let i = 0; i < path.length; i++){
+
             context.fillRect(path[i][1] * layerX10, path[i][0] * layerY10, layerX10, layerY10)
         }
     }
@@ -549,6 +597,9 @@ const Map = () => {
         </button>
         <button onClick={startDfs}>
             DFS
+        </button>
+        <button onClick={startBfs}>
+            BFS
         </button>
         <button onClick={drawEnd}>
             Add End Point
