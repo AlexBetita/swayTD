@@ -45,26 +45,27 @@ const Map = () => {
     ]
 
     const matrix = [
-        [0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     ]
 
     const visited = {}
     const llVisited = {}
-    let foundEnd = false
 
     const canvas = useRef();
     const startB = useRef();
     const endB = useRef();
     const nodeB = useRef();
+    const squareB = useRef();
+    const tClick = useRef();
 
     const [x, setX] = useState('')
     const [y, setY] = useState('')
@@ -118,6 +119,10 @@ const Map = () => {
             if(endB.current.classList.contains('active')){
                 drawEnd(yC, xC)
                 endB.current.classList.remove('active')
+            }
+
+            if(squareB.current.classList.contains('active')){
+                fillSquare(yC, xC)
             }
 
             if(nodeB.current.classList.contains('active')){
@@ -205,7 +210,7 @@ const Map = () => {
 
 
 
-    const fillSquare = () => {
+    const fillSquare = (squareY, squareX) => {
         context.fillStyle = `rgba(0, 0, 0, 0.5)`;
         context.fillRect(squareX * layerX10, squareY * layerY10, layerX10, layerY10)
         stateMatrix[squareY][squareX] = 1
@@ -281,11 +286,12 @@ const Map = () => {
 
     const startDfs = () =>{
         let current = start
+        console.log('start', start)
         visited[`${current[0]}, ${current[1]}`] = true
         path.push(current)
         setPath(path)
         dfs(stateMatrix, current, visited)
-        console.log(path, 'path')
+        drawPath(path)
     }
 
     const drawEnd = (squareY, squareX) => {
@@ -332,7 +338,7 @@ const Map = () => {
                 count += 1
             }
         }
-        console.log(matrixDictionary)
+        // console.log(matrixDictionary)
     }
 
     const toggleStart = () => {
@@ -359,6 +365,15 @@ const Map = () => {
         }
     }
 
+    const toggleFillSquare = () => {
+        if(squareB.current.classList.contains('active')){
+            squareB.current.classList.remove('active')
+        } else{
+            squareB.current.classList.add('active')
+        }
+    }
+
+
     const showLinkedList = () =>{
         console.log(linkedList)
         console.log(linkedList.start)
@@ -367,17 +382,18 @@ const Map = () => {
 
     const toggleClick = () => {
         addClick(clicky)
+        tClick.current.setAttribute('disabled', 'true')
     }
 
     const traverseLL = () => {
         llVisited[linkedList.start.data] = true
         const res = dfsLL(linkedList.start, llVisited)
         console.log(res.reverse(), 'result')
+        drawLinkedListPath(res)
     }
 
     const dfsLL = (current, llVisited, result = []) =>{
         if(current === linkedList.end){
-            foundEnd = true
             return result.push(current.data)
         }
 
@@ -479,6 +495,26 @@ const Map = () => {
         console.log(llPath)
     }
 
+    const drawPath = (path) => {
+        path = path.splice(1, path.length - 2)
+        for (let i = 0; i < path.length; i++){
+            context.fillStyle = `rgba(194, 246, 248, 1)`;
+            context.fillRect(path[i][1] * layerX10, path[i][0] * layerY10, layerX10, layerY10)
+        }
+    }
+
+    const drawLinkedListPath = (path) =>{
+        path = path.splice(1, path.length - 2)
+        matrixGen()
+
+        for(let i = 0; i < path.length; i++){
+
+            let grid = matrixDictionary[path[i]]
+            context.fillStyle = `rgba(252, 255, 0, 1)`;
+            context.fillRect(grid[1] * layerX10, grid[0] * layerY10, layerX10, layerY10)
+        }
+    }
+
     return (
     <>
         <button onClick={fillRect}>
@@ -505,8 +541,8 @@ const Map = () => {
         <button onClick={drawGrid}>
             Draw Grid
         </button>
-        <button onClick={fillSquare}>
-            Fill Square
+        <button ref={squareB} onClick={toggleFillSquare}>
+            Toggle Fill Square
         </button>
         <button onClick={showImageData}>
             Show Image Data
@@ -532,7 +568,7 @@ const Map = () => {
         <button className="activate" ref={nodeB} onClick={toggleNode}>
             Activate Node
         </button>
-        <button onClick={toggleClick}>
+        <button ref={tClick} onClick={toggleClick}>
             Toggle Click
         </button>
         <button onClick={showLinkedList}>
