@@ -2,6 +2,19 @@ import React, {useRef, useEffect, useState} from 'react';
 
 import './Map.css';
 
+function addClick(clicky){
+    window.addEventListener('click', clicky)
+}
+
+
+class LinkedList {
+    constructor(start = null, end= null){
+        this.start = start
+        this.end = end
+    }
+}
+
+
 const Map = () => {
 
     class Node{
@@ -11,13 +24,6 @@ const Map = () => {
             this.south = null;
             this.east = null;
             this.west = null;
-        }
-    }
-
-    class LinkedList {
-        constructor(head = null, end= null){
-            this.start = start
-            this.end = end
         }
     }
 
@@ -52,8 +58,13 @@ const Map = () => {
     ]
 
     const visited = {}
+    const llVisited = {}
+
     const canvas = useRef();
-    const [context, setContext] = useState('')
+    const startB = useRef();
+    const endB = useRef();
+    const nodeB = useRef();
+
     const [x, setX] = useState('')
     const [y, setY] = useState('')
     const [width, setWidth] = useState('')
@@ -64,25 +75,103 @@ const Map = () => {
     const [o, setO] = useState('')
     const [squareX, setSquareX] = useState('')
     const [squareY, setSquareY] = useState('')
-    const [layerX10, setLayerX] = useState('')
-    const [layerY10, setLayerY] = useState('')
+    const [layerX10, setLayerX] = useState(window.innerWidth / 10)
+    const [layerY10, setLayerY] = useState(window.innerHeight / 10)
     const [stateMatrix, setStateMatrix] = useState(matrix)
     const [matrixDictionary, setMatrixDictionary] = useState(dictionaryMatrix)
     const [nodeMatrixState, setNodeMatrixState] = useState(nodeMatrix)
+    const [context, setContext] = useState('')
+    const [canvasWidth, setCanvasWidth] = useState('')
+    const [canvasHeight, setCanvasHeight] = useState('')
+    const [linkedList, setLinkedList] = useState(new LinkedList())
 
-    const start = [0,0]
-    const end = [10,10]
-    const path = []
+    const [start, setStart] = useState([0,0])
+    const [end, setEnd] = useState([10,10])
+    const [path, setPath] = useState([])
+    const [llPath, setLLPath] = useState([])
 
     useEffect(() =>{
-        canvas.current.width = window.innerWidth;
-        canvas.current.height = window.innerHeight;
-
         setContext(canvas.current.getContext('2d'))
-        window.addEventListener('click', clicky)
-        setLayerX(window.innerWidth / 10)
-        setLayerY(window.innerHeight / 10)
+        setCanvasWidth(canvas.current.width = window.innerWidth)
+        setCanvasHeight(canvas.current.height = window.innerHeight)
     },[])
+
+
+    const clicky = (e) =>{
+        if (e.target.tagName === 'CANVAS'){
+            console.log(e)
+            console.log(e.target)
+            const yC = Math.ceil(e.layerY / (window.innerHeight / 10)) - 1
+            const xC = Math.ceil(e.layerX / (window.innerWidth / 10)) - 1
+            setX(e.layerX)
+            setY(e.layerY)
+            setSquareX(xC)
+            setSquareY(yC)
+
+            if(startB.current.classList.contains('active')){
+                console.log('hmmm')
+                drawStart(yC, xC)
+                startB.current.classList.remove('active')
+            }
+
+            if(endB.current.classList.contains('active')){
+                drawEnd(yC, xC)
+                endB.current.classList.remove('active')
+            }
+
+            if(nodeB.current.classList.contains('active')){
+                drawNode(yC, xC)
+
+                let data = (yC * 10) + (xC + 1)
+                const node = new Node(data)
+                nodeMatrixState[yC][xC] = node
+
+                const directions = {
+                    0 : [0,1],
+                    1 : [1,0],
+                    2 : [-1,0],
+                    3 : [0,-1]
+                }
+
+                for (let i = 0; i < 4; i++){
+                    let x = yC + directions[i][0]
+                    let y = xC + directions[i][1]
+                    if(x >= 0 && x < nodeMatrixState.length && y >= 0 && y < nodeMatrixState[x].length){
+
+                        if (i === 0){
+                            node.east = nodeMatrixState[x][y]
+                            if(nodeMatrixState[x][y] instanceof Node){
+                                nodeMatrixState[x][y].west = nodeMatrixState[yC][xC]
+                                console.log(nodeMatrixState[x][y])
+                            }
+                        } else if(i === 1){
+                            node.south = nodeMatrixState[x][y]
+                            if(nodeMatrixState[x][y] instanceof Node){
+                                nodeMatrixState[x][y].north = nodeMatrixState[yC][xC]
+                                console.log(nodeMatrixState[x][y])
+                            }
+                        } else if(i === 2){
+                            node.north = nodeMatrixState[x][y]
+                            if(nodeMatrixState[x][y] instanceof Node){
+                                nodeMatrixState[x][y].south = nodeMatrixState[yC][xC]
+                                console.log(nodeMatrixState[x][y])
+                            }
+                        } else {
+                            node.west = nodeMatrixState[x][y]
+                            if(nodeMatrixState[x][y] instanceof Node){
+                                nodeMatrixState[x][y].east = nodeMatrixState[yC][xC]
+                                console.log(nodeMatrixState[x][y])
+                            }
+                        }
+                    }
+                }
+
+                console.log(nodeMatrixState)
+                console.log(node)
+            }
+
+        }
+    }
 
     const fillRect = () => {
         context.fillRect(x, y, width, height)
@@ -113,65 +202,7 @@ const Map = () => {
         context.strokeStyle = `rgba(${r}, ${g}, ${b}, ${o})`;
     }
 
-    const clicky = (e) =>{
-        if (e.target.tagName === 'CANVAS'){
-            console.log(e)
-            console.log(e.target)
-            const yC = Math.ceil(e.layerY / (window.innerHeight / 10)) - 1
-            const xC = Math.ceil(e.layerX / (window.innerWidth / 10)) - 1
-            setX(e.layerX)
-            setY(e.layerY)
-            setSquareX(xC)
-            setSquareY(yC)
 
-            let data = (yC * 10) + (xC + 1)
-            const node = new Node(data)
-
-            const directions = {
-                0 : [0,1],
-                1 : [1,0],
-                2 : [-1,0],
-                3 : [0,-1]
-            }
-
-            nodeMatrixState[yC][xC] = node
-            for (let i = 0; i < 4; i++){
-                let x = yC + directions[i][0]
-                let y = xC + directions[i][1]
-                if(x >= 0 && x < nodeMatrix.length && y >= 0 && y < nodeMatrix[x].length){
-
-                    if (i === 0){
-                        node.east = nodeMatrix[x][y]
-                        if(nodeMatrix[x][y] instanceof Node){
-                            nodeMatrix[x][y].west = nodeMatrix[yC][xC]
-                            console.log(nodeMatrix[x][y])
-                        }
-                    } else if(i === 1){
-                        node.south = nodeMatrix[x][y]
-                        if(nodeMatrix[x][y] instanceof Node){
-                            nodeMatrix[x][y].north = nodeMatrix[yC][xC]
-                            console.log(nodeMatrix[x][y])
-                        }
-                    } else if(i === 2){
-                        node.north = nodeMatrix[x][y]
-                        if(nodeMatrix[x][y] instanceof Node){
-                            nodeMatrix[x][y].south = nodeMatrix[yC][xC]
-                            console.log(nodeMatrix[x][y])
-                        }
-                    } else {
-                        node.west = nodeMatrix[x][y]
-                        if(nodeMatrix[x][y] instanceof Node){
-                            nodeMatrix[x][y].east = nodeMatrix[yC][xC]
-                            console.log(nodeMatrix[x][y])
-                        }
-                    }
-                }
-            }
-
-            console.log(nodeMatrixState)
-            console.log(node)
-        }
-    }
 
     const fillSquare = () => {
         context.fillStyle = `rgba(0, 0, 0, 0.5)`;
@@ -236,7 +267,9 @@ const Map = () => {
             neighbors = [current[0] + directions[i][0], current[1]  + directions[i][1]];
             if (checkBoundary(stateMatrix, neighbors, visited)){
                 visited[`${neighbors[0]}, ${neighbors[1]}`] = true
+                // path.push(neighbors)
                 path.push(neighbors)
+                setPath(path)
                 if (dfs(stateMatrix, neighbors, visited)){
                     return true
                 }
@@ -249,18 +282,48 @@ const Map = () => {
         let current = start
         visited[`${current[0]}, ${current[1]}`] = true
         path.push(current)
+        setPath(path)
         dfs(stateMatrix, current, visited)
         console.log(path, 'path')
     }
 
-    const addEnd = () => {
+    const drawEnd = (squareY, squareX) => {
         stateMatrix[squareY][squareX] = 'end'
+
+        let data = (squareY * 10) + (squareX + 1)
+        const node = new Node(data)
+        nodeMatrixState[squareY][squareX] = node
+        linkedList.end = node
+
+        console.log(context, 'context')
         context.fillStyle = `rgba(255, 0, 0, 0.50)`;
         context.fillRect(squareX * layerX10, squareY * layerY10, layerX10, layerY10)
     }
 
+    const drawStart = (squareY, squareX) => {
+        setStart([squareY, squareX])
+        console.log(context, 'context')
 
-    const matrixDictionaryGen = () => {
+        let data = (squareY * 10) + (squareX + 1)
+        const node = new Node(data)
+        nodeMatrixState[squareY][squareX] = node
+        linkedList.start = node
+
+        context.fillStyle = `rgba(0, 255, 0, 0.50)`;
+        context.fillRect(squareX * layerX10, squareY * layerY10, layerX10, layerY10)
+    }
+
+    const drawNode = (squareY, squareX) =>{
+        context.fillStyle = `rgba(0, 0, 255, 0.50)`;
+        context.fillRect(squareX * layerX10, squareY * layerY10, layerX10, layerY10)
+    }
+
+
+    const showNodeMatrix = () => {
+        console.log(nodeMatrixState)
+    }
+
+    const matrixGen = () => {
         let count = 1
         for (let i = 0; i < 10; i++){
             for (let j= 0; j < 10; j++){
@@ -269,6 +332,87 @@ const Map = () => {
             }
         }
         console.log(matrixDictionary)
+    }
+
+    const toggleStart = () => {
+        if(startB.current.classList.contains('active')){
+            startB.current.classList.remove('active')
+        } else{
+            startB.current.classList.add('active')
+        }
+    }
+
+    const toggleEnd = () => {
+        if(endB.current.classList.contains('active')){
+            endB.current.classList.remove('active')
+        } else{
+            endB.current.classList.add('active')
+        }
+    }
+
+    const toggleNode = () => {
+        if(nodeB.current.classList.contains('active')){
+            nodeB.current.classList.remove('active')
+        } else{
+            nodeB.current.classList.add('active')
+        }
+    }
+
+    const showLinkedList = () =>{
+        console.log(linkedList)
+        console.log(linkedList.start)
+        console.log(linkedList.end)
+    }
+
+    const toggleClick = () => {
+        addClick(clicky)
+    }
+
+    const traverseLL = () => {
+        llVisited[linkedList.start.data] = true
+        dfsLL(linkedList.start, llVisited)
+    }
+
+    const dfsLL = (current, llVisited) =>{
+        if(current === linkedList.end){
+            llVisited[current.data] = true
+            llPath.push(current.data)
+            setLLPath(llPath)
+            return true
+        }
+        if(current.north){
+            if(!llVisited[current.north.data]){
+                llVisited[current.north.data] = true
+                llPath.push(current.north.data)
+                dfsLL(current.north, llVisited)
+            }
+        }
+        if(current.east){
+            if(!llVisited[current.east.data]){
+                llVisited[current.east.data] = true
+                llPath.push(current.east.data)
+                dfsLL(current.east, llVisited)
+            }
+        }
+        if(current.west){
+            if(!llVisited[current.west.data]){
+                llVisited[current.west.data] = true
+                llPath.push(current.west.data)
+                dfsLL(current.west, llVisited)
+            }
+        }
+        if(current.south){
+            if(!llVisited[current.south.data]){
+                llVisited[current.south.data] = true
+                llPath.push(current.south.data)
+                dfsLL(current.south, llVisited)
+            }
+        }
+        return false
+    }
+
+    const showLLPath = () => {
+        console.log(llPath)
     }
 
     return (
@@ -306,11 +450,35 @@ const Map = () => {
         <button onClick={startDfs}>
             DFS
         </button>
-        <button onClick={addEnd}>
+        <button onClick={drawEnd}>
             Add End Point
         </button>
-        <button onClick={matrixDictionaryGen}>
+        <button onClick={showNodeMatrix}>
             Node Matrix
+        </button>
+        <button onClick={matrixGen}>
+            Genereate Matrix
+        </button>
+        <button className="start" ref={startB} onClick={toggleStart}>
+            Set Start
+        </button>
+        <button className="end" ref={endB} onClick={toggleEnd}>
+            Set End
+        </button>
+        <button className="activate" ref={nodeB} onClick={toggleNode}>
+            Activate Node
+        </button>
+        <button onClick={toggleClick}>
+            Toggle Click
+        </button>
+        <button onClick={showLinkedList}>
+            Show Linked List
+        </button>
+        <button onClick={traverseLL}>
+            Traverse Link List
+        </button>
+        <button onClick={showLLPath}>
+            Show Linked List Path
         </button>
         <input
             type='text'

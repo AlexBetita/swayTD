@@ -1,3 +1,9 @@
 canvas{
     border: 1px solid black;
 }
+
+.active {
+    border: 1px solid orange;
+    color: orangered;
+    background-color: yellow;
+}
