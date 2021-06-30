@@ -1,5 +1,7 @@
 import React, {useRef, useEffect, useState} from 'react';
 
+import Map from './map';
+
 import './Map.css';
 
 function addClick(clicky){
@@ -15,7 +17,7 @@ class LinkedList {
 }
 
 
-const Map = () => {
+const Map_ = () => {
 
     class Node{
         constructor(data) {
@@ -30,6 +32,8 @@ const Map = () => {
     const dictionaryMatrix = {
 
     }
+
+
 
     const nodeMatrix = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -92,20 +96,20 @@ const Map = () => {
     const [pathDFS, setPathDFS] = useState([])
     const [pathBFS, setPathBFS] = useState([])
     const [llPath, setLLPath] = useState([])
+    const [test, setTest] = useState()
+
 
     useEffect(() =>{
         setContext(canvas.current.getContext('2d'))
-        setCanvasWidth(canvas.current.width = window.innerWidth)
-        setCanvasHeight(canvas.current.height = window.innerHeight)
+        setTest(new Map(200, 200, canvas, 5, 10))
+
     },[])
 
 
     const clicky = (e) =>{
         if (e.target.tagName === 'CANVAS'){
-            console.log(e)
-            console.log(e.target)
-            const yC = Math.ceil(e.layerY / (window.innerHeight / 10)) - 1
-            const xC = Math.ceil(e.layerX / (window.innerWidth / 10)) - 1
+            const yC = Math.ceil(e.layerY / (200 / 10)) - 1
+            const xC = Math.ceil(e.layerX / (200/ 5)) - 1
             setX(e.layerX)
             setY(e.layerY)
             setSquareX(xC)
@@ -123,58 +127,12 @@ const Map = () => {
             }
 
             if(squareB.current.classList.contains('active')){
-                fillSquare(yC, xC)
+                test.drawTile(xC, yC)
             }
 
             if(nodeB.current.classList.contains('active')){
-                drawNode(yC, xC)
-
-                let data = (yC * 10) + (xC + 1)
-                const node = new Node(data)
-                nodeMatrixState[yC][xC] = node
-
-                const directions = {
-                    0 : [0,1],
-                    1 : [1,0],
-                    2 : [-1,0],
-                    3 : [0,-1]
-                }
-
-                for (let i = 0; i < 4; i++){
-                    let x = yC + directions[i][0]
-                    let y = xC + directions[i][1]
-                    if(x >= 0 && x < nodeMatrixState.length && y >= 0 && y < nodeMatrixState[x].length){
-
-                        if (i === 0){
-                            if(nodeMatrixState[x][y] instanceof Node){
-                                node.east = nodeMatrixState[x][y]
-                                nodeMatrixState[x][y].west = nodeMatrixState[yC][xC]
-                                console.log(nodeMatrixState[x][y])
-                            }
-                        } else if(i === 1){
-                            if(nodeMatrixState[x][y] instanceof Node){
-                                node.south = nodeMatrixState[x][y]
-                                nodeMatrixState[x][y].north = nodeMatrixState[yC][xC]
-                                console.log(nodeMatrixState[x][y])
-                            }
-                        } else if(i === 2){
-                            if(nodeMatrixState[x][y] instanceof Node){
-                                node.north = nodeMatrixState[x][y]
-                                nodeMatrixState[x][y].south = nodeMatrixState[yC][xC]
-                                console.log(nodeMatrixState[x][y])
-                            }
-                        } else {
-                            if(nodeMatrixState[x][y] instanceof Node){
-                                node.west = nodeMatrixState[x][y]
-                                nodeMatrixState[x][y].east = nodeMatrixState[yC][xC]
-                                console.log(nodeMatrixState[x][y])
-                            }
-                        }
-                    }
-                }
-
-                console.log(nodeMatrixState)
-                console.log(node)
+                test.drawNode(xC, yC)
+                test.plotNode(xC, yC)
             }
 
         }
@@ -212,6 +170,7 @@ const Map = () => {
 
 
     const fillSquare = (squareY, squareX) => {
+        //yC, xC
         context.fillStyle = `rgba(0, 0, 0, 0.5)`;
         context.fillRect(squareX * layerX10, squareY * layerY10, layerX10, layerY10)
         stateMatrix[squareY][squareX] = 1
@@ -221,24 +180,8 @@ const Map = () => {
     }
 
     const drawGrid = () => {
-        context.beginPath();
-        let gridX = layerX10
-        let gridY = window.innerHeight
-        for (let  i = 0; i < 10; i++){
-            context.moveTo(gridX,0)
-            context.lineTo(gridX, gridY)
-            context.stroke()
-            gridX += layerX10
-        }
-
-        gridX = window.innerWidth
-        gridY = layerY10
-        for (let  i = 0; i < 10; i++){
-            context.moveTo(0,gridY)
-            context.lineTo(gridX, gridY)
-            context.stroke()
-            gridY += layerY10
-        }
+        test.setCanvasDimensions()
+        test.drawGrid()
     }
 
     const showImageData = () => {
@@ -696,4 +639,4 @@ const Map = () => {
 }
 
 
-export default Map;
+export default Map_;

@@ -7,7 +7,7 @@ import ProtectedRoute from "./components/auth/ProtectedRoute";
 import UsersList from "./components/UsersList";
 import User from "./components/User";
 import { authenticate } from "./services/auth";
-import Map from './components/Map';
+import Map_ from './components/Map';
 
 function App() {
   const [authenticated, setAuthenticated] = useState(false);
@@ -32,7 +32,7 @@ function App() {
       <NavBar setAuthenticated={setAuthenticated} />
       <Switch>
         <Route path="/" exact={true}>
-          <Map />
+          <Map_ />
         </Route>
         <Route path="/login" exact={true}>
           <LoginForm
