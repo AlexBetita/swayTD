@@ -48,9 +48,9 @@ export default class Map{
         this.end = null
 
         //path result
-        this.pathBFS = null
-        this.pathDFS = null
-        this.pathLL = null
+        this.pathBFS = []
+        this.pathDFS = []
+        this.pathLL = []
 
         //north, east, west, south
         this.directions = {
@@ -66,8 +66,15 @@ export default class Map{
             `rgba(255, 253, 23, 1)`, // bright yellow
             `rgba(28, 168, 218, 0.54)`, // sky blue
             `rgba(255, 0, 0, 1)`, // red
-            `rgba(184, 50, 208, 1)` // purple
+            `rgba(184, 50, 208, 1)`, // purple
+            `rgba(0, 255, 27, 1)`, // bright green
+            `rgba(225, 137, 24, 1)` // orange
         ]
+    }
+
+    //get shortest path
+    get shortestPath(){
+        return Math.min([this.pathBFS.length, this.pathDFS.length, this.pathLL.length])
     }
 
     //draw the clicked tile
@@ -76,6 +83,81 @@ export default class Map{
         this.fillRect(x, y)
         this.matrix[y][x] = 1
     }
+
+    //draw node
+    drawNode(x, y){
+        this.context.fillStyle = this.tiles[5]
+        this.fillRect(x, y)
+    }
+
+    //draw start
+    drawStart(x, y){
+        this.context.fillStyle = this.tiles[1]
+        this.fillRect(x, y)
+        this.plotNode(x, y)
+        this.start = [x, y]
+    }
+
+    //draw end
+    drawEnd(x, y){
+        this.context.fillStyle = this.tiles[4]
+        this.fillRect(x, y)
+        this.plotNode(x, y)
+        this.end = [x, y]
+        this.matrix[y][x] = 'end'
+    }
+
+    //draw path
+    drawPath(type){
+        if(type === 'dfs'){
+            let pathDFS = this.pathDFS.slice(1, this.pathDFS.length - 1)
+
+            for (let i = 0; i < pathDFS.length; i++){
+                this.context.fillStyle = this.tiles[3]
+                this.fillRect(pathDFS[i][1], pathDFS[i][0])
+            }
+        } else if(type === 'bfs'){
+            let pathBFS = this.pathBFS.slice(1, this.pathBFS.length - 1)
+
+            for (let i = 0; i < pathBFS.length; i++){
+                this.context.fillStyle = this.tiles[2]
+                this.fillRect(pathBFS[i][1], pathBFS[i][0])
+            }
+        } else if(type === 'dfs'){
+            let pathLL = this.pathLL.slice(1, this.pathLL.length - 1)
+
+            for (let i = 0; i < pathLL.length; i++){
+                this.context.fillStyle = this.tiles[6]
+                this.fillRect(pathLL[i][1], pathLL[i][0])
+            }
+        }
+    }
+
+    //draw all paths
+    drawPaths(){
+        let pathBFS = this.pathBFS.slice(1, this.pathBFS.length - 1)
+
+        for (let i = 0; i < pathBFS.length; i++){
+            this.context.fillStyle = this.tiles[2]
+            this.fillRect(pathBFS[i][1], pathBFS[i][0])
+        }
+
+        let pathDFS = this.pathDFS.slice(1, this.pathDFS.length - 1)
+
+        for (let i = 0; i < pathDFS.length; i++){
+            this.context.fillStyle = this.tiles[3]
+            this.fillRect(pathDFS[i][1], pathDFS[i][0])
+        }
+
+
+        let pathLL = this.pathLL.slice(1, this.pathLL.length - 1)
+
+        for (let i = 0; i < pathLL.length; i++){
+            this.context.fillStyle = this.tiles[6]
+            this.fillRect(pathLL[i][1], pathLL[i][0])
+        }
+    }
+
 
     //draw grid
     drawGrid(){
@@ -107,12 +189,6 @@ export default class Map{
     setCanvasDimensions(){
         this.canvas.current.width = this.width
         this.canvas.current.height = this.height
-    }
-
-    //draw nodes
-    drawNode(x, y){
-        this.context.fillStyle = this.tiles[5]
-        this.fillRect(x, y)
     }
 
     //fill rect
@@ -162,6 +238,45 @@ export default class Map{
                 }
             }
         }
+    }
+
+    //checks if possible to traverse
+    checkBoundary(current, visited){
+        let x = current[0]
+        let y = current[1]
+
+        return x >= 0 && x < this.matrix.length && y >= 0 && y < this.matrix[x].length &&
+               !visited[`${current[0]}, ${current[1]}`] && this.matrix[x][y] !== undefined;
+    }
+
+    //start dfs
+    startDFS(){
+        let current = this.start
+        let visited = {}
+        visited[`${current[0]}, ${current[1]}`] = true
+        this.pathDFS.push(current)
+        this.DFS(current, visited)
+    }
+
+    //recursive dfs
+    DFS(current, visited){
+        if(this.matrix[current[0]][current[1]] === 'end'){
+            return true
+        }
+
+        let neighbors;
+
+        for (let i = 0; i < 4; i ++){
+            neighbors = [current[0] + this.directions[i][0], current[1]  + this.directions[i][1]];
+            if (this.checkBoundary(neighbors, visited)){
+                visited[`${neighbors[0]}, ${neighbors[1]}`] = true
+                this.pathDFS.push(neighbors)
+                if (this.DFS(neighbors, visited)){
+                    return true
+                }
+            }
+        }
+        return false
     }
 
 }
