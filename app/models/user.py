@@ -31,10 +31,10 @@ class User(db.Model, UserMixin):
     __tablename__ = 'users'
     __table_args__ = {'extend_existing': True}
 
-    id = db.Column(db.Integer, primary_key = True)
-    username = db.Column(db.String(40), nullable = False, unique = True)
-    email = db.Column(db.String(255), nullable = False, unique = True)
-    hashed_password = db.Column(db.String(255), nullable = False)
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(40), nullable=False, unique=True)
+    email = db.Column(db.String(255), nullable=False, unique=True)
+    hashed_password = db.Column(db.String(255), nullable=False)
     currency = db.Column(db.BigInteger, default=0)
     profileImage = db.Column(db.String(256))
     created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)

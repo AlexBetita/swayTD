@@ -155,12 +155,15 @@ export default class Map{
             'plotted_tiles' : {
             }
         }
-        this.drawGrid();
     }
 
     //draw the clicked tile
     drawTile(x, y){
         let data = this.getTileNumber(x, y)
+
+        if(y < 0 || y >= this.column){
+            return false
+        }
 
         if(this.matrix[y][x] !== 1){
             this.context.fillStyle = this.tiles[0]
@@ -177,6 +180,10 @@ export default class Map{
     //draw node
     drawNode(x, y){
         let data = this.getTileNumber(x, y)
+
+        if(y < 0 || y >= this.column){
+            return false
+        }
 
         if(!(this.nodeMatrix[y][x] instanceof Node)){
             this.context.fillStyle = this.tiles[5]
@@ -317,6 +324,33 @@ export default class Map{
         }
     }
 
+    //remove grid
+    removeGrid(){
+        this.context.beginPath();
+
+        //starting position of x
+        let posX = this.tileWidth
+        this.context.lineWidth = 1.7
+        this.context.strokeStyle = "rgba(255, 255, 255, 1)";
+
+        for (let i = 0; i < this.column; i ++){
+            this.context.moveTo(posX, 0)
+            this.context.lineTo(posX, this.height)
+            this.context.stroke()
+            posX += this.tileWidth
+        }
+
+        //starting position of y
+        let posY = this.tileHeight
+
+        for (let i = 0; i < this.row; i ++){
+            this.context.moveTo(0, posY)
+            this.context.lineTo(this.width, posY)
+            this.context.stroke()
+            posY += this.tileHeight
+        }
+    }
+
     //set Canvas dimensions
     setCanvasDimensions(){
         this.canvas.current.width = this.width
@@ -325,7 +359,7 @@ export default class Map{
 
     //fill rect
     fillRect(x, y){
-        this.context.fillRect(x * this.tileWidth, y * this.tileHeight, this.tileWidth, this.tileHeight)
+        this.context.fillRect(x * this.tileWidth, y * this.tileHeight, this.tileWidth - 1, this.tileHeight - 1)
     }
 
     //remove fill rect

@@ -254,6 +254,10 @@ const Map_ = () => {
         canvas.cleanMap()
     }
 
+    const removeGrid = () =>{
+        canvas.removeGrid()
+    }
+
     return (
     <>
         <button onClick={drawGrid}>
@@ -309,7 +313,9 @@ const Map_ = () => {
         <button onClick={loadMap}>
             Load Map Data
         </button>
-
+        <button onClick={removeGrid}>
+            Remove Grid
+        </button>
         <button onClick={cleanMap}>
             Clean Map
         </button>
