@@ -45,7 +45,7 @@ export default class Map{
 
         //start and end coordinates
         this.start = [0,0]
-        this.end = [0,0]
+        this.end = [0,1]
 
 
         //linked list
@@ -86,9 +86,9 @@ export default class Map{
             'plotted_tiles' : {
                 /*
                 '1' : {
+                    'data' : 1,
                     'start' : true,
                     'end' : false,
-                    'data' : 1,
                     'x' : 0,
                     'y' : 0,
                     'fill_color' : `rgba(x, x, x, x)`
@@ -172,11 +172,14 @@ export default class Map{
     drawStart(x, y){
         let data = this.getTileNumber(x, y)
 
+        //These two if statements can cause bugs
         if(this.matrix[this.start[1]][this.start[0]] === 1){
+
             this.removeFillRect(this.start[0], this.start[1])
         }
 
         if(this.nodeMatrix[this.start[1]][this.start[0]] instanceof Node){
+
             this.removeFillRect(this.start[0], this.start[1])
         }
 
@@ -184,18 +187,19 @@ export default class Map{
         this.mapData = [data + 'n', data, true, false, x, y, this.tiles[1]]
 
         this.context.fillStyle = this.tiles[1]
-        this.fillRect(x, y)
+
         this.plotNode(x, y, 'start')
-        this.start = [x, y]
         this.matrix[y][x] = 1
+        this.start = [x, y]
+        this.fillRect(x, y)
     }
 
     //draw end
     drawEnd(x, y){
         let data = this.getTileNumber(x, y)
 
-
-        if(this.matrix[this.end[1]][this.end[0]] === 1){
+        //These two if statements can cause bugs
+        if(this.matrix[this.end[1]][this.end[0]] === 1 && this.end[0]){
             this.removeFillRect(this.end[0], this.end[1])
         }
 
@@ -207,9 +211,10 @@ export default class Map{
         this.mapData = [data + 'n', data, false, true, x, y, this.tiles[4]]
 
         this.context.fillStyle = this.tiles[4]
+
+        this.end = [x, y]
         this.fillRect(x, y)
         this.plotNode(x, y, 'end')
-        this.end = [x, y]
         this.matrix[y][x] = 1
     }
 
@@ -490,5 +495,90 @@ export default class Map{
 
         }
         return false
+    }
+
+    static loadMap(mapData, canvas){
+
+        mapData = {
+            'width': 200,
+            'height' : 200,
+            'rows' : 10,
+            'columns' : 10,
+            'plotted_tiles' : {
+                '1' : {
+                    'data' : 1,
+                    'start' : true,
+                    'end' : false,
+                    'x' : 0,
+                    'y' : 0,
+                    'fill_color' : `rgba(x, x, x, x)`
+                },
+                '2' : {
+                    'data' : 2,
+                    'start' : false,
+                    'end' : false,
+                    'x' : 1,
+                    'y' : 0,
+                    'fill_color' : `rgba(x, x, x, x)`
+                },
+                '3' : {
+                    'data' : 3,
+                    'start' : false,
+                    'end' : false,
+                    'x' : 2,
+                    'y' : 0,
+                    'fill_color' : `rgba(x, x, x, x)`
+                },
+                '4' : {
+                    'data' : 4,
+                    'start' : false,
+                    'end' : false,
+                    'x' : 3,
+                    'y' : 0,
+                    'fill_color' : `rgba(x, x, x, x)`
+                },
+                '5' : {
+                    'data' : 5,
+                    'start' : false,
+                    'end' : false,
+                    'x' : 4,
+                    'y' : 0,
+                    'fill_color' : `rgba(x, x, x, x)`
+                },
+                '6' : {
+                    'data' : 6,
+                    'start' : false,
+                    'end' : true,
+                    'x' : 5,
+                    'y' : 0,
+                    'fill_color' : `rgba(x, x, x, x)`
+                }
+            }
+        }
+
+        const {width, height, rows, columns, plotted_tiles} = mapData
+
+        const newMap = new Map(width, height, canvas, rows, columns)
+
+        newMap.setCanvasDimensions()
+        newMap.drawGrid()
+
+        Object.keys(plotted_tiles).map((key, id)=>{
+            let x = plotted_tiles[key].x
+            let y = plotted_tiles[key].y
+
+            let start = plotted_tiles[key].start
+            let end = plotted_tiles[key].end
+
+            if(start){
+                newMap.drawStart(x, y)
+            } else if(end){
+                newMap.drawEnd(x, y)
+            } else {
+                newMap.drawTile(x, y)
+            }
+        })
+
+        return newMap
     }
 }
