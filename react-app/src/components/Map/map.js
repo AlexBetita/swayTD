@@ -122,7 +122,7 @@ export default class Map{
 
     //draw node
     drawNode(x, y){
-        if(!this.nodeMatrix[y][x] instanceof Node === false){
+        if(!(this.nodeMatrix[y][x] instanceof Node)){
             this.context.fillStyle = this.tiles[5]
             this.fillRect(x, y)
             this.plotNode(x, y)
