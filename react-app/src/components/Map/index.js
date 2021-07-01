@@ -33,21 +33,6 @@ const Map_ = () => {
 
     }
 
-
-
-    const nodeMatrix = [
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    ]
-
     const matrix = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -75,15 +60,9 @@ const Map_ = () => {
     const [layerY10, setLayerY] = useState(window.innerHeight / 10)
     const [stateMatrix, setStateMatrix] = useState(matrix)
     const [matrixDictionary, setMatrixDictionary] = useState(dictionaryMatrix)
-    const [nodeMatrixState, setNodeMatrixState] = useState(nodeMatrix)
     const [context, setContext] = useState('')
-    const [canvasWidth, setCanvasWidth] = useState('')
-    const [canvasHeight, setCanvasHeight] = useState('')
     const [linkedList, setLinkedList] = useState(new LinkedList())
 
-    const [start, setStart] = useState([0,0])
-    const [end, setEnd] = useState([10,10])
-    const [pathDFS, setPathDFS] = useState([])
     const [pathBFS, setPathBFS] = useState([])
     const [llPath, setLLPath] = useState([])
     const [canvas, setCanvas] = useState()
@@ -98,8 +77,9 @@ const Map_ = () => {
 
     const clicky = (e) =>{
         if (e.target.tagName === 'CANVAS'){
-            const yC = Math.ceil(e.layerY / (canvas.height / canvas.gridY)) - 1
-            const xC = Math.ceil(e.layerX / (canvas.width/ canvas.gridX)) - 1
+            console.log(e)
+            const yC = Math.ceil(e.layerY / (canvas.height / canvas.row)) - 1
+            const xC = Math.ceil(e.layerX / (canvas.width/ canvas.column)) - 1
 
             if(startB.current.classList.contains('active')){
                 canvas.drawStart(xC, yC)
@@ -237,10 +217,12 @@ const Map_ = () => {
     }
 
     const traverseLL = () => {
-        llVisited[linkedList.start.data] = true
-        const res = dfsLL(linkedList.start, llVisited)
-        console.log(res.reverse(), 'result')
-        drawLinkedListPath(res)
+        // llVisited[linkedList.start.data] = true
+        // const res = dfsLL(linkedList.start, llVisited)
+        // console.log(res.reverse(), 'result')
+        // drawLinkedListPath(res)
+        canvas.startLL()
+        canvas.drawPath('ll')
     }
 
     const dfsLL = (current, llVisited, result = []) =>{

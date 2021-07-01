@@ -17,7 +17,7 @@ class LinkedList {
 
 export default class Map{
 
-    constructor(width, height, canvas, gridX, gridY){
+    constructor(width, height, canvas, row, column){
 
         //dimensions of canvas
         this.width = width
@@ -30,22 +30,26 @@ export default class Map{
         this.context = canvas.current.getContext('2d')
 
         //size of tile
-        this.tileWidth = width / gridX
-        this.tileHeight = height / gridY
+        this.tileWidth = width / column
+        this.tileHeight = height / row
 
         //grid dimensions
-        this.gridX = gridX
-        this.gridY = gridY
+        this.row = Math.floor(row)
+        this.column = Math.floor(column)
 
         //2d matrix
-        this.matrix = Array.from(Array(gridY), () => new Array(gridX))
+        this.matrix = Array.from(Array(row), () => new Array(column))
 
         //node matrix
-        this.nodeMatrix = Array.from(Array(gridY), () => new Array(gridX))
+        this.nodeMatrix = Array.from(Array(row), () => new Array(column))
 
         //start and end coordinates
-        this.start = null
-        this.end = null
+        this.start = [0,0]
+        this.end = [0,0]
+
+
+        //linked list
+        this.linkedlist = new LinkedList()
 
         //path result
         this.pathBFS = []
@@ -60,6 +64,7 @@ export default class Map{
             3 : [0, -1]
         }
 
+        //tiles
         this.tiles = [
             `rgba(0, 0, 0, 0.5)`, // black
             `rgba(15, 112, 15, 1)`, // dark green
@@ -70,6 +75,22 @@ export default class Map{
             `rgba(0, 255, 27, 1)`, // bright green
             `rgba(225, 137, 24, 1)` // orange
         ]
+
+        //map data
+        this._mapData = {
+            'width': this.width,
+            'height' : this.height,
+            'rows' : this.row,
+            'columns' : this.column,
+            'plotted_tiles' : {
+                /*
+                '0,0' : {
+                    ...data
+                    'fill_color' : `rgba(x, x, x, x)`
+                }
+                */
+            }
+        }
     }
 
     //get shortest path
@@ -77,8 +98,20 @@ export default class Map{
         return Math.min([this.pathBFS.length, this.pathDFS.length, this.pathLL.length])
     }
 
+    //get map data
+    get mapData(){
+        return this._mapData
+    }
+
+    //set map data
+    set mapData(tileObj){
+        this._mapData.plotted_tiles[tileObj.coordinates] = {...tileObj}
+    }
+
     //draw the clicked tile
     drawTile(x, y){
+        console.log(x)
+        console.log(y)
         this.context.fillStyle = this.tiles[0]
         this.fillRect(x, y)
         this.matrix[y][x] = 1
@@ -94,7 +127,7 @@ export default class Map{
     drawStart(x, y){
         this.context.fillStyle = this.tiles[1]
         this.fillRect(x, y)
-        this.plotNode(x, y)
+        this.plotNode(x, y, 'start')
         this.start = [x, y]
     }
 
@@ -102,9 +135,8 @@ export default class Map{
     drawEnd(x, y){
         this.context.fillStyle = this.tiles[4]
         this.fillRect(x, y)
-        this.plotNode(x, y)
+        this.plotNode(x, y, 'end')
         this.end = [x, y]
-        this.matrix[y][x] = 'end'
     }
 
     //draw path
@@ -114,21 +146,21 @@ export default class Map{
 
             for (let i = 0; i < pathDFS.length; i++){
                 this.context.fillStyle = this.tiles[3]
-                this.fillRect(pathDFS[i][1], pathDFS[i][0])
+                this.fillRect(pathDFS[i][0], pathDFS[i][1])
             }
         } else if(type === 'bfs'){
             let pathBFS = this.pathBFS.slice(1, this.pathBFS.length - 1)
 
             for (let i = 0; i < pathBFS.length; i++){
                 this.context.fillStyle = this.tiles[2]
-                this.fillRect(pathBFS[i][1], pathBFS[i][0])
+                this.fillRect(pathBFS[i][0], pathBFS[i][1])
             }
-        } else if(type === 'dfs'){
-            let pathLL = this.pathLL.slice(1, this.pathLL.length - 2)
+        } else if(type === 'll'){
+            let pathLL = this.pathLL.slice(1, this.pathLL.length - 1)
 
             for (let i = 0; i < pathLL.length; i++){
                 this.context.fillStyle = this.tiles[6]
-                this.fillRect(pathLL[i][1], pathLL[i][0])
+                this.fillRect(pathLL[i][0], pathLL[i][1])
             }
         }
     }
@@ -150,7 +182,7 @@ export default class Map{
         }
 
 
-        let pathLL = this.pathLL.slice(1, this.pathLL.length - 2)
+        let pathLL = this.pathLL.slice(1, this.pathLL.length - 1)
 
         for (let i = 0; i < pathLL.length; i++){
             this.context.fillStyle = this.tiles[6]
@@ -166,18 +198,17 @@ export default class Map{
         //starting position of x
         let posX = this.tileWidth
 
-        for (let i = 0; i < this.gridX; i ++){
+        for (let i = 0; i < this.column; i ++){
             this.context.moveTo(posX, 0)
             this.context.lineTo(posX, this.height)
             this.context.stroke()
             posX += this.tileWidth
-            console.log(posX)
         }
 
         //starting position of y
         let posY = this.tileHeight
 
-        for (let i = 0; i < this.gridY; i ++){
+        for (let i = 0; i < this.row; i ++){
             this.context.moveTo(0, posY)
             this.context.lineTo(this.width, posY)
             this.context.stroke()
@@ -197,43 +228,49 @@ export default class Map{
     }
 
     //plot node in the nodematrix
-    plotNode(x, y){
-        let data = (y * this.gridY) + (x + 1)
+    plotNode(x, y, position = null){
+        let data = (y * this.column) + (x + 1)
 
         const node = new Node(data)
 
         this.nodeMatrix[y][x] = node
 
+        if(position === 'start'){
+            this.linkedlist.start = node
+        } else if(position === 'end'){
+            this.linkedlist.end = node
+        }
+
         for (let i = 0; i < 4; i++){
 
-            let newX = y + this.directions[i][0]
-            let newY = x + this.directions[i][1]
+            let newY = y + this.directions[i][0]
+            let newX = x + this.directions[i][1]
 
-            if(newX >= 0 && newX < this.nodeMatrix.length && newY >= 0 && newY < this.nodeMatrix[newX].length){
+            if(newY >= 0 && newY < this.nodeMatrix.length && newX >= 0 && newX < this.nodeMatrix[newY].length){
 
                 if (i === 0){
-                    if(this.nodeMatrix[newX][newY] instanceof Node){
-                        node.east = this.nodeMatrix[newX][newY]
-                        this.nodeMatrix[newX][newY].west = this.nodeMatrix[y][x]
-                        console.log(this.nodeMatrix[newX][newY])
+                    if(this.nodeMatrix[newY][newX] instanceof Node){
+                        node.west = this.nodeMatrix[newY][newX]
+                        this.nodeMatrix[newY][newX].east = this.nodeMatrix[y][x]
+                        console.log(this.nodeMatrix[newY][newX])
                     }
                 } else if(i === 1){
-                    if(this.nodeMatrix[newX][newY] instanceof Node){
-                        node.south = this.nodeMatrix[newX][newY]
-                        this.nodeMatrix[newX][newY].north = this.nodeMatrix[y][x]
-                        console.log(this.nodeMatrix[newX][newY])
+                    if(this.nodeMatrix[newY][newX] instanceof Node){
+                        node.north = this.nodeMatrix[newY][newX]
+                        this.nodeMatrix[newY][newX].south = this.nodeMatrix[y][x]
+                        console.log(this.nodeMatrix[newY][newX])
                     }
                 } else if(i === 2){
-                    if(this.nodeMatrix[newX][newY] instanceof Node){
-                        node.north = this.nodeMatrix[newX][newY]
-                        this.nodeMatrix[newX][newY].south = this.nodeMatrix[y][x]
-                        console.log(this.nodeMatrix[newX][newY])
+                    if(this.nodeMatrix[newY][newX] instanceof Node){
+                        node.south = this.nodeMatrix[newY][newX]
+                        this.nodeMatrix[newY][newX].north = this.nodeMatrix[y][x]
+                        console.log(this.nodeMatrix[newY][newX])
                     }
-                } else {
-                    if(this.nodeMatrix[newX][newY] instanceof Node){
-                        node.west = this.nodeMatrix[newX][newY]
-                        this.nodeMatrix[newX][newY].east = this.nodeMatrix[y][x]
-                        console.log(this.nodeMatrix[newX][newY])
+                } else if(i === 3){
+                    if(this.nodeMatrix[newY][newX] instanceof Node){
+                        node.east = this.nodeMatrix[newY][newX]
+                        this.nodeMatrix[newY][newX].west = this.nodeMatrix[y][x]
+                        console.log(this.nodeMatrix[newY][newX])
                     }
                 }
             }
@@ -251,9 +288,9 @@ export default class Map{
 
     //start dfs
     startDFS(){
+        const visited = {}
         let current = this.start
-        console.log(current)
-        let visited = {}
+
         visited[`${current[0]}, ${current[1]}`] = true
         this.pathDFS.push(current)
         this.DFS(current, visited)
@@ -261,7 +298,7 @@ export default class Map{
 
     //recursive dfs
     DFS(current, visited){
-        if(this.matrix[current[0]][current[1]] === 'end'){
+        if(current[0] === this.end[0] && current[1] === this.end[1]){
             return true
         }
 
@@ -284,8 +321,9 @@ export default class Map{
 
     //start bfs
     startBFS(){
+        const visited = {}
         let current = this.start
-        let visited = {}
+
         visited[`${current[0]}, ${current[1]}`] = true
         this.pathBFS.push(current)
         this.BFS(current, visited)
@@ -314,5 +352,65 @@ export default class Map{
 
             }
         }
+    }
+
+    //start linked list
+    startLL(){
+        const visited = {}
+
+        const result = this.LL(this.linkedlist.start, visited).reverse()
+        const convertResultToCoords = []
+        for (let i = 0; i < result.length; i++){
+            let x = (result[i] % this.column) - 1
+            let y = Math.floor(result[i] / this.column) % this.column
+            convertResultToCoords.push([x, y])
+        }
+        
+        this.pathLL=convertResultToCoords
+    }
+
+    //linked list
+    LL(current, visited, result = []){
+        if(current === this.linkedlist.end){
+            return result.push(current.data)
+        }
+
+        if(current.north){
+            if(!visited[current.north.data]){
+                visited[current.north.data] = true
+                if(this.LL(current.north, visited, result)){
+                    result.push(current.data)
+                    return [...result]
+                }
+            }
+        }
+        if(current.south){
+            if(!visited[current.south.data]){
+                visited[current.south.data] = true
+                if(this.LL(current.south, visited, result)){
+                    result.push(current.data)
+                    return [...result]
+                }
+            }
+        }
+        if(current.east){
+            if(!visited[current.east.data]){
+                visited[current.east.data] = true
+                if(this.LL(current.east, visited, result)){
+                    result.push(current.data)
+                    return [...result]
+                }
+            }
+        }
+        if(current.west){
+            if(!visited[current.west.data]){
+                visited[current.west.data] = true
+                if(this.LL(current.west, visited, result)){
+                    result.push(current.data)
+                    return [...result]
+                }
+            }
+        }
+        return false
     }
 }
