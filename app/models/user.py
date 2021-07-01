@@ -40,25 +40,25 @@ class User(db.Model, UserMixin):
     created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
-    # map = db.relationship('Map', lazy='dynamic', foreign_keys='Map.user_id')
-
-    # map_scores = db.relationship(
-    #   'Map',
-    #   secondary=user_scores,
-    #   primaryjoin=(user_scores.c.user_id == id),
-    #   backref=db.backref('user_score', lazy='dynamic',
-    #                      cascade="all, delete-orphan",
-    #                      single_parent=True),
-    #   lazy='dynamic'
-    # )
+    map = db.relationship('Map', lazy='dynamic', foreign_keys='Map.user_id')
 
     map_scores = db.relationship(
       'Map',
       secondary=user_scores,
       primaryjoin=(user_scores.c.user_id == id),
-      backref=db.backref('user_score', lazy='dynamic'),
+      backref=db.backref('user_score', lazy='dynamic',
+                         cascade="all, delete-orphan",
+                         single_parent=True),
       lazy='dynamic'
-      )
+    )
+
+    # map_scores = db.relationship(
+    #   'Map',
+    #   secondary=user_scores,
+    #   primaryjoin=(user_scores.c.user_id == id),
+    #   backref=db.backref('user_score', lazy='dynamic'),
+    #   lazy='dynamic'
+    #   )
 
     @property
     def password(self):

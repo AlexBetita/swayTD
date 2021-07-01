@@ -23,7 +23,7 @@ class Map(db.Model):
     def to_dict(self):
         return {
             'name': self.id,
-            'map_data': self.map_data,
+            'map_data': json.loads(self.map_data),
             'user_id': self.user_id,
             }
 
@@ -31,8 +31,8 @@ class Map(db.Model):
 # https://stackoverflow.com/questions/9234082/setting-delete-orphan-on-sqlalchemy-relationship-causes-assertionerror-this-att
 
 
-@event.listens_for(db.session, 'after_flush')
-def delete_map_orphans(session, ctx):
-    session.query(Map).\
-        filter(~Map.user_score.any()).\
-        delete(synchronize_session=False)
+# @event.listens_for(db.session, 'after_flush')
+# def delete_map_orphans(session, ctx):
+#     session.query(Map).\
+#         filter(~Map.user_score.any()).\
+#         delete(synchronize_session=False)

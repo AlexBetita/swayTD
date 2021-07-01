@@ -1,7 +1,8 @@
 # Credits
 # https://hackmd.io/@jpshafto/SyWY45KGu
 
-import boto3, botocore
+import boto3
+import botocore
 from .config import Config
 import os
 import uuid
@@ -11,10 +12,10 @@ ALLOWED_EXTENSIONS = {"pdf", "png", "jpg", "jpeg", "gif"}
 BUCKET_NAME = os.environ.get("S3_BUCKET")
 S3_LOCATION = f"http://swaytd.s3.amazonaws.com/"
 
+# aws_access_key_id=Config.S3_KEY,
+# aws_secret_access_key=Config.S3_SECRET_ACCESS_KEY
 s3 = boto3.client(
    "s3",
-#    aws_access_key_id=Config.S3_KEY,
-#    aws_secret_access_key=Config.S3_SECRET_ACCESS_KEY
    aws_access_key_id=os.environ.get("S3_KEY"),
    aws_secret_access_key=os.environ.get("S3_SECRET")
 )
@@ -43,6 +44,7 @@ def upload_file_to_s3(file, acl="public-read"):
 def allowed_file(filename):
     return "." in filename and \
            filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 def get_unique_filename(filename):
     ext = filename.rsplit(".", 1)[1].lower()

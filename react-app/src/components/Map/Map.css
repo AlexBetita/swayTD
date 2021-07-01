@@ -1,5 +1,8 @@
 canvas{
     border: 0.2px solid black;
+    margin-top: 5%;
+    margin-left: 10%;
+    margin-right: 10%;
 }
 
 .active {

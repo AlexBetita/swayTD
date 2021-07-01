@@ -136,6 +136,28 @@ export default class Map{
 
     }
 
+    //resets map
+    cleanMap(){
+        this.setCanvasDimensions()
+        this.matrix = Array.from(Array(this.row), () => new Array(this.column).fill(0))
+        this.nodeMatrix = Array.from(Array(this.row), () => new Array(this.column).fill(0))
+        this.linkedlist = new LinkedList()
+        this.start = [0,0]
+        this.end = [0,1]
+        this.pathBFS = []
+        this.pathDFS = []
+        this.pathLL = []
+        this._mapData = {
+            'width': this.width,
+            'height' : this.height,
+            'rows' : this.row,
+            'columns' : this.column,
+            'plotted_tiles' : {
+            }
+        }
+        this.drawGrid();
+    }
+
     //draw the clicked tile
     drawTile(x, y){
         let data = this.getTileNumber(x, y)
@@ -439,7 +461,7 @@ export default class Map{
 
             queue.shift();
             if(current[0] === this.end[0] && current[1] === this.end[1]){
-                return 
+                return
             }
             for (let i = 0; i < 4; i ++ ){
 
@@ -500,63 +522,6 @@ export default class Map{
     }
 
     static loadMap(mapData, canvas){
-
-        mapData = {
-            'width': 200,
-            'height' : 200,
-            'rows' : 10,
-            'columns' : 10,
-            'plotted_tiles' : {
-                '1' : {
-                    'data' : 1,
-                    'start' : true,
-                    'end' : false,
-                    'x' : 0,
-                    'y' : 0,
-                    'fill_color' : `rgba(x, x, x, x)`
-                },
-                '2' : {
-                    'data' : 2,
-                    'start' : false,
-                    'end' : false,
-                    'x' : 1,
-                    'y' : 0,
-                    'fill_color' : `rgba(x, x, x, x)`
-                },
-                '3' : {
-                    'data' : 3,
-                    'start' : false,
-                    'end' : false,
-                    'x' : 2,
-                    'y' : 0,
-                    'fill_color' : `rgba(x, x, x, x)`
-                },
-                '4' : {
-                    'data' : 4,
-                    'start' : false,
-                    'end' : false,
-                    'x' : 3,
-                    'y' : 0,
-                    'fill_color' : `rgba(x, x, x, x)`
-                },
-                '5' : {
-                    'data' : 5,
-                    'start' : false,
-                    'end' : false,
-                    'x' : 4,
-                    'y' : 0,
-                    'fill_color' : `rgba(x, x, x, x)`
-                },
-                '6' : {
-                    'data' : 6,
-                    'start' : false,
-                    'end' : true,
-                    'x' : 5,
-                    'y' : 0,
-                    'fill_color' : `rgba(x, x, x, x)`
-                }
-            }
-        }
 
         const {width, height, rows, columns, plotted_tiles} = mapData
 
