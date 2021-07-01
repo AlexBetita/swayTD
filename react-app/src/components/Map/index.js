@@ -12,6 +12,12 @@ function removeClick(clicky){
     window.removeEventListener('click', clicky)
 }
 
+
+
+function removeMouseDown(clicky){
+    window.removeEventListener('mousedown', clicky)
+}
+
 class LinkedList {
     constructor(start = null, end= null){
         this.start = start
@@ -36,21 +42,10 @@ const Map_ = () => {
 
     }
 
-    const matrix = [
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    ]
-
     const visited = {}
     const llVisited = {}
+
+    let isPathing = false;
 
     const canvasElement = useRef();
     const startB = useRef();
@@ -58,10 +53,10 @@ const Map_ = () => {
     const nodeB = useRef();
     const squareB = useRef();
     const tClick = useRef();
+    const mousDownClick = useRef();
 
     const [layerX10, setLayerX] = useState(window.innerWidth / 10)
     const [layerY10, setLayerY] = useState(window.innerHeight / 10)
-    const [stateMatrix, setStateMatrix] = useState(matrix)
     const [matrixDictionary, setMatrixDictionary] = useState(dictionaryMatrix)
     const [context, setContext] = useState('')
     const [linkedList, setLinkedList] = useState(new LinkedList())
@@ -70,6 +65,9 @@ const Map_ = () => {
     const [llPath, setLLPath] = useState([])
     const [canvas, setCanvas] = useState()
 
+    const m = (e) => {
+        clickyGo('move', e)
+    }
 
     useEffect(() =>{
         setContext(canvasElement.current.getContext('2d'))
@@ -80,6 +78,7 @@ const Map_ = () => {
 
     const clicky = (e) =>{
         if (e.target.tagName === 'CANVAS'){
+            console.log(e)
             const yC = Math.ceil(e.layerY / (canvas.height / canvas.row)) - 1
             const xC = Math.ceil(e.layerX / (canvas.width/ canvas.column)) - 1
 
@@ -104,6 +103,42 @@ const Map_ = () => {
         }
     }
 
+
+    const clickyGo = (trigger, e) =>{
+        if(trigger === 'down'){
+            isPathing = true
+            canvasElement.current.addEventListener('mousemove', (e)=> m(e))
+        }
+
+        if(trigger === 'up' || trigger === 'out'){
+            isPathing = false
+            canvasElement.current.removeEventListener('mousemove', (e)=> m(e))
+        }
+
+        if (e.target.tagName === 'CANVAS' && isPathing && trigger === 'move'){
+            const yC = Math.ceil(e.layerY / (canvas.height / canvas.row)) - 1
+            const xC = Math.ceil(e.layerX / (canvas.width/ canvas.column)) - 1
+
+            if(startB.current.classList.contains('active')){
+                canvas.drawStart(xC, yC)
+                startB.current.classList.remove('active')
+            }
+
+            if(endB.current.classList.contains('active')){
+                canvas.drawEnd(xC, yC)
+                endB.current.classList.remove('active')
+            }
+
+            if(squareB.current.classList.contains('active')){
+                canvas.drawTile(xC, yC)
+            }
+
+            if(nodeB.current.classList.contains('active')){
+                canvas.drawNode(xC, yC)
+            }
+
+        }
+    }
 
     const drawGrid = () => {
         canvas.setCanvasDimensions()
@@ -164,8 +199,13 @@ const Map_ = () => {
     }
 
     const toggleClick = () => {
-        addClick(clicky)
-        tClick.current.setAttribute('disabled', 'true')
+        if(tClick.current.classList.contains('active')){
+            removeClick(clicky)
+            tClick.current.classList.remove('active')
+        } else{
+            addClick(clicky)
+            tClick.current.classList.add('active')
+        }
     }
 
     const traverseLL = () => {
@@ -183,6 +223,35 @@ const Map_ = () => {
 
     const getMapData = () => {
         console.log(canvas.mapData)
+    }
+
+    function addMouseDown(clickyGo){
+
+        canvasElement.current.addEventListener('mousedown', (e) =>{
+            clickyGo('down', e)
+        })
+
+        canvasElement.current.addEventListener('mouseup', (e)=>{
+            clickyGo('up', e)
+        })
+
+        canvasElement.current.addEventListener('mouseout', (e)=>{
+            clickyGo('out', e)
+        })
+    }
+
+    const toggleMouseDown = () => {
+        if(mousDownClick.current.classList.contains('active')){
+            removeClick(clickyGo)
+            mousDownClick.current.classList.remove('active')
+        } else{
+            addMouseDown(clickyGo)
+            mousDownClick.current.classList.add('active')
+        }
+    }
+
+    const loadMap = () =>{
+        setCanvas(Map.loadMap('', canvasElement))
     }
 
     return (
@@ -212,6 +281,9 @@ const Map_ = () => {
         <button ref={tClick} onClick={toggleClick}>
             Toggle Click
         </button>
+        <button ref={mousDownClick} onClick={toggleMouseDown}>
+            Toggle Mouse Down
+        </button>
         <button onClick={showLinkedList}>
             Show Linked List
         </button>
@@ -227,6 +299,9 @@ const Map_ = () => {
         </button>
         <button onClick={getMapData}>
             Get map data
+        </button>
+        <button onClick={loadMap}>
+            Load Map Data
         </button>
         <canvas ref={canvasElement}>
 
