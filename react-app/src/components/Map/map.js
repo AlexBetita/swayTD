@@ -85,8 +85,12 @@ export default class Map{
             'columns' : this.column,
             'plotted_tiles' : {
                 /*
-                '0,0' : {
-                    ...data
+                '1' : {
+                    'start' : true,
+                    'end' : false,
+                    'data' : 1,
+                    'x' : 0,
+                    'y' : 0,
                     'fill_color' : `rgba(x, x, x, x)`
                 }
                 */
@@ -96,7 +100,21 @@ export default class Map{
 
     //get shortest path
     get shortestPath(){
-        return Math.min([this.pathBFS.length, this.pathDFS.length, this.pathLL.length])
+        const paths = [this.pathBFS, this.pathDFS, this.pathLL]
+
+        let min = Infinity;
+        let currentMin;
+
+        for (let i = 0; i < 3; i ++){
+            if(paths[i].length !== 0){
+                if(paths[i].length < min){
+                    min = paths[i].length
+                    currentMin = i
+                }
+            }
+        }
+
+        return paths[currentMin]
     }
 
     //get map data
@@ -105,16 +123,30 @@ export default class Map{
     }
 
     //set map data
-    set mapData(tileObj){
-        this._mapData.plotted_tiles[tileObj.coordinates] = {...tileObj}
+    set mapData(arr){
+
+        this._mapData.plotted_tiles[arr[0]] = {
+            'data' : arr[1],
+            'start' : arr[2],
+            'end' : arr[3],
+            'x' : arr[4],
+            'y' : arr[5],
+            'fill_color' : arr[6]
+        }
+
     }
 
     //draw the clicked tile
     drawTile(x, y){
+        let data = this.getTileNumber(x, y)
+
         if(this.matrix[y][x] !== 1){
             this.context.fillStyle = this.tiles[0]
             this.fillRect(x, y)
             this.matrix[y][x] = 1
+
+            this.mapData = [data, data, false, false, x, y, this.tiles[0]]
+
             return true
         }
         return false
@@ -122,10 +154,15 @@ export default class Map{
 
     //draw node
     drawNode(x, y){
+        let data = this.getTileNumber(x, y)
+
         if(!(this.nodeMatrix[y][x] instanceof Node)){
             this.context.fillStyle = this.tiles[5]
             this.fillRect(x, y)
             this.plotNode(x, y)
+
+            this.mapData = [data + 'n', data, false, false, x, y, this.tiles[5]]
+
             return true
         }
         return false
@@ -133,7 +170,8 @@ export default class Map{
 
     //draw start
     drawStart(x, y){
-        console.log(this.nodeMatrix)
+        let data = this.getTileNumber(x, y)
+
         if(this.matrix[this.start[1]][this.start[0]] === 1){
             this.removeFillRect(this.start[0], this.start[1])
         }
@@ -141,6 +179,9 @@ export default class Map{
         if(this.nodeMatrix[this.start[1]][this.start[0]] instanceof Node){
             this.removeFillRect(this.start[0], this.start[1])
         }
+
+        this.mapData = [data, data, true, false, x, y, this.tiles[1]]
+        this.mapData = [data + 'n', data, true, false, x, y, this.tiles[1]]
 
         this.context.fillStyle = this.tiles[1]
         this.fillRect(x, y)
@@ -151,6 +192,9 @@ export default class Map{
 
     //draw end
     drawEnd(x, y){
+        let data = this.getTileNumber(x, y)
+
+
         if(this.matrix[this.end[1]][this.end[0]] === 1){
             this.removeFillRect(this.end[0], this.end[1])
         }
@@ -158,6 +202,9 @@ export default class Map{
         if(this.nodeMatrix[this.end[1]][this.end[0]] instanceof Node){
             this.removeFillRect(this.end[0], this.end[1])
         }
+
+        this.mapData = [data, data, false, true, x, y, this.tiles[4]]
+        this.mapData = [data + 'n', data, false, true, x, y, this.tiles[4]]
 
         this.context.fillStyle = this.tiles[4]
         this.fillRect(x, y)
@@ -262,10 +309,15 @@ export default class Map{
         this.nodeMatrix[y][x] = 0
     }
 
+    //get exact number of tile in grid
+    getTileNumber(x, y){
+        return (y * this.column) + (x + 1)
+    }
+
     //plot node in the nodematrix
     plotNode(x, y, position = null){
 
-        let data = (y * this.column) + (x + 1)
+        let data = this.getTileNumber(x, y)
 
         const node = new Node(data)
 
@@ -324,6 +376,9 @@ export default class Map{
 
     //start dfs
     startDFS(){
+        //reset path
+        this.pathDFS = []
+
         const visited = {}
         let current = this.start
 
@@ -357,6 +412,9 @@ export default class Map{
 
     //start bfs
     startBFS(){
+        //reset path
+        this.pathBFS = []
+
         const visited = {}
         let current = this.start
 
@@ -392,6 +450,9 @@ export default class Map{
 
     //start linked list
     startLL(){
+        //reset path
+        this.pathLL = []
+
         const visited = {}
         visited[`${this.start[0]}, ${this.start[1]}`] = true
         const result = this.LL(this.linkedlist.start, visited).reverse()

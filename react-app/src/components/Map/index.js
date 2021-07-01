@@ -8,6 +8,9 @@ function addClick(clicky){
     window.addEventListener('click', clicky)
 }
 
+function removeClick(clicky){
+    window.removeEventListener('click', clicky)
+}
 
 class LinkedList {
     constructor(start = null, end= null){
@@ -174,6 +177,14 @@ const Map_ = () => {
         console.log(llPath)
     }
 
+    const shortestPath = () => {
+        console.log(canvas.shortestPath)
+    }
+
+    const getMapData = () => {
+        console.log(canvas.mapData)
+    }
+
     return (
     <>
         <button onClick={drawGrid}>
@@ -211,6 +222,12 @@ const Map_ = () => {
             Show Linked List Path
         </button>
 
+        <button onClick={shortestPath}>
+            Shortest path
+        </button>
+        <button onClick={getMapData}>
+            Get map data
+        </button>
         <canvas ref={canvasElement}>
 
         </canvas>
