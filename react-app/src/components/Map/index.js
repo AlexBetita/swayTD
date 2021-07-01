@@ -77,7 +77,6 @@ const Map_ = () => {
 
     const clicky = (e) =>{
         if (e.target.tagName === 'CANVAS'){
-            console.log(e)
             const yC = Math.ceil(e.layerY / (canvas.height / canvas.row)) - 1
             const xC = Math.ceil(e.layerX / (canvas.width/ canvas.column)) - 1
 
@@ -97,7 +96,6 @@ const Map_ = () => {
 
             if(nodeB.current.classList.contains('active')){
                 canvas.drawNode(xC, yC)
-                canvas.plotNode(xC, yC)
             }
 
         }

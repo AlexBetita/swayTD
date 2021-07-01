@@ -38,10 +38,10 @@ export default class Map{
         this.column = Math.floor(column)
 
         //2d matrix
-        this.matrix = Array.from(Array(row), () => new Array(column))
+        this.matrix = Array.from(Array(row), () => new Array(column).fill(0))
 
         //node matrix
-        this.nodeMatrix = Array.from(Array(row), () => new Array(column))
+        this.nodeMatrix = Array.from(Array(row), () => new Array(column).fill(0))
 
         //start and end coordinates
         this.start = [0,0]
@@ -73,7 +73,8 @@ export default class Map{
             `rgba(255, 0, 0, 1)`, // red
             `rgba(184, 50, 208, 1)`, // purple
             `rgba(0, 255, 27, 1)`, // bright green
-            `rgba(225, 137, 24, 1)` // orange
+            `rgba(225, 137, 24, 1)`, // orange
+            `rgba(255, 255, 255, 1)` // white
         ]
 
         //map data
@@ -110,33 +111,59 @@ export default class Map{
 
     //draw the clicked tile
     drawTile(x, y){
-        console.log(x)
-        console.log(y)
-        this.context.fillStyle = this.tiles[0]
-        this.fillRect(x, y)
-        this.matrix[y][x] = 1
+        if(this.matrix[y][x] !== 1){
+            this.context.fillStyle = this.tiles[0]
+            this.fillRect(x, y)
+            this.matrix[y][x] = 1
+            return true
+        }
+        return false
     }
 
     //draw node
     drawNode(x, y){
-        this.context.fillStyle = this.tiles[5]
-        this.fillRect(x, y)
+        if(!this.nodeMatrix[y][x] instanceof Node === false){
+            this.context.fillStyle = this.tiles[5]
+            this.fillRect(x, y)
+            this.plotNode(x, y)
+            return true
+        }
+        return false
     }
 
     //draw start
     drawStart(x, y){
+        console.log(this.nodeMatrix)
+        if(this.matrix[this.start[1]][this.start[0]] === 1){
+            this.removeFillRect(this.start[0], this.start[1])
+        }
+
+        if(this.nodeMatrix[this.start[1]][this.start[0]] instanceof Node){
+            this.removeFillRect(this.start[0], this.start[1])
+        }
+
         this.context.fillStyle = this.tiles[1]
         this.fillRect(x, y)
         this.plotNode(x, y, 'start')
         this.start = [x, y]
+        this.matrix[y][x] = 1
     }
 
     //draw end
     drawEnd(x, y){
+        if(this.matrix[this.end[1]][this.end[0]] === 1){
+            this.removeFillRect(this.end[0], this.end[1])
+        }
+
+        if(this.nodeMatrix[this.end[1]][this.end[0]] instanceof Node){
+            this.removeFillRect(this.end[0], this.end[1])
+        }
+
         this.context.fillStyle = this.tiles[4]
         this.fillRect(x, y)
         this.plotNode(x, y, 'end')
         this.end = [x, y]
+        this.matrix[y][x] = 1
     }
 
     //draw path
@@ -227,8 +254,17 @@ export default class Map{
         this.context.fillRect(x * this.tileWidth, y * this.tileHeight, this.tileWidth, this.tileHeight)
     }
 
+    //remove fill rect
+    removeFillRect(x, y){
+        this.context.fillStyle = this.tiles[8]
+        this.context.fillRect(x * this.tileWidth, y * this.tileHeight, this.tileWidth, this.tileHeight)
+        this.matrix[y][x] = 0
+        this.nodeMatrix[y][x] = 0
+    }
+
     //plot node in the nodematrix
     plotNode(x, y, position = null){
+
         let data = (y * this.column) + (x + 1)
 
         const node = new Node(data)
@@ -250,26 +286,26 @@ export default class Map{
 
                 if (i === 0){
                     if(this.nodeMatrix[newY][newX] instanceof Node){
-                        node.west = this.nodeMatrix[newY][newX]
-                        this.nodeMatrix[newY][newX].east = this.nodeMatrix[y][x]
+                        node.east = this.nodeMatrix[newY][newX]
+                        this.nodeMatrix[newY][newX].west = this.nodeMatrix[y][x]
                         console.log(this.nodeMatrix[newY][newX])
                     }
                 } else if(i === 1){
-                    if(this.nodeMatrix[newY][newX] instanceof Node){
-                        node.north = this.nodeMatrix[newY][newX]
-                        this.nodeMatrix[newY][newX].south = this.nodeMatrix[y][x]
-                        console.log(this.nodeMatrix[newY][newX])
-                    }
-                } else if(i === 2){
                     if(this.nodeMatrix[newY][newX] instanceof Node){
                         node.south = this.nodeMatrix[newY][newX]
                         this.nodeMatrix[newY][newX].north = this.nodeMatrix[y][x]
                         console.log(this.nodeMatrix[newY][newX])
                     }
+                } else if(i === 2){
+                    if(this.nodeMatrix[newY][newX] instanceof Node){
+                        node.north = this.nodeMatrix[newY][newX]
+                        this.nodeMatrix[newY][newX].south = this.nodeMatrix[y][x]
+                        console.log(this.nodeMatrix[newY][newX])
+                    }
                 } else if(i === 3){
                     if(this.nodeMatrix[newY][newX] instanceof Node){
-                        node.east = this.nodeMatrix[newY][newX]
-                        this.nodeMatrix[newY][newX].west = this.nodeMatrix[y][x]
+                        node.west = this.nodeMatrix[newY][newX]
+                        this.nodeMatrix[newY][newX].east = this.nodeMatrix[y][x]
                         console.log(this.nodeMatrix[newY][newX])
                     }
                 }
@@ -283,7 +319,7 @@ export default class Map{
         let y = current[1]
 
         return y >= 0 && y < this.matrix.length && x >= 0 && x < this.matrix[y].length &&
-              !visited[`${current[0]}, ${current[1]}`] && this.matrix[y][x] !== undefined;
+              !visited[`${current[0]}, ${current[1]}`] && this.matrix[y][x] !== 0;
     }
 
     //start dfs
@@ -392,5 +428,6 @@ export default class Map{
             }
 
         }
+        return false
     }
 }
