@@ -43,7 +43,9 @@ def login():
     form['csrf_token'].data = request.cookies['csrf_token']
     if form.validate_on_submit():
         # Add the user to the session, we are logged in!
-        user = User.query.filter(User.email == form.data['email']).first()
+        user = User.query.filter(
+            User.email == form.data['email']).first()
+
         login_user(user)
         return user.to_dict()
     return {'errors': validation_errors_to_error_messages(form.errors)}, 401
@@ -63,23 +65,33 @@ def sign_up():
     """
     Creates a new user and logs them in
     """
+    print(1)
     if "image" not in request.files:
+        print(2)
         return {'errors': 'image required'}, 400
 
+    print(3)
     image = request.files["image"]
 
+    print(4)
     if not allowed_file(image.filename):
         return {"errors": "file type not permitted"}, 400
 
+    print(5)
     image.filename = get_unique_filename(image.filename)
 
+    print(6)
     upload = upload_file_to_s3(image)
 
+    print(7)
     if "url" not in upload:
         # if the dictionary doesn't have a url key
         # it means that there was an error when we tried to upload
         # so we send back that error message
+        print(9)
         return upload, 400
+
+    print(8)
 
     url = upload["url"]
 
