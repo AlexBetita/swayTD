@@ -73,7 +73,7 @@ const Map_ = () => {
 
     useEffect(() =>{
         setContext(canvasElement.current.getContext('2d'))
-        setCanvas(new Map(200, 200, canvasElement, 5, 10))
+        setCanvas(new Map(800, 800, canvasElement, 60, 60))
 
     },[])
 
