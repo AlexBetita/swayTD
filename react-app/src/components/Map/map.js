@@ -357,7 +357,7 @@ export default class Map{
     //start linked list
     startLL(){
         const visited = {}
-
+        visited[`${this.start[0]}, ${this.start[1]}`] = true
         const result = this.LL(this.linkedlist.start, visited).reverse()
         const convertResultToCoords = []
         for (let i = 0; i < result.length; i++){
@@ -369,55 +369,8 @@ export default class Map{
                     : Math.floor((result[i] - 1) / this.column) % this.column
             convertResultToCoords.push([x, y])
         }
-        console.log(result, 'result')
-        console.log(convertResultToCoords, 'coords')
         this.pathLL=convertResultToCoords
     }
-
-    //linked list
-    // LL(current, visited, result = []){
-    //     if(current === this.linkedlist.end){
-    //         return result.push(current.data)
-    //     }
-
-    //     if(current.north){
-    //         if(!visited[current.north.data]){
-    //             visited[current.north.data] = true
-    //             if(this.LL(current.north, visited, result)){
-    //                 result.push(current.data)
-    //                 return [...result]
-    //             }
-    //         }
-    //     }
-    //     if(current.south){
-    //         if(!visited[current.south.data]){
-    //             visited[current.south.data] = true
-    //             if(this.LL(current.south, visited, result)){
-    //                 result.push(current.data)
-    //                 return [...result]
-    //             }
-    //         }
-    //     }
-    //     if(current.east){
-    //         if(!visited[current.east.data]){
-    //             visited[current.east.data] = true
-    //             if(this.LL(current.east, visited, result)){
-    //                 result.push(current.data)
-    //                 return [...result]
-    //             }
-    //         }
-    //     }
-    //     if(current.west){
-    //         if(!visited[current.west.data]){
-    //             visited[current.west.data] = true
-    //             if(this.LL(current.west, visited, result)){
-    //                 result.push(current.data)
-    //                 return [...result]
-    //             }
-    //         }
-    //     }
-    //     return false
-    // }
 
     LL(current, visited, result =[]){
         if(current === this.linkedlist.end){
