@@ -438,7 +438,9 @@ export default class Map{
             let neighbors;
 
             queue.shift();
-
+            if(current[0] === this.end[0] && current[1] === this.end[1]){
+                return 
+            }
             for (let i = 0; i < 4; i ++ ){
 
                 neighbors = [current[0] + this.directions[i][0], current[1]  + this.directions[i][1]];
