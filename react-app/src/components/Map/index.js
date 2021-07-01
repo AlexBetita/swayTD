@@ -109,51 +109,11 @@ const Map_ = () => {
         canvas.drawGrid()
     }
 
-
-    const checkBoundary = (stateMatrix, neighbors, visited) =>{
-        let x = neighbors[0]
-        let y = neighbors[1]
-
-        return x >= 0 && x < stateMatrix.length && y >= 0 && y < stateMatrix[x].length && !visited[`${neighbors[0]}, ${neighbors[1]}`] && stateMatrix[x][y] !== 0;
-    }
-
     const startDfs = () =>{
         canvas.startDFS()
         let type = 'dfs'
         // canvas.drawPath(type)
         canvas.drawPaths()
-    }
-
-    const bfs = (stateMatrix, current, visited) => {
-        const queue = [current];
-
-        while (queue.length != 0) {
-
-            current = queue[0]
-
-            queue.shift();
-
-            const directions = {
-                0 : [0,1],
-                1 : [1,0],
-                2 : [-1,0],
-                3 : [0,-1]
-            }
-
-            for (let i = 0; i < 4; i ++ ){
-
-                let neighbors = [current[0] + directions[i][0], current[1]  + directions[i][1]];
-
-                if(checkBoundary(stateMatrix, neighbors, visited)) {
-                    visited[`${neighbors[0]}, ${neighbors[1]}`] = true
-                    pathBFS.push(neighbors)
-                    setPathBFS(pathBFS)
-                    queue.push(neighbors)
-                }
-
-            }
-        }
-
     }
 
     const startBfs = () => {
@@ -162,15 +122,6 @@ const Map_ = () => {
         canvas.drawPath(type)
     }
 
-    // const matrixGen = () => {
-    //     let count = 1
-    //     for (let i = 0; i < 10; i++){
-    //         for (let j= 0; j < 10; j++){
-    //             matrixDictionary[count] = [i, j]
-    //             count += 1
-    //         }
-    //     }
-    // }
 
     const toggleStart = () => {
         if(startB.current.classList.contains('active')){
@@ -217,77 +168,12 @@ const Map_ = () => {
     }
 
     const traverseLL = () => {
-        // llVisited[linkedList.start.data] = true
-        // const res = dfsLL(linkedList.start, llVisited)
-        // console.log(res.reverse(), 'result')
-        // drawLinkedListPath(res)
         canvas.startLL()
         canvas.drawPath('ll')
     }
 
-    const dfsLL = (current, llVisited, result = []) =>{
-        if(current === linkedList.end){
-            return result.push(current.data)
-        }
-
-        if(current.north){
-            if(!llVisited[current.north.data]){
-                llVisited[current.north.data] = true
-                llPath.push(current.north.data)
-                if (dfsLL(current.north, llVisited, result)){
-                    result.push(current.data)
-                    return [...result]
-                }
-            }
-        }
-        if(current.east){
-            if(!llVisited[current.east.data]){
-                llVisited[current.east.data] = true
-                llPath.push(current.east.data)
-                if (dfsLL(current.east, llVisited, result)){
-                    result.push(current.data)
-                    return [...result]
-                }
-            }
-        }
-        if(current.west){
-            if(!llVisited[current.west.data]){
-                llVisited[current.west.data] = true
-                llPath.push(current.west.data)
-                if (dfsLL(current.west, llVisited, result)){
-                    result.push(current.data)
-                    return [...result]
-                }
-            }
-        }
-        if(current.south){
-            if(!llVisited[current.south.data]){
-                llVisited[current.south.data] = true
-                llPath.push(current.south.data)
-                if (dfsLL(current.south, llVisited, result)){
-                    result.push(current.data)
-                    return [...result]
-                }
-            }
-        }
-
-        return false
-    }
-
     const showLLPath = () => {
         console.log(llPath)
-    }
-
-    const drawLinkedListPath = (path) =>{
-        path = path.splice(1, path.length - 2)
-        // matrixGen()
-
-        for(let i = 0; i < path.length; i++){
-
-            let grid = matrixDictionary[path[i]]
-            context.fillStyle = `rgba(252, 255, 0, 1)`;
-            context.fillRect(grid[1] * layerX10, grid[0] * layerY10, layerX10, layerY10)
-        }
     }
 
     return (
@@ -304,10 +190,6 @@ const Map_ = () => {
         <button onClick={startBfs}>
             BFS
         </button>
-{/*
-        <button onClick={matrixGen}>
-            Genereate Matrix
-        </button> */}
 
         <button className="start" ref={startB} onClick={toggleStart}>
             Set Start

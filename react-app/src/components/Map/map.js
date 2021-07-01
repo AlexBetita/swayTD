@@ -156,7 +156,7 @@ export default class Map{
                 this.fillRect(pathBFS[i][0], pathBFS[i][1])
             }
         } else if(type === 'll'){
-            let pathLL = this.pathLL.slice(1, this.pathLL.length - 1)
+            let pathLL = this.pathLL.slice(0, this.pathLL.length - 2)
 
             for (let i = 0; i < pathLL.length; i++){
                 this.context.fillStyle = this.tiles[6]
@@ -182,7 +182,7 @@ export default class Map{
         }
 
 
-        let pathLL = this.pathLL.slice(1, this.pathLL.length - 1)
+        let pathLL = this.pathLL.slice(0, this.pathLL.length - 2)
 
         for (let i = 0; i < pathLL.length; i++){
             this.context.fillStyle = this.tiles[6]
@@ -361,56 +361,83 @@ export default class Map{
         const result = this.LL(this.linkedlist.start, visited).reverse()
         const convertResultToCoords = []
         for (let i = 0; i < result.length; i++){
-            let x = (result[i] % this.column) - 1
-            let y = Math.floor(result[i] / this.column) % this.column
+            let x = result[i] === 0 ? 0
+                    : result[i] <= this.column ? result[i] - 1
+                    : (result[i] % this.column) - 1 === -1 ? (result[i] - (result[i] - this.column)) - 1
+                    : (result[i] % this.column) - 1
+            let y = result[i] <= this.column ? 0
+                    : Math.floor((result[i] - 1) / this.column) % this.column
             convertResultToCoords.push([x, y])
         }
-        
+        console.log(result, 'result')
+        console.log(convertResultToCoords, 'coords')
         this.pathLL=convertResultToCoords
     }
 
     //linked list
-    LL(current, visited, result = []){
+    // LL(current, visited, result = []){
+    //     if(current === this.linkedlist.end){
+    //         return result.push(current.data)
+    //     }
+
+    //     if(current.north){
+    //         if(!visited[current.north.data]){
+    //             visited[current.north.data] = true
+    //             if(this.LL(current.north, visited, result)){
+    //                 result.push(current.data)
+    //                 return [...result]
+    //             }
+    //         }
+    //     }
+    //     if(current.south){
+    //         if(!visited[current.south.data]){
+    //             visited[current.south.data] = true
+    //             if(this.LL(current.south, visited, result)){
+    //                 result.push(current.data)
+    //                 return [...result]
+    //             }
+    //         }
+    //     }
+    //     if(current.east){
+    //         if(!visited[current.east.data]){
+    //             visited[current.east.data] = true
+    //             if(this.LL(current.east, visited, result)){
+    //                 result.push(current.data)
+    //                 return [...result]
+    //             }
+    //         }
+    //     }
+    //     if(current.west){
+    //         if(!visited[current.west.data]){
+    //             visited[current.west.data] = true
+    //             if(this.LL(current.west, visited, result)){
+    //                 result.push(current.data)
+    //                 return [...result]
+    //             }
+    //         }
+    //     }
+    //     return false
+    // }
+
+    LL(current, visited, result =[]){
         if(current === this.linkedlist.end){
             return result.push(current.data)
         }
 
-        if(current.north){
-            if(!visited[current.north.data]){
-                visited[current.north.data] = true
-                if(this.LL(current.north, visited, result)){
-                    result.push(current.data)
-                    return [...result]
+        const queue = [current.north, current.south, current.east, current.west]
+
+        while (queue.length){
+            current = queue.shift()
+            if(current){
+                if(!visited[current.data]){
+                    visited[current.data] = true
+                    if(this.LL(current, visited, result)){
+                        result.push(current.data)
+                        return [...result]
+                    }
                 }
             }
+
         }
-        if(current.south){
-            if(!visited[current.south.data]){
-                visited[current.south.data] = true
-                if(this.LL(current.south, visited, result)){
-                    result.push(current.data)
-                    return [...result]
-                }
-            }
-        }
-        if(current.east){
-            if(!visited[current.east.data]){
-                visited[current.east.data] = true
-                if(this.LL(current.east, visited, result)){
-                    result.push(current.data)
-                    return [...result]
-                }
-            }
-        }
-        if(current.west){
-            if(!visited[current.west.data]){
-                visited[current.west.data] = true
-                if(this.LL(current.west, visited, result)){
-                    result.push(current.data)
-                    return [...result]
-                }
-            }
-        }
-        return false
     }
 }
