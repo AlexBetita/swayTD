@@ -1,12 +1,141 @@
 canvas{
     border: 0.2px solid black;
-    margin-top: 5%;
-    margin-left: 10%;
-    margin-right: 10%;
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .active {
     border: 1px solid orange;
     color: orangered;
     background-color: yellow;
+}
+
+.map__ui{
+    position: fixed;
+    top: 90%;
+    display: flex;
+    border: 2px solid red;
+    max-width: 80%;
+    min-height: 60px;
+    left: 10%;
+    align-items: center;
+}
+
+.map__ui button{
+    display: inline-block;
+    text-align: center;
+    font-size: 10px;
+    max-height: 30px;
+    border-radius: 50%;
+}
+
+.profile__icon{
+    max-width: 20px;
+    max-height: 20px;
+    border-radius: 50%;
+    border: 3px dashed purple;
+    text-align: center;
+    cursor: pointer;
+    margin-left: 5px;
+}
+
+.profile__icon:hover{
+    border: 3.5px dashed rgb(182, 26, 182);
+}
+
+.profile__details{
+
+}
+
+.profile__details label{
+    font-size: 30x;
+    font-weight: 300;
+    margin-left: 5px;
+    margin-right: 5px;
+    text-align: center;
+    color: rgb(77, 6, 71);
+}
+
+.coin{
+    max-width: 20px;
+    max-height: 20px;
+    position: absolute;
+    top: 30px;
+    left: 32px;
+}
+
+.currency{
+    position: relative;
+    left: 22px;
+    color: rgb(255, 217, 0);
+}
+
+.star{
+    position: relative;
+    bottom: 5px;
+    right: 10px;
+    animation-duration: 3s;
+    animation-name: colorchange;
+    animation-iteration-count: infinite;
+}
+
+
+@keyframes colorchange {
+    from{
+        color:rgb(255, 0, 0)
+    }
+
+    5% {
+        color:rgb(255, 102, 0)
+    }
+
+    10% {
+        color:rgb(255, 238, 0)
+    }
+
+    15% {
+        color:rgb(123, 255, 0)
+    }
+
+    20% {
+        color:rgb(0, 204, 255)
+    }
+
+    25% {
+        color:rgb(0, 89, 255)
+    }
+
+    30% {
+        color:rgb(111, 0, 255)
+    }
+
+    40% {
+        color:rgb(183, 0, 255)
+    }
+
+    50% {
+        color:rgb(177, 34, 170)
+    }
+
+    60% {
+        color:rgb(226, 85, 144)
+    }
+
+    70% {
+        color:rgb(44, 139, 65)
+    }
+
+    80% {
+        color:rgb(208, 211, 35)
+    }
+
+    90% {
+        color:rgb(240, 123, 14)
+    }
+
+    to {
+        color:rgb(255, 34, 218)
+    }
 }

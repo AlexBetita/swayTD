@@ -213,7 +213,6 @@ export default class Map{
         }
 
         this.mapData = [data, data, true, false, x, y, this.tiles[1]]
-        this.mapData = [data + 'n', data, true, false, x, y, this.tiles[1]]
 
         this.context.fillStyle = this.tiles[1]
 
@@ -237,7 +236,6 @@ export default class Map{
         }
 
         this.mapData = [data, data, false, true, x, y, this.tiles[4]]
-        this.mapData = [data + 'n', data, false, true, x, y, this.tiles[4]]
 
         this.context.fillStyle = this.tiles[4]
 

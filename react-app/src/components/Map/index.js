@@ -1,9 +1,15 @@
+/*
+    Credits:
+    https://www.iconpacks.net/free-icon/coin-dollar-2686.html
+
+*/
 import React, {useRef, useEffect, useState} from 'react';
 import { useSelector, useDispatch } from "react-redux"
 
 import {addMapData, fetchMapData} from "../../store/map";
 import Map from './map';
 
+import coin from '../img/coin.png'
 import './Map.css';
 
 function addClick(clicky){
@@ -77,9 +83,8 @@ const Map_ = () => {
 
     const clicky = (e) =>{
         if (e.target.tagName === 'CANVAS'){
-            console.log(e)
-            const yC = Math.ceil(e.layerY / (canvas.height / canvas.row)) - 1
-            const xC = Math.ceil(e.layerX / (canvas.width/ canvas.column)) - 1
+            const yC = Math.ceil(e.offsetY / (canvas.height / canvas.row)) - 1
+            const xC = Math.ceil(e.offsetX / (canvas.width/ canvas.column)) - 1
 
             if(startB.current.classList.contains('active')){
                 canvas.drawStart(xC, yC)
@@ -115,8 +120,8 @@ const Map_ = () => {
         }
 
         if (e.target.tagName === 'CANVAS' && isPathing && trigger === 'move'){
-            const yC = Math.ceil(e.layerY / (canvas.height / canvas.row)) - 1
-            const xC = Math.ceil(e.layerX / (canvas.width/ canvas.column)) - 1
+            const yC = Math.ceil(e.offsetY / (canvas.height / canvas.row)) - 1
+            const xC = Math.ceil(e.offsetX / (canvas.width/ canvas.column)) - 1
 
             if(startB.current.classList.contains('active')){
                 canvas.drawStart(xC, yC)
@@ -260,77 +265,101 @@ const Map_ = () => {
 
     return (
     <>
-        <button onClick={drawGrid}>
-            Draw Grid
-        </button>
-        <button ref={squareB} onClick={toggleFillSquare}>
-            Toggle Fill Square
-        </button>
-        <button onClick={startDfs}>
-            DFS
-        </button>
-        <button onClick={startBfs}>
-            BFS
-        </button>
-
-        <button className="start" ref={startB} onClick={toggleStart}>
-            Set Start
-        </button>
-        <button className="end" ref={endB} onClick={toggleEnd}>
-            Set End
-        </button>
-        <button className="activate" ref={nodeB} onClick={toggleNode}>
-            Activate Node
-        </button>
-        <button ref={tClick} onClick={toggleClick}>
-            Toggle Click
-        </button>
-        <button ref={mousDownClick} onClick={toggleMouseDown}>
-            Toggle Mouse Down
-        </button>
-        <button onClick={showLinkedList}>
-            Show Linked List
-        </button>
-        <button onClick={traverseLL}>
-            Traverse Link List
-        </button>
-        <button onClick={showLLPath}>
-            Show Linked List Path
-        </button>
-
-        <button onClick={shortestPath}>
-            Shortest path
-        </button>
-        <button onClick={generateMapData}>
-            Generate Map Data
-        </button>
-        <button onClick={getMap}>
-            Get Map Data
-        </button>
-        <button onClick={onSubmit}>
-            Save Map Data
-        </button>
-        <button onClick={loadMap}>
-            Load Map Data
-        </button>
-        <button onClick={removeGrid}>
-            Remove Grid
-        </button>
-        <button onClick={cleanMap}>
-            Clean Map
-        </button>
-
-        <input
-            value={mapId}
-            name='mapId'
-            placeholder='map id'
-            onChange={(e)=>setMapId(e.target.value)}
-        >
-
-        </input>
         <canvas ref={canvasElement}>
 
         </canvas>
+        <div className='map__ui'>
+            <div className=''>
+                <img
+                    className='profile__icon'
+                    src={user.profileImage}
+                    alt='profileImage'>
+                </img>
+            </div>
+            <div className='profile__details'>
+                <div>
+                    <label>
+                        {user.username}
+                    </label>
+                    <label className='star'>☆</label>
+                </div>
+                <div>
+                    <img className='coin' src={coin} alt='coin'></img>
+                    <text className='currency'>
+                        {user.currency}
+                    </text>
+                </div>
+            </div>
+            <button onClick={drawGrid}>
+                Draw Grid
+            </button>
+            <button ref={squareB} onClick={toggleFillSquare}>
+                Toggle Fill Square
+            </button>
+            <button onClick={startDfs}>
+                DFS
+            </button>
+            <button onClick={startBfs}>
+                BFS
+            </button>
+
+            <button className="start" ref={startB} onClick={toggleStart}>
+                Set Start
+            </button>
+            <button className="end" ref={endB} onClick={toggleEnd}>
+                Set End
+            </button>
+            <button className="activate" ref={nodeB} onClick={toggleNode}>
+                Activate Node
+            </button>
+            <button ref={tClick} onClick={toggleClick}>
+                Toggle Click
+            </button>
+            <button ref={mousDownClick} onClick={toggleMouseDown}>
+                Toggle Mouse Down
+            </button>
+            <button onClick={showLinkedList}>
+                Show Linked List
+            </button>
+            <button onClick={traverseLL}>
+                Traverse Link List
+            </button>
+            <button onClick={showLLPath}>
+                Show Linked List Path
+            </button>
+
+            <button onClick={shortestPath}>
+                Shortest path
+            </button>
+            <button onClick={generateMapData}>
+                Generate Map Data
+            </button>
+            <button onClick={getMap}>
+                Get Map Data
+            </button>
+            <button onClick={onSubmit}>
+                Save Map Data
+            </button>
+            <button onClick={loadMap}>
+                Load Map Data
+            </button>
+            <button onClick={removeGrid}>
+                Remove Grid
+            </button>
+            <button onClick={cleanMap}>
+                Clean Map
+            </button>
+
+            <input
+                value={mapId}
+                name='mapId'
+                placeholder='map id'
+                onChange={(e)=>setMapId(e.target.value)}
+            >
+
+            </input>
+
+        </div>
     </>
     )
 }
