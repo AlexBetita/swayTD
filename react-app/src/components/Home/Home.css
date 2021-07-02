@@ -103,3 +103,24 @@
     font-size: 65px;
     color: rgb(124, 10, 113);
 }
+
+.edit__profile__button{
+    display: inline-block;
+    text-align: center;
+    font-size: 8px;
+    font-weight: 700;
+    min-width: 60px;
+    max-width: 60px;
+    min-height: 30px;
+    max-height: 30px;
+    margin: 5px;
+    border-radius: 6px;
+    cursor: pointer;
+    color: rgb(36, 14, 78);
+    text-transform: uppercase;
+}
+
+.edit__profile__button:hover{
+    border-color: #aed6dc;
+    box-shadow: 1px 1px 5px #aed6dc;
+}

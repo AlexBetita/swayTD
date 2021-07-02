@@ -28,6 +28,7 @@ const Home = () => {
 
     return (
         <>
+        {user &&
             <div className='home__container'>
                 <div className='main__home'>
                     <div className='home__profile__image__container'>
@@ -36,7 +37,7 @@ const Home = () => {
                             src={user.profileImage} alt='profileImage'>
                         </img>
                         <div className='home__edit'>
-                            <button>
+                            <button className='edit__profile__button'>
                                 Edit Profile
                             </button>
                         </div>
@@ -111,6 +112,7 @@ const Home = () => {
                 </div>
 
             </div>
+            }
         </>
     )
 }

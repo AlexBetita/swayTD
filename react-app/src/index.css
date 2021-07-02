@@ -20,6 +20,27 @@ input:focus{
     outline: none;
 }
 
+button{
+    display: inline-block;
+    text-align: center;
+    font-size: 8px;
+    font-weight: 700;
+    min-width: 60px;
+    max-width: 60px;
+    min-height: 30px;
+    max-height: 30px;
+    margin: 5px;
+    border-radius: 6px;
+    cursor: pointer;
+    color: rgb(36, 14, 78);
+    text-transform: uppercase;
+}
+
+button:hover{
+    border-color: #aed6dc;
+    box-shadow: 1px 1px 5px #aed6dc;
+}
+
 .footer{
     display:flex;
     flex-direction: row;
@@ -142,4 +163,60 @@ input:focus{
         box-shadow: 5px 4px 15px  #4a536b;
     }
 
+}
+
+@keyframes title {
+    from {
+        color:rgb(74, 6, 83);
+        box-shadow: -1px 10px 5px;
+    }
+
+    10% {
+        color:rgb(95, 6, 107);
+        box-shadow: 0px 5px 5px;
+    }
+
+    20% {
+        color:rgb(106, 10, 119);
+        box-shadow: 5px 5px 5px;
+    }
+
+    30% {
+        color:rgb(119, 13, 133);
+        box-shadow: 5px -5px 5px;
+    }
+
+    40% {
+        color:rgb(128, 18, 143);
+        box-shadow: -5px -5px 5px;
+    }
+
+    50% {
+        color:rgb(116, 15, 129);
+        box-shadow: -8px 0px 5px;
+    }
+
+    60% {
+        color:rgb(100, 11, 112);
+        box-shadow: -1px 10px 5px;
+    }
+
+    70% {
+        color:rgb(88, 11, 99);
+        box-shadow: 0px 5px 5px;
+    }
+
+    80% {
+        color:rgb(81, 10, 90);
+        box-shadow: 5px 5px 5px;
+    }
+
+    90% {
+        color:rgb(71, 8, 80);
+        box-shadow: 5px -5px 5px;
+    }
+
+    to {
+        color:rgb(62, 6, 70);
+    }
 }

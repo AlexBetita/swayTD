@@ -72,7 +72,7 @@ canvas{
 }
 
 
-.map__ui button{
+/* .map__ui button{
     display: inline-block;
     text-align: center;
     font-size: 8px;
@@ -86,12 +86,12 @@ canvas{
     cursor: pointer;
     color: rgb(36, 14, 78);
     text-transform: uppercase;
-}
+} */
 
-.map__ui button:hover{
+/* .map__ui button:hover{
     border-color: #aed6dc;
     box-shadow: 1px 1px 5px #aed6dc;
-}
+} */
 
 .map__id{
     max-width: 40px;
