@@ -46,6 +46,7 @@ const Home = () => {
                         <label className='home__username'>
                             {user.username}
                         </label>
+                        <label className='star__home'>☆</label>
                     </div>
 
                     <div>

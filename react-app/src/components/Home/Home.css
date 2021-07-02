@@ -19,6 +19,14 @@
     animation-iteration-count: infinite;
 }
 
+.star__home{
+    position: relative;
+    bottom: 25px;
+    animation-duration: 3s;
+    animation-name: colorchange;
+    animation-iteration-count: infinite;
+    font-size: 45px;
+}
 
 .main__home > *{
     margin: 10px;
