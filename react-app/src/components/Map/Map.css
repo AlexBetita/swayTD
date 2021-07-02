@@ -61,13 +61,16 @@ canvas{
     top: 85%;
     display: flex;
     max-width: 80%;
+    min-width: 80%;
     min-height: 90px;
     left: 10%;
     align-items: center;
     animation-duration: 10s;
     animation-name: bordercolorchange;
     animation-iteration-count: infinite;
+    justify-content: space-between;
 }
+
 
 .map__ui button{
     display: inline-block;
@@ -134,6 +137,7 @@ canvas{
 .coin{
     max-width: 20px;
     max-height: 20px;
+    bottom: 19px;
     position: absolute;
     animation-duration: 3s;
     animation-name: coinflip;
@@ -155,11 +159,20 @@ canvas{
     animation-iteration-count: infinite;
 }
 
+.dimensions{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    color: rgb(77, 6, 71);
+}
+
 .dimensions input{
     max-width: 35px;
     max-height: 10px;
     font-size: 10px;
     margin-right: 5px;
+    padding: 4px;
+    margin-left: 5px;
 }
 
 .dimension__names{
