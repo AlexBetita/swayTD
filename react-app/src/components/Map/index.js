@@ -1,7 +1,15 @@
-import React, {useRef, useEffect, useState} from 'react';
+/*
+    Credits:
+    https://www.iconpacks.net/free-icon/coin-dollar-2686.html
 
+*/
+import React, {useRef, useEffect, useState} from 'react';
+import { useSelector, useDispatch } from "react-redux"
+
+import {addMapData, fetchMapData} from "../../store/map";
 import Map from './map';
 
+import coin from '../img/coin.png'
 import './Map.css';
 
 function addClick(clicky){
@@ -14,10 +22,6 @@ function removeClick(clicky){
 
 
 
-function removeMouseDown(clicky){
-    window.removeEventListener('mousedown', clicky)
-}
-
 class LinkedList {
     constructor(start = null, end= null){
         this.start = start
@@ -25,27 +29,12 @@ class LinkedList {
     }
 }
 
-
 const Map_ = () => {
 
-    class Node{
-        constructor(data) {
-            this.data = data;
-            this.north = null;
-            this.south = null;
-            this.east = null;
-            this.west = null;
-        }
-    }
-
-    const dictionaryMatrix = {
-
-    }
-
-    const visited = {}
-    const llVisited = {}
-
     let isPathing = false;
+
+    const dispatch = useDispatch()
+    const user = useSelector(state  => state.session.user)
 
     const canvasElement = useRef();
     const startB = useRef();
@@ -54,52 +43,82 @@ const Map_ = () => {
     const squareB = useRef();
     const tClick = useRef();
     const mousDownClick = useRef();
+    const clearB = useRef();
+    const popUpTile = useRef();
 
-    const [layerX10, setLayerX] = useState(window.innerWidth / 10)
-    const [layerY10, setLayerY] = useState(window.innerHeight / 10)
-    const [matrixDictionary, setMatrixDictionary] = useState(dictionaryMatrix)
-    const [context, setContext] = useState('')
-    const [linkedList, setLinkedList] = useState(new LinkedList())
-
-    const [pathBFS, setPathBFS] = useState([])
-    const [llPath, setLLPath] = useState([])
     const [canvas, setCanvas] = useState()
+    const [name, setName] = useState('test')
+    const [map_data, setMapData] = useState()
+    const [errors, setErrors] = useState([]);
+    const [load_map, setLoadMap] = useState()
+    const [mapId, setMapId] = useState('')
+    const [row, setRow] = useState(90)
+    const [column, setColumn] = useState(90)
+    const [width, setWidth] = useState(800)
+    const [height, setHeight] = useState(800)
 
     const m = (e) => {
+        // setTimeout(()=>{
+        //     clickyGo('move', e)
+        // }, 0)
         clickyGo('move', e)
     }
 
     useEffect(() =>{
-        setContext(canvasElement.current.getContext('2d'))
-        setCanvas(new Map(800, 800, canvasElement, 60, 60))
-
+        let c = new Map(width, height, canvasElement, row, column)
+        setCanvas(c)
+        c.setCanvasDimensions()
     },[])
 
+    const onSubmit = async (e) =>{
+        e.preventDefault();
+        const user_id = user.id;
+        const data = await dispatch(addMapData({name, map_data, user_id}))
+        if(data.errors){
+            setErrors(data.errors);
+        }
+        setMapId(data.id)
+    }
+
+    const getMap = async (e) =>{
+        e.preventDefault();
+        const id = mapId
+        console.log(id)
+        const data = await dispatch(fetchMapData({id}))
+        if(data.errors){
+            setErrors(data.errors)
+        }
+        setLoadMap(data['map_data'])
+        setMapId(data.id)
+        setName(data.name)
+    }
 
     const clicky = (e) =>{
         if (e.target.tagName === 'CANVAS'){
-            console.log(e)
-            const yC = Math.ceil(e.layerY / (canvas.height / canvas.row)) - 1
-            const xC = Math.ceil(e.layerX / (canvas.width/ canvas.column)) - 1
+            const y = Math.ceil(e.offsetY / (canvas.height / canvas.row)) - 1
+            const x = Math.ceil(e.offsetX / (canvas.width/ canvas.column)) - 1
 
             if(startB.current.classList.contains('active')){
-                canvas.drawStart(xC, yC)
+                canvas.drawStart(x, y)
                 startB.current.classList.remove('active')
             }
 
             if(endB.current.classList.contains('active')){
-                canvas.drawEnd(xC, yC)
+                canvas.drawEnd(x, y)
                 endB.current.classList.remove('active')
             }
 
             if(squareB.current.classList.contains('active')){
-                canvas.drawTile(xC, yC)
+                canvas.drawTile(x, y)
             }
 
             if(nodeB.current.classList.contains('active')){
-                canvas.drawNode(xC, yC)
+                canvas.drawNode(x, y)
             }
 
+            if(clearB.current.classList.contains('active')){
+                canvas.clearTile(x, y)
+            }
         }
     }
 
@@ -116,32 +135,36 @@ const Map_ = () => {
         }
 
         if (e.target.tagName === 'CANVAS' && isPathing && trigger === 'move'){
-            const yC = Math.ceil(e.layerY / (canvas.height / canvas.row)) - 1
-            const xC = Math.ceil(e.layerX / (canvas.width/ canvas.column)) - 1
+            const y = Math.ceil(e.offsetY / (canvas.height / canvas.row)) - 1
+            const x = Math.ceil(e.offsetX / (canvas.width/ canvas.column)) - 1
 
             if(startB.current.classList.contains('active')){
-                canvas.drawStart(xC, yC)
+                canvas.drawStart(x, y)
                 startB.current.classList.remove('active')
             }
 
             if(endB.current.classList.contains('active')){
-                canvas.drawEnd(xC, yC)
+                canvas.drawEnd(x, y)
                 endB.current.classList.remove('active')
             }
 
             if(squareB.current.classList.contains('active')){
-                canvas.drawTile(xC, yC)
+                canvas.drawTile(x, y)
             }
 
             if(nodeB.current.classList.contains('active')){
-                canvas.drawNode(xC, yC)
+                canvas.drawNode(x, y)
+            }
+
+            if(clearB.current.classList.contains('active')){
+                canvas.clearTile(x, y)
             }
 
         }
     }
 
     const drawGrid = () => {
-        canvas.setCanvasDimensions()
+        canvas.cleanMap()
         canvas.drawGrid()
     }
 
@@ -191,11 +214,16 @@ const Map_ = () => {
         }
     }
 
+    const clearTile = () => {
+        if(clearB.current.classList.contains('active')){
+            clearB.current.classList.remove('active')
+        } else{
+            clearB.current.classList.add('active')
+        }
+    }
+
 
     const showLinkedList = () =>{
-        console.log(linkedList)
-        console.log(linkedList.start)
-        console.log(linkedList.end)
     }
 
     const toggleClick = () => {
@@ -214,15 +242,15 @@ const Map_ = () => {
     }
 
     const showLLPath = () => {
-        console.log(llPath)
     }
 
     const shortestPath = () => {
         console.log(canvas.shortestPath)
     }
 
-    const getMapData = () => {
+    const generateMapData = () => {
         console.log(canvas.mapData)
+        setMapData(canvas.mapData)
     }
 
     function addMouseDown(clickyGo){
@@ -242,7 +270,10 @@ const Map_ = () => {
 
     const toggleMouseDown = () => {
         if(mousDownClick.current.classList.contains('active')){
-            removeClick(clickyGo)
+
+            canvasElement.current.removeEventListener('mousemove', (e)=> m(e))
+            isPathing = false
+
             mousDownClick.current.classList.remove('active')
         } else{
             addMouseDown(clickyGo)
@@ -251,61 +282,305 @@ const Map_ = () => {
     }
 
     const loadMap = () =>{
-        setCanvas(Map.loadMap('', canvasElement))
+        setCanvas(Map.loadMap(load_map, canvasElement))
+    }
+
+    const cleanMap = () =>{
+        canvas.cleanMap()
+    }
+
+    const removeGrid = () =>{
+        canvas.removeGrid()
+    }
+
+    const canvasWidthChange = (e) =>{
+        e = parseInt(e.target.value)
+
+        if(!isNaN(e)){
+            if(e > 1000 || e  < 50){
+                return
+            }
+            setWidth(e)
+            canvas._width = e
+            canvas.setCanvasDimensions()
+        }
+    }
+
+    const canvasHeightChange = (e) =>{
+        e = parseInt(e.target.value)
+        if(!isNaN(e)){
+            if(e > 1000 || e  < 50){
+                return
+            }
+            setHeight(e)
+            canvas._height = e
+            canvas.setCanvasDimensions()
+        }
+    }
+
+    const canvasRowChange = (e) =>{
+
+        e = parseInt(e.target.value)
+        if(!isNaN(e)){
+            if(e> 80 || e < 5){
+                return
+            }
+            setRow(e)
+            canvas._row= e
+            canvas.adjustMatrix()
+        }
+    }
+
+    const canvasColumnChange = (e) =>{
+        e = parseInt(e.target.value)
+
+        if(!isNaN(e)){
+            if(e > 80 || e < 5){
+                return
+            }
+            setColumn(e)
+            canvas._column= e
+            canvas.adjustMatrix()
+        }
     }
 
     return (
     <>
-        <button onClick={drawGrid}>
-            Draw Grid
-        </button>
-        <button ref={squareB} onClick={toggleFillSquare}>
-            Toggle Fill Square
-        </button>
-        <button onClick={startDfs}>
-            DFS
-        </button>
-        <button onClick={startBfs}>
-            BFS
-        </button>
+        <div className='map__editor__body'>
+            {height < 900 &&
+                <div className='map__dimensions__text__900'>
+                    <label>
+                        Map Dimensions
+                    </label>
+                    <label>
+                        {width} x {height}
+                    </label>
+                    <label>
+                        {row} x {column}
+                    </label>
+                </div>
+            }
+            {height > 900 &&
+                <div className='map__dimensions__text__1000'>
+                    <label>
+                    Map Dimensions
+                    </label>
+                        <label>
+                            {width} x {height}
+                        </label>
+                        <label>
+                            {row} x {column}
+                    </label>
+                </div>
+            }
+            <canvas ref={canvasElement}>
 
-        <button className="start" ref={startB} onClick={toggleStart}>
-            Set Start
-        </button>
-        <button className="end" ref={endB} onClick={toggleEnd}>
-            Set End
-        </button>
-        <button className="activate" ref={nodeB} onClick={toggleNode}>
-            Activate Node
-        </button>
-        <button ref={tClick} onClick={toggleClick}>
-            Toggle Click
-        </button>
-        <button ref={mousDownClick} onClick={toggleMouseDown}>
-            Toggle Mouse Down
-        </button>
-        <button onClick={showLinkedList}>
-            Show Linked List
-        </button>
-        <button onClick={traverseLL}>
-            Traverse Link List
-        </button>
-        <button onClick={showLLPath}>
-            Show Linked List Path
-        </button>
+            </canvas>
 
-        <button onClick={shortestPath}>
-            Shortest path
-        </button>
-        <button onClick={getMapData}>
-            Get map data
-        </button>
-        <button onClick={loadMap}>
-            Load Map Data
-        </button>
-        <canvas ref={canvasElement}>
+            <div className='map__name'>
+                Map Name:
+                <input
+                    maxLength = "9"
+                    className='input__map__name'
+                    type='text'
+                    name='name'
+                    value={name}
+                    onChange={(e)=>setName(e.target.value)}
+                >
 
-        </canvas>
+                </input>
+            </div>
+            <div className='map__ui'>
+                <div className=''>
+                    <img
+                        className='profile__icon'
+                        src={user.profileImage}
+                        alt='profileImage'>
+                    </img>
+                </div>
+                <div className='profile__details'>
+                    <div>
+                        <label className='map__username'>
+                            {user.username}
+                        </label>
+                        <label className='star'>☆</label>
+                    </div>
+                    <div>
+                        <img className='coin' src={coin} alt='coin'></img>
+                        <label className='currency'>
+                            {user.currency}
+                        </label>
+                    </div>
+                </div>
+                <div className='dimension__names'>
+                    <label>
+                        Row
+                    </label>
+                    <label>
+                        Column
+                    </label>
+                    <label>
+                        Width
+                    </label>
+                    <label>
+                        Height
+                    </label>
+                </div>
+                <div className='dimensions'>
+                    <label>
+                    </label>
+                    <input maxLength = "2"
+                        type='number'
+                        placeholder='row'
+                        value={row}
+                        onChange={(e)=>
+                            canvasRowChange(e)
+                        }
+                    >
+
+                    </input>
+                    <input maxLength = "2"
+                        placeholder='column'
+                        type='number'
+                        value={column}
+                        onChange={(e)=>
+                            canvasColumnChange(e)
+                        }
+                    >
+                    </input>
+                    <label>
+                    </label>
+                    <input maxLength='4'
+                        placeholder='width'
+                        type='number'
+                        value={width}
+                        onChange={(e)=>
+                            canvasWidthChange(e)
+                        }
+                    >
+
+                    </input>
+                    <input maxLength='4'
+                        placeholder='height'
+                        type='number'
+                        value={height}
+                        onChange={(e)=>
+                            canvasHeightChange(e)
+                        }
+                    >
+
+                    </input>
+                </div>
+
+                <div>
+                    <button onClick={drawGrid}>
+                        Draw Grid
+                    </button>
+
+                    <button onClick={removeGrid}>
+                        Remove Grid
+                    </button>
+                </div>
+
+                <div>
+                    <button onClick={clearTile} ref={clearB}>
+                        Clear Tile
+                    </button>
+
+                    <button onClick={cleanMap}>
+                        Clean Map
+                    </button>
+                </div>
+
+                <button ref={squareB} onClick={toggleFillSquare}>
+                    Toggle Fill Square
+                </button>
+
+                <div>
+                    <button onClick={startDfs}>
+                        DFS
+                    </button>
+                    <button onClick={startBfs}>
+                        BFS
+                    </button>
+                </div>
+
+
+                <div>
+                    <button className="start" ref={startB} onClick={toggleStart}>
+                        Set Start
+                    </button>
+                    <button className="end" ref={endB} onClick={toggleEnd}>
+                        Set End
+                    </button>
+                </div>
+                <button className="activate" ref={nodeB} onClick={toggleNode}>
+                    Activate Node
+                </button>
+
+                <div>
+                    <button ref={tClick} onClick={toggleClick}>
+                        Single Click
+                    </button>
+                    <button ref={mousDownClick} onClick={toggleMouseDown}>
+                        Hold Click
+                    </button>
+                </div>
+
+                <div>
+                    <button onClick={showLinkedList}>
+                        Show LL
+                    </button>
+                    <button onClick={traverseLL}>
+                        Travel LL
+                    </button>
+                </div>
+
+                <button onClick={showLLPath}>
+                    LL Path
+                </button>
+
+                <div>
+                    <button onClick={generateMapData}>
+                        Generate Map Data
+                    </button>
+                    <button onClick={getMap}>
+                        Get Map Data
+                    </button>
+                </div>
+
+                <div>
+                    <button onClick={onSubmit}>
+                        Save Map Data
+                    </button>
+                    <button onClick={loadMap}>
+                        Load Map Data
+                    </button>
+                </div>
+
+                <input
+                    className='map__id'
+                    value={mapId}
+                    name='mapId'
+                    placeholder='map id'
+                    onChange={(e)=>setMapId(e.target.value)}
+                >
+
+                </input>
+
+            </div>
+            {/* <div ref={popUpTile}>
+                <div>
+
+                </div>
+                <div>
+
+                </div>
+                <div>
+
+                </div>
+            </div> */}
+        </div>
     </>
     )
 }

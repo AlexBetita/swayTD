@@ -1,9 +1,285 @@
 canvas{
-    border: 0.2px solid black;
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation-duration: 10s;
+    animation-name: bordercolorchange;
+    animation-iteration-count: infinite;
+    background-color: white;
 }
 
 .active {
     border: 1px solid orange;
     color: orangered;
     background-color: yellow;
+}
+
+.map__dimensions__text__900{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.map__dimensions__text__1000{
+    display: flex;
+    flex-direction: column;
+}
+
+.map__dimensions__text__900,
+.map__dimensions__text__1000{
+    text-transform: uppercase;
+    font-weight: 600;
+    font-size: 20px;
+}
+
+.map__name{
+    position: fixed;
+    top: 82%;
+    left: 10%;
+    font-weight: bold;
+    font-size: 25px;
+}
+
+.input__map__name{
+    font-size: 20px;
+    max-width: 80px;
+    text-align: center;
+    border: 0.01rem solid rgba(204, 180, 180, 0.575);
+    margin-left: 10px;
+    background-color: rgba(241, 241, 241, 0.575);
+}
+
+.input__map__name:focus{
+    border: 0.1rem solid #aed6dc;
+    background-color: rgba(241, 241, 241, 0.575);
+    outline: none;
+}
+
+.map__ui{
+    position: fixed;
+    top: 85%;
+    display: flex;
+    max-width: 80%;
+    min-width: 80%;
+    min-height: 90px;
+    left: 10%;
+    align-items: center;
+    animation-duration: 10s;
+    animation-name: bordercolorchange;
+    animation-iteration-count: infinite;
+    justify-content: space-between;
+}
+
+
+.map__ui button{
+    display: inline-block;
+    text-align: center;
+    font-size: 8px;
+    font-weight: 700;
+    min-width: 60px;
+    max-width: 60px;
+    min-height: 30px;
+    max-height: 30px;
+    margin: 5px;
+    border-radius: 6px;
+    cursor: pointer;
+    color: rgb(36, 14, 78);
+    text-transform: uppercase;
+}
+
+.map__ui button:hover{
+    border-color: #aed6dc;
+    box-shadow: 1px 1px 5px #aed6dc;
+}
+
+.map__id{
+    max-width: 40px;
+    margin-right: 7px;
+}
+
+.profile__icon{
+    max-width: 20px;
+    max-height: 20px;
+    border-radius: 50%;
+    border: 3px dashed purple;
+    text-align: center;
+    cursor: pointer;
+    margin-left: 5px;
+}
+
+.profile__icon:hover{
+    border: 3.5px dashed rgb(182, 26, 182);
+}
+
+.profile__details div{
+    margin-left: 5px;
+    min-width: 80px;
+    max-width: 80px;
+}
+
+.map__username{
+    margin-left: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    overflow-wrap: break-word;
+    text-overflow: ellipsis;
+}
+
+.profile__details label{
+    font-size: clamp(1rem, 5vw, 1.5rem);;
+    font-weight: 300;
+    margin-right: 5px;
+    text-align: center;
+    color: rgb(77, 6, 71);
+}
+
+.coin{
+    max-width: 20px;
+    max-height: 20px;
+    bottom: 19px;
+    position: absolute;
+    animation-duration: 3s;
+    animation-name: coinflip;
+    animation-iteration-count: infinite;
+}
+
+.currency{
+    position: relative;
+    left: 22px;
+    color: rgb(255, 217, 0);
+}
+
+.star{
+    position: relative;
+    bottom: 5px;
+    right: 10px;
+    animation-duration: 3s;
+    animation-name: colorchange;
+    animation-iteration-count: infinite;
+}
+
+.dimensions{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    color: rgb(77, 6, 71);
+}
+
+.dimensions input{
+    max-width: 35px;
+    max-height: 10px;
+    font-size: 10px;
+    margin-right: 5px;
+    padding: 4px;
+    margin-left: 5px;
+}
+
+.dimension__names{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    color: rgb(77, 6, 71);
+}
+
+@keyframes colorchange {
+    from{
+        color:rgb(255, 0, 0)
+    }
+
+    5% {
+        color:rgb(255, 102, 0)
+    }
+
+    10% {
+        color:rgb(255, 238, 0)
+    }
+
+    15% {
+        color:rgb(123, 255, 0)
+    }
+
+    20% {
+        color:rgb(0, 204, 255)
+    }
+
+    25% {
+        color:rgb(0, 89, 255)
+    }
+
+    30% {
+        color:rgb(111, 0, 255)
+    }
+
+    40% {
+        color:rgb(183, 0, 255)
+    }
+
+    50% {
+        color:rgb(177, 34, 170)
+    }
+
+    60% {
+        color:rgb(226, 85, 144)
+    }
+
+    70% {
+        color:rgb(44, 139, 65)
+    }
+
+    80% {
+        color:rgb(208, 211, 35)
+    }
+
+    90% {
+        color:rgb(240, 123, 14)
+    }
+
+    to {
+        color:rgb(255, 34, 218)
+    }
+}
+
+
+@keyframes coinflip {
+
+    from{
+        transform: scaleX(1);
+        -moz-transform: scaleX(1);
+        -webkit-transform: scaleX(1);
+        -ms-transform: scaleX(1);
+    }
+
+    50% {
+        transform: scaleX(-1);
+        -moz-transform: scaleX(-1);
+        -webkit-transform: scaleX(-1);
+        -ms-transform: scaleX(-1);
+    }
+
+    to{
+        transform: scaleX(1);
+        -moz-transform: scaleX(1);
+        -webkit-transform: scaleX(1);
+        -ms-transform: scaleX(1);
+    }
+}
+
+@keyframes bordercolorchange {
+
+    from {
+        border-color: #aed6dc;
+        box-shadow: 5px 4px 15px #aed6dc;
+    }
+
+    50% {
+        border-color: #ff9a8d;
+        box-shadow: 5px 4px 15px #ff9a8d;
+    }
+
+    to {
+        border-color:  #4a536b;
+        box-shadow: 5px 4px 15px  #4a536b;
+    }
+
 }

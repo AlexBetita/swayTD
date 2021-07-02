@@ -136,9 +136,58 @@ export default class Map{
 
     }
 
+    //set row
+    set _row(row){
+        this.row = row
+        this.tileHeight = this.height / row
+    }
+
+    //set column
+    set _column(column){
+        this.column = column
+        this.tileWidth = this.width / column
+    }
+
+    //set height
+    set _height(height){
+        this.height = height
+        this.tileHeight = height / this.row
+    }
+
+    //set width
+    set _width(width){
+        this.width = width
+        this.tileWidth = width / this.column
+    }
+
+    //resets map
+    cleanMap(){
+        this.setCanvasDimensions()
+        this.matrix = Array.from(Array(this.row), () => new Array(this.column).fill(0))
+        this.nodeMatrix = Array.from(Array(this.row), () => new Array(this.column).fill(0))
+        this.linkedlist = new LinkedList()
+        this.start = [0,0]
+        this.end = [0,1]
+        this.pathBFS = []
+        this.pathDFS = []
+        this.pathLL = []
+        this._mapData = {
+            'width': this.width,
+            'height' : this.height,
+            'rows' : this.row,
+            'columns' : this.column,
+            'plotted_tiles' : {
+            }
+        }
+    }
+
     //draw the clicked tile
     drawTile(x, y){
         let data = this.getTileNumber(x, y)
+
+        if(y < 0 || y >= this.column){
+            return false
+        }
 
         if(this.matrix[y][x] !== 1){
             this.context.fillStyle = this.tiles[0]
@@ -155,6 +204,10 @@ export default class Map{
     //draw node
     drawNode(x, y){
         let data = this.getTileNumber(x, y)
+
+        if(y < 0 || y >= this.column){
+            return false
+        }
 
         if(!(this.nodeMatrix[y][x] instanceof Node)){
             this.context.fillStyle = this.tiles[5]
@@ -175,16 +228,15 @@ export default class Map{
         //These two if statements can cause bugs
         if(this.matrix[this.start[1]][this.start[0]] === 1){
 
-            this.removeFillRect(this.start[0], this.start[1])
+            this.clearTile(this.start[0], this.start[1])
         }
 
         if(this.nodeMatrix[this.start[1]][this.start[0]] instanceof Node){
 
-            this.removeFillRect(this.start[0], this.start[1])
+            this.clearTile(this.start[0], this.start[1])
         }
 
         this.mapData = [data, data, true, false, x, y, this.tiles[1]]
-        this.mapData = [data + 'n', data, true, false, x, y, this.tiles[1]]
 
         this.context.fillStyle = this.tiles[1]
 
@@ -200,15 +252,14 @@ export default class Map{
 
         //These two if statements can cause bugs
         if(this.matrix[this.end[1]][this.end[0]] === 1 && this.end[0]){
-            this.removeFillRect(this.end[0], this.end[1])
+            this.clearTile(this.end[0], this.end[1])
         }
 
         if(this.nodeMatrix[this.end[1]][this.end[0]] instanceof Node){
-            this.removeFillRect(this.end[0], this.end[1])
+            this.clearTile(this.end[0], this.end[1])
         }
 
         this.mapData = [data, data, false, true, x, y, this.tiles[4]]
-        this.mapData = [data + 'n', data, false, true, x, y, this.tiles[4]]
 
         this.context.fillStyle = this.tiles[4]
 
@@ -269,9 +320,9 @@ export default class Map{
         }
     }
 
-
     //draw grid
     drawGrid(){
+
         this.context.beginPath();
 
         //starting position of x
@@ -295,21 +346,53 @@ export default class Map{
         }
     }
 
+    //remove grid
+    removeGrid(){
+        this.context.beginPath();
+
+        //starting position of x
+        let posX = this.tileWidth
+        this.context.lineWidth = 1.7
+        this.context.strokeStyle = "rgba(255, 255, 255, 1)";
+
+        for (let i = 0; i < this.column; i ++){
+            this.context.moveTo(posX, 0)
+            this.context.lineTo(posX, this.height)
+            this.context.stroke()
+            posX += this.tileWidth
+        }
+
+        //starting position of y
+        let posY = this.tileHeight
+
+        for (let i = 0; i < this.row; i ++){
+            this.context.moveTo(0, posY)
+            this.context.lineTo(this.width, posY)
+            this.context.stroke()
+            posY += this.tileHeight
+        }
+    }
+
     //set Canvas dimensions
-    setCanvasDimensions(){
-        this.canvas.current.width = this.width
-        this.canvas.current.height = this.height
+    setCanvasDimensions(width = this.width, height = this.height){
+        this.canvas.current.width = width
+        this.canvas.current.height = height
     }
 
     //fill rect
     fillRect(x, y){
-        this.context.fillRect(x * this.tileWidth, y * this.tileHeight, this.tileWidth, this.tileHeight)
+        this.context.fillRect(x * this.tileWidth, y * this.tileHeight, this.tileWidth - 1, this.tileHeight - 1)
     }
 
     //remove fill rect
-    removeFillRect(x, y){
+    clearTile(x, y){
         this.context.fillStyle = this.tiles[8]
         this.context.fillRect(x * this.tileWidth, y * this.tileHeight, this.tileWidth, this.tileHeight)
+
+        this.context.strokeStyle = "rgba(255, 255, 255, 1)";
+        this.context.lineWidth   = 5;
+        this.context.strokeRect(x * this.tileWidth, y * this.tileHeight, this.tileWidth, this.tileHeight);
+
         this.matrix[y][x] = 0
         this.nodeMatrix[y][x] = 0
     }
@@ -368,6 +451,15 @@ export default class Map{
                 }
             }
         }
+    }
+
+    //adjust matrix
+    adjustMatrix(){
+        //2d matrix
+        this.matrix = Array.from(Array(this.row), () => new Array(this.column).fill(0))
+
+        //node matrix
+        this.nodeMatrix = Array.from(Array(this.row), () => new Array(this.column).fill(0))
     }
 
     //checks if possible to traverse
@@ -438,7 +530,9 @@ export default class Map{
             let neighbors;
 
             queue.shift();
-
+            if(current[0] === this.end[0] && current[1] === this.end[1]){
+                return
+            }
             for (let i = 0; i < 4; i ++ ){
 
                 neighbors = [current[0] + this.directions[i][0], current[1]  + this.directions[i][1]];
@@ -460,7 +554,13 @@ export default class Map{
 
         const visited = {}
         visited[`${this.start[0]}, ${this.start[1]}`] = true
-        const result = this.LL(this.linkedlist.start, visited).reverse()
+        const result = this.LL(this.linkedlist.start, visited)
+        if(!result){
+            return
+        }
+
+        result.reverse()
+        
         const convertResultToCoords = []
         for (let i = 0; i < result.length; i++){
             let x = result[i] === 0 ? 0
@@ -476,6 +576,9 @@ export default class Map{
 
     LL(current, visited, result =[]){
         if(current === this.linkedlist.end){
+            if(!current){
+                return false
+            }
             return result.push(current.data)
         }
 
@@ -497,71 +600,17 @@ export default class Map{
         return false
     }
 
-    static loadMap(mapData, canvas){
-
-        mapData = {
-            'width': 200,
-            'height' : 200,
-            'rows' : 10,
-            'columns' : 10,
-            'plotted_tiles' : {
-                '1' : {
-                    'data' : 1,
-                    'start' : true,
-                    'end' : false,
-                    'x' : 0,
-                    'y' : 0,
-                    'fill_color' : `rgba(x, x, x, x)`
-                },
-                '2' : {
-                    'data' : 2,
-                    'start' : false,
-                    'end' : false,
-                    'x' : 1,
-                    'y' : 0,
-                    'fill_color' : `rgba(x, x, x, x)`
-                },
-                '3' : {
-                    'data' : 3,
-                    'start' : false,
-                    'end' : false,
-                    'x' : 2,
-                    'y' : 0,
-                    'fill_color' : `rgba(x, x, x, x)`
-                },
-                '4' : {
-                    'data' : 4,
-                    'start' : false,
-                    'end' : false,
-                    'x' : 3,
-                    'y' : 0,
-                    'fill_color' : `rgba(x, x, x, x)`
-                },
-                '5' : {
-                    'data' : 5,
-                    'start' : false,
-                    'end' : false,
-                    'x' : 4,
-                    'y' : 0,
-                    'fill_color' : `rgba(x, x, x, x)`
-                },
-                '6' : {
-                    'data' : 6,
-                    'start' : false,
-                    'end' : true,
-                    'x' : 5,
-                    'y' : 0,
-                    'fill_color' : `rgba(x, x, x, x)`
-                }
-            }
-        }
+    static loadMap(mapData, canvas, grid = false){
 
         const {width, height, rows, columns, plotted_tiles} = mapData
 
         const newMap = new Map(width, height, canvas, rows, columns)
 
         newMap.setCanvasDimensions()
-        newMap.drawGrid()
+
+        if(grid){
+            newMap.drawGrid()
+        }
 
         Object.keys(plotted_tiles).map((key, id)=>{
             let x = plotted_tiles[key].x
@@ -574,6 +623,8 @@ export default class Map{
                 newMap.drawStart(x, y)
             } else if(end){
                 newMap.drawEnd(x, y)
+            } else if(key.slice(-1) === 'n') {
+                newMap.drawNode(x, y)
             } else {
                 newMap.drawTile(x, y)
             }
