@@ -26,7 +26,7 @@ class Map(db.Model):
 
     def to_dict(self):
         return {
-            'name': self.id,
+            'name': self.name,
             'map_data': json.loads(self.map_data),
             'user_id': self.user_id,
             'id': self.id,

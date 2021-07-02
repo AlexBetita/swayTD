@@ -90,6 +90,7 @@ const Map_ = () => {
         }
         setLoadMap(data['map_data'])
         setMapId(data.id)
+        setName(data.name)
     }
 
     const clicky = (e) =>{
