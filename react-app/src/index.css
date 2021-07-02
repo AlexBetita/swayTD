@@ -60,7 +60,10 @@ button:hover{
     line-height: 15px;
 }
 
-
+a{
+    text-decoration: none;
+    color: rgb(94, 8, 86);
+}
 
 
 @keyframes colorchange {

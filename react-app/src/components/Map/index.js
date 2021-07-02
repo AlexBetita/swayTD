@@ -96,14 +96,25 @@ const Map_ = () => {
 
     const onSubmit = async (e) =>{
         e.preventDefault();
+        let newErrors = []
+        setErrors([])
+
+        if(name.length <= 2){
+            newErrors.push('name is too short, minimum 3')
+        }
+
         const user_id = user.id;
         let map_data = canvas.mapData
         const data = await dispatch(addMapData({name, map_data, user_id}))
+
         if(data.errors){
             setErrors(data.errors);
+        } else if (newErrors.length) {
+            setErrors(newErrors)
+        } else {
+            history.push(`/maps/create/${data.id}`)
         }
         map_data = null
-        history.push(`/maps/create/${data.id}`)
     }
 
     const getMap = async (e) =>{
@@ -169,7 +180,6 @@ const Map_ = () => {
             }
         }
     }
-
 
     const clickyGo = (trigger, e) =>{
         if(trigger === 'down'){
@@ -382,6 +392,10 @@ const Map_ = () => {
     const canvasColumnChange = (e) =>{
         e = parseInt(e.target.value)
 
+        if (column >= row){
+            return
+        }
+
         if(!isNaN(e)){
             if(e > 100 || e < 5){
                 return
@@ -422,6 +436,13 @@ const Map_ = () => {
                         </label>
                     </div>
                 }
+
+                <ul>
+                    {errors.map((error, idx) => (
+                        <li key={idx} className="error">{error}</li>
+                    ))}
+                </ul>
+
                 <canvas ref={canvasElement}>
 
                 </canvas>

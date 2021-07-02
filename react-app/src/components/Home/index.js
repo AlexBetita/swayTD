@@ -3,8 +3,11 @@
 */
 
 import React from 'react';
-import { useHistory, NavLink } from 'react-router';
+import { useHistory} from 'react-router';
 import { useSelector } from 'react-redux';
+import { NavLink } from 'react-router-dom';
+
+import MapHome from '../MapHome/index';
 
 import coin from '../img/coin.png';
 import linkedin from '../img/linkedin.png';
@@ -58,9 +61,11 @@ const Home = () => {
                         </label>
                     </div>
                     <div>
-                        <label className='home__maps'>
-                            Maps
-                        </label>
+                        <NavLink to='/maps'>
+                            <label className='home__maps'>
+                                Maps
+                            </label>
+                        </NavLink>
                     </div>
 
                     <div>

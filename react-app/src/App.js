@@ -6,6 +6,7 @@ import LoginForm from "./components/auth/LoginForm";
 import SignUpForm from "./components/auth/SignUpForm";
 import Map_ from './components/Map';
 import Home from './components/Home';
+import MapHome from './components/MapHome';
 
 // import NavBar from "./components/NavBar";
 import { authenticate } from "./store/session";
@@ -45,6 +46,9 @@ function App() {
         </Route>
         <Route path='/' exact={true}>
            <Home />
+        </Route>
+        <Route path="/maps" exact={true}>
+          <MapHome />
         </Route>
         <Route pathe='/*'>
           <SignUpForm />
