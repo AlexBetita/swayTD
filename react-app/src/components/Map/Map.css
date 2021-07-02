@@ -12,15 +12,29 @@ canvas{
     background-color: yellow;
 }
 
+.map__dimensions__text__900{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.map__dimensions__text__1000{
+    display: flex;
+    flex-direction: column;
+}
+
 .map__ui{
     position: fixed;
-    top: 90%;
+    top: 85%;
     display: flex;
     border: 2px solid red;
     max-width: 80%;
-    min-height: 60px;
+    min-height: 90px;
     left: 10%;
     align-items: center;
+    animation-duration: 3s;
+    animation-name: bordercolorchange;
+    animation-iteration-count: infinite;
 }
 
 .map__ui button{
@@ -45,14 +59,23 @@ canvas{
     border: 3.5px dashed rgb(182, 26, 182);
 }
 
-.profile__details{
+.profile__details div{
+    margin-left: 5px;
+    min-width: 80px;
+    max-width: 80px;
+}
 
+.map__username{
+    margin-left: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    overflow-wrap: break-word;
+    text-overflow: ellipsis;
 }
 
 .profile__details label{
-    font-size: 30x;
+    font-size: clamp(1rem, 5vw, 1.5rem);;
     font-weight: 300;
-    margin-left: 5px;
     margin-right: 5px;
     text-align: center;
     color: rgb(77, 6, 71);
@@ -62,8 +85,9 @@ canvas{
     max-width: 20px;
     max-height: 20px;
     position: absolute;
-    top: 30px;
-    left: 32px;
+    animation-duration: 3s;
+    animation-name: coinflip;
+    animation-iteration-count: infinite;
 }
 
 .currency{
@@ -79,6 +103,13 @@ canvas{
     animation-duration: 3s;
     animation-name: colorchange;
     animation-iteration-count: infinite;
+}
+
+.dimensions input{
+    max-width: 35px;
+    max-height: 10px;
+    font-size: 10px;
+    margin-right: 5px;
 }
 
 
@@ -137,5 +168,53 @@ canvas{
 
     to {
         color:rgb(255, 34, 218)
+    }
+}
+
+
+@keyframes coinflip {
+
+    from{
+        transform: scaleX(1);
+        -moz-transform: scaleX(1);
+        -webkit-transform: scaleX(1);
+        -ms-transform: scaleX(1);
+    }
+
+    50% {
+        transform: scaleX(-1);
+        -moz-transform: scaleX(-1);
+        -webkit-transform: scaleX(-1);
+        -ms-transform: scaleX(-1);
+    }
+
+    to{
+        transform: scaleX(1);
+        -moz-transform: scaleX(1);
+        -webkit-transform: scaleX(1);
+        -ms-transform: scaleX(1);
+    }
+}
+
+@keyframes bordercolorchange {
+
+    from {
+        border-color: rgb(255, 0, 0);
+    }
+
+    25% {
+        border-color: rgb(146, 0, 243);
+    }
+
+    50% {
+        border-color: rgb(230, 11, 157);
+    }
+
+    75% {
+        border-color: rgb(7, 83, 248);
+    }
+
+    to {
+        border-color: rgb(248, 7, 7);
     }
 }

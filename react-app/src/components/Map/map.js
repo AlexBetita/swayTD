@@ -136,6 +136,26 @@ export default class Map{
 
     }
 
+    //set row
+    set _row(row){
+        this.row = row
+    }
+
+    //set column
+    set _column(column){
+        this.column = column
+    }
+
+    //set row
+    set _height(height){
+        this.height = height
+    }
+
+    //set width
+    set _width(width){
+        this.width = width
+    }
+
     //resets map
     cleanMap(){
         this.setCanvasDimensions()
@@ -204,12 +224,12 @@ export default class Map{
         //These two if statements can cause bugs
         if(this.matrix[this.start[1]][this.start[0]] === 1){
 
-            this.removeFillRect(this.start[0], this.start[1])
+            this.clearTile(this.start[0], this.start[1])
         }
 
         if(this.nodeMatrix[this.start[1]][this.start[0]] instanceof Node){
 
-            this.removeFillRect(this.start[0], this.start[1])
+            this.clearTile(this.start[0], this.start[1])
         }
 
         this.mapData = [data, data, true, false, x, y, this.tiles[1]]
@@ -228,11 +248,11 @@ export default class Map{
 
         //These two if statements can cause bugs
         if(this.matrix[this.end[1]][this.end[0]] === 1 && this.end[0]){
-            this.removeFillRect(this.end[0], this.end[1])
+            this.clearTile(this.end[0], this.end[1])
         }
 
         if(this.nodeMatrix[this.end[1]][this.end[0]] instanceof Node){
-            this.removeFillRect(this.end[0], this.end[1])
+            this.clearTile(this.end[0], this.end[1])
         }
 
         this.mapData = [data, data, false, true, x, y, this.tiles[4]]
@@ -299,6 +319,7 @@ export default class Map{
 
     //draw grid
     drawGrid(){
+
         this.context.beginPath();
 
         //starting position of x
@@ -350,9 +371,9 @@ export default class Map{
     }
 
     //set Canvas dimensions
-    setCanvasDimensions(){
-        this.canvas.current.width = this.width
-        this.canvas.current.height = this.height
+    setCanvasDimensions(width = this.width, height = this.height){
+        this.canvas.current.width = width
+        this.canvas.current.height = height
     }
 
     //fill rect
@@ -361,7 +382,7 @@ export default class Map{
     }
 
     //remove fill rect
-    removeFillRect(x, y){
+    clearTile(x, y){
         this.context.fillStyle = this.tiles[8]
         this.context.fillRect(x * this.tileWidth, y * this.tileHeight, this.tileWidth, this.tileHeight)
         this.matrix[y][x] = 0
