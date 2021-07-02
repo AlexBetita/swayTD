@@ -51,15 +51,16 @@ const Map_ = () => {
     const [errors, setErrors] = useState([]);
     const [load_map, setLoadMap] = useState()
     const [mapId, setMapId] = useState('')
-    const [row, setRow] = useState(20)
-    const [column, setColumn] = useState(20)
+    const [row, setRow] = useState(90)
+    const [column, setColumn] = useState(90)
     const [width, setWidth] = useState(800)
     const [height, setHeight] = useState(800)
 
     const m = (e) => {
-        setTimeout(()=>{
-            clickyGo('move', e)
-        }, 0)
+        // setTimeout(()=>{
+        //     clickyGo('move', e)
+        // }, 0)
+        clickyGo('move', e)
     }
 
     useEffect(() =>{
@@ -290,51 +291,53 @@ const Map_ = () => {
 
     const canvasWidthChange = (e) =>{
         e = parseInt(e.target.value)
-        if(isNaN(e)){
-            return
+
+        if(!isNaN(e)){
+            if(e > 1000 || e  < 50){
+                return
+            }
+            setWidth(e)
+            canvas._width = e
+            canvas.setCanvasDimensions()
         }
-        if(e > 1000){
-            return
-        }
-        setWidth(e)
-        canvas.setCanvasDimensions(e, height)
     }
 
     const canvasHeightChange = (e) =>{
         e = parseInt(e.target.value)
-        if(isNaN(e)){
-            return
+        if(!isNaN(e)){
+            if(e > 1000 || e  < 50){
+                return
+            }
+            setHeight(e)
+            canvas._height = e
+            canvas.setCanvasDimensions()
         }
-        if(e > 1000){
-            return
-        }
-        setHeight(e)
-        canvas.setCanvasDimensions(width, e)
     }
 
     const canvasRowChange = (e) =>{
 
         e = parseInt(e.target.value)
-        if(isNaN(e)){
-            return
+        if(!isNaN(e)){
+            if(e> 80 || e < 5){
+                return
+            }
+            setRow(e)
+            canvas._row= e
+            canvas.adjustMatrix()
         }
-        if(e> 80){
-            return
-        }
-        setRow(e)
-        canvas._row= e
     }
 
     const canvasColumnChange = (e) =>{
         e = parseInt(e.target.value)
-        if(isNaN(e)){
-            return
+
+        if(!isNaN(e)){
+            if(e > 80 || e < 5){
+                return
+            }
+            setColumn(e)
+            canvas._column= e
+            canvas.adjustMatrix()
         }
-        if(e > 80){
-            return
-        }
-        setColumn(e)
-        canvas._column= e
     }
 
     return (
@@ -393,6 +396,7 @@ const Map_ = () => {
                 </div>
                 <div className='dimensions'>
                     <input maxlength = "3"
+                        type='number'
                         placeholder='row'
                         value={row}
                         onChange={(e)=>
@@ -403,6 +407,7 @@ const Map_ = () => {
                     </input>
                     <input maxlength = "3"
                         placeholder='column'
+                        type='number'
                         value={column}
                         onChange={(e)=>
                             canvasColumnChange(e)
@@ -411,6 +416,7 @@ const Map_ = () => {
                     </input>
                     <input maxlength='4'
                         placeholder='width'
+                        type='number'
                         value={width}
                         onChange={(e)=>
                             canvasWidthChange(e)
@@ -420,6 +426,7 @@ const Map_ = () => {
                     </input>
                     <input maxlength='4'
                         placeholder='height'
+                        type='number'
                         value={height}
                         onChange={(e)=>
                             canvasHeightChange(e)

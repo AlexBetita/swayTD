@@ -139,21 +139,25 @@ export default class Map{
     //set row
     set _row(row){
         this.row = row
+        this.tileHeight = this.height / row
     }
 
     //set column
     set _column(column){
         this.column = column
+        this.tileWidth = this.width / column
     }
 
-    //set row
+    //set height
     set _height(height){
         this.height = height
+        this.tileHeight = height / this.row
     }
 
     //set width
     set _width(width){
         this.width = width
+        this.tileWidth = width / this.column
     }
 
     //resets map
@@ -316,7 +320,6 @@ export default class Map{
         }
     }
 
-
     //draw grid
     drawGrid(){
 
@@ -443,6 +446,15 @@ export default class Map{
                 }
             }
         }
+    }
+
+    //adjust matrix
+    adjustMatrix(){
+        //2d matrix
+        this.matrix = Array.from(Array(this.row), () => new Array(this.column).fill(0))
+
+        //node matrix
+        this.nodeMatrix = Array.from(Array(this.row), () => new Array(this.column).fill(0))
     }
 
     //checks if possible to traverse

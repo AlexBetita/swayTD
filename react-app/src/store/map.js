@@ -16,7 +16,7 @@ const getMap = (payload) => ({
 //thunks
 export const addMapData = (payload) => async (dispatch) => {
     const {name, map_data, user_id} = payload
-
+    const {width, height, rows, columns} = map_data
     const response = await fetch("/api/maps/", {
         method: "POST",
         headers: {
@@ -25,9 +25,14 @@ export const addMapData = (payload) => async (dispatch) => {
         body: JSON.stringify({
             name,
             map_data,
-            user_id
+            user_id,
+            width,
+            height,
+            rows,
+            columns
         })
     });
+
     const data = await response.json();
     if (data.errors) {
         return data;

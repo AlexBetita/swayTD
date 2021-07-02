@@ -32,7 +32,11 @@ def create_map():
     map_ = Map(
         name=data['name'],
         map_data=json.dumps(data['map_data']),
-        user_id=user.id
+        user_id=user.id,
+        rows=data['rows'],
+        columns=data['columns'],
+        width=data['width'],
+        height=data['height']
     )
     db.session.add(map_)
     db.session.commit()
