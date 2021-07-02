@@ -20,6 +20,26 @@ input:focus{
     outline: none;
 }
 
+.footer{
+    display:flex;
+    flex-direction: row;
+    margin-top: auto;
+}
+
+
+.footer > div > img{
+    cursor: pointer;
+    max-height: 20px;
+    max-width: 20px;
+}
+
+.footer > * {
+    margin-left: 20px;
+    margin-right: 20px;
+    line-height: 15px;
+}
+
+
 
 
 @keyframes colorchange {

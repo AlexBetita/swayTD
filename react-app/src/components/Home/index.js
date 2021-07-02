@@ -1,6 +1,15 @@
+/*
+    https://iconmonstr.com/license/
+*/
+
 import React from 'react';
-import { useHistory } from 'react-router';
+import { useHistory, NavLink } from 'react-router';
 import { useSelector } from 'react-redux';
+
+import coin from '../img/coin.png';
+import linkedin from '../img/linkedin.png';
+import email from '../img/email.png';
+import github from '../img/github.png';
 
 import './Home.css';
 
@@ -8,8 +17,13 @@ const Home = () => {
     const history = useHistory();
     const user = useSelector((state)=> state.session.user)
 
+
     if(!user){
         history.push('/login')
+    }
+
+    const openEmail = () =>{
+        window.open('mailto:alexbheb25@gmail.com')
     }
 
     return (
@@ -32,6 +46,55 @@ const Home = () => {
                             {user.username}
                         </label>
                     </div>
+
+                    <div>
+                        <img className='home__coin' src={coin} alt='coin'>
+
+                        </img>
+                        <label className='home__currency'>
+                            {user.currency}
+                        </label>
+                    </div>
+                    <div>
+                        <label className='home__maps'>
+                            Maps
+                        </label>
+                    </div>
+
+                    <div>
+                        <label className='home__start__game'>
+                            Start Game
+                        </label>
+                    </div>
+
+
+                    <div className='footer'>
+                        <div>
+                            About me
+                        </div>
+                        <div
+                            onClick={()=>{
+                            window.location.href = 'https://github.com/AlexBetita/'
+                        }}>
+                            <img src={github} alt='github'>
+                            </img>
+                        </div>
+
+                        <div
+                            onClick={()=>{
+                            window.location.href = 'https://www.linkedin.com/in/alex-betita/'
+                            }}
+                        >
+                            <img src={linkedin} alt='linkedin'>
+                            </img>
+                        </div>
+
+                        <div
+                            onClick={()=> openEmail()}
+                        >
+                            <img src={email} alt='email'></img>
+                        </div>
+                    </div>
                 </div>
 
                 <div className='side__home'>
@@ -46,6 +109,7 @@ const Home = () => {
                         </label>
                     </div>
                 </div>
+
             </div>
         </>
     )

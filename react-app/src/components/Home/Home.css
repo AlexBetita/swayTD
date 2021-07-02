@@ -62,7 +62,44 @@
     font-size: 70px;
 }
 
+
 .home__edit{
     position: absolute;
     left: 50%;
+}
+
+.home__currency{
+    font-size: 85px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.home__maps{
+    cursor: pointer;
+    font-size: 60px;
+}
+
+.home__start__game{
+    cursor: pointer;
+    font-size: 60px;
+}
+
+.home__coin{
+    display:inline-block;
+    margin:auto;
+    animation-duration: 3s;
+    animation-name: coinflip;
+    animation-iteration-count: infinite;
+}
+
+.home__maps:hover{
+    cursor: pointer;
+    font-size: 65px;
+    color: rgb(124, 10, 113);
+}
+
+.home__start__game:hover{
+    cursor: pointer;
+    font-size: 65px;
+    color: rgb(124, 10, 113);
 }
