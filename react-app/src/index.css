@@ -1,5 +1,21 @@
 /* TODO Add site wide styles */
 body{
     margin: 0;
+    background-color: rgba(236, 229, 229, 0.575);
+    color: rgb(94, 8, 86);
+}
+
+div{
+    border-radius: 10px;
+}
+
+input{
     background-color: rgba(241, 241, 241, 0.575);
+    border: 0.01rem solid rgba(204, 180, 180, 0.575);
+}
+
+input:focus{
+    border: 0.1rem solid #aed6dc;
+    background-color: rgba(241, 241, 241, 0.575);
+    outline: none;
 }

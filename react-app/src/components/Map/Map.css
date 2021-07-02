@@ -1,9 +1,12 @@
 canvas{
-    border: 0.2px solid black;
     position: fixed;
     top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
+    animation-duration: 10s;
+    animation-name: bordercolorchange;
+    animation-iteration-count: infinite;
+    background-color: white;
 }
 
 .active {
@@ -23,16 +26,45 @@ canvas{
     flex-direction: column;
 }
 
+.map__dimensions__text__900,
+.map__dimensions__text__1000{
+    text-transform: uppercase;
+    font-weight: 600;
+    font-size: 20px;
+}
+
+.map__name{
+    position: fixed;
+    top: 82%;
+    left: 10%;
+    font-weight: bold;
+    font-size: 25px;
+}
+
+.input__map__name{
+    font-size: 20px;
+    max-width: 80px;
+    text-align: center;
+    border: 0.01rem solid rgba(204, 180, 180, 0.575);
+    margin-left: 10px;
+    background-color: rgba(241, 241, 241, 0.575);
+}
+
+.input__map__name:focus{
+    border: 0.1rem solid #aed6dc;
+    background-color: rgba(241, 241, 241, 0.575);
+    outline: none;
+}
+
 .map__ui{
     position: fixed;
     top: 85%;
     display: flex;
-    border: 2px solid red;
     max-width: 80%;
     min-height: 90px;
     left: 10%;
     align-items: center;
-    animation-duration: 3s;
+    animation-duration: 10s;
     animation-name: bordercolorchange;
     animation-iteration-count: infinite;
 }
@@ -40,9 +72,27 @@ canvas{
 .map__ui button{
     display: inline-block;
     text-align: center;
-    font-size: 10px;
+    font-size: 8px;
+    font-weight: 700;
+    min-width: 60px;
+    max-width: 60px;
+    min-height: 30px;
     max-height: 30px;
-    border-radius: 50%;
+    margin: 5px;
+    border-radius: 6px;
+    cursor: pointer;
+    color: rgb(36, 14, 78);
+    text-transform: uppercase;
+}
+
+.map__ui button:hover{
+    border-color: #aed6dc;
+    box-shadow: 1px 1px 5px #aed6dc;
+}
+
+.map__id{
+    max-width: 40px;
+    margin-right: 7px;
 }
 
 .profile__icon{
@@ -112,6 +162,12 @@ canvas{
     margin-right: 5px;
 }
 
+.dimension__names{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    color: rgb(77, 6, 71);
+}
 
 @keyframes colorchange {
     from{
@@ -199,22 +255,18 @@ canvas{
 @keyframes bordercolorchange {
 
     from {
-        border-color: rgb(255, 0, 0);
-    }
-
-    25% {
-        border-color: rgb(146, 0, 243);
+        border-color: #aed6dc;
+        box-shadow: 5px 4px 15px #aed6dc;
     }
 
     50% {
-        border-color: rgb(230, 11, 157);
-    }
-
-    75% {
-        border-color: rgb(7, 83, 248);
+        border-color: #ff9a8d;
+        box-shadow: 5px 4px 15px #ff9a8d;
     }
 
     to {
-        border-color: rgb(248, 7, 7);
+        border-color:  #4a536b;
+        box-shadow: 5px 4px 15px  #4a536b;
     }
+
 }

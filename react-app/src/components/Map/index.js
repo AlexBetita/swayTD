@@ -44,6 +44,7 @@ const Map_ = () => {
     const tClick = useRef();
     const mousDownClick = useRef();
     const clearB = useRef();
+    const popUpTile = useRef();
 
     const [canvas, setCanvas] = useState()
     const [name, setName] = useState('test')
@@ -76,6 +77,7 @@ const Map_ = () => {
         if(data.errors){
             setErrors(data.errors);
         }
+        setMapId(data.id)
     }
 
     const getMap = async (e) =>{
@@ -87,6 +89,7 @@ const Map_ = () => {
             setErrors(data.errors)
         }
         setLoadMap(data['map_data'])
+        setMapId(data.id)
     }
 
     const clicky = (e) =>{
@@ -372,6 +375,20 @@ const Map_ = () => {
             <canvas ref={canvasElement}>
 
             </canvas>
+
+            <div className='map__name'>
+                Map Name:
+                <input
+                    maxLength = "9"
+                    className='input__map__name'
+                    type='text'
+                    name='name'
+                    value={name}
+                    onChange={(e)=>setName(e.target.value)}
+                >
+
+                </input>
+            </div>
             <div className='map__ui'>
                 <div className=''>
                     <img
@@ -394,8 +411,24 @@ const Map_ = () => {
                         </label>
                     </div>
                 </div>
+                <div className='dimension__names'>
+                    <label>
+                        Row
+                    </label>
+                    <label>
+                        Column
+                    </label>
+                    <label>
+                        Width
+                    </label>
+                    <label>
+                        Height
+                    </label>
+                </div>
                 <div className='dimensions'>
-                    <input maxlength = "3"
+                    <label>
+                    </label>
+                    <input maxLength = "2"
                         type='number'
                         placeholder='row'
                         value={row}
@@ -405,7 +438,7 @@ const Map_ = () => {
                     >
 
                     </input>
-                    <input maxlength = "3"
+                    <input maxLength = "2"
                         placeholder='column'
                         type='number'
                         value={column}
@@ -414,7 +447,9 @@ const Map_ = () => {
                         }
                     >
                     </input>
-                    <input maxlength='4'
+                    <label>
+                    </label>
+                    <input maxLength='4'
                         placeholder='width'
                         type='number'
                         value={width}
@@ -424,7 +459,7 @@ const Map_ = () => {
                     >
 
                     </input>
-                    <input maxlength='4'
+                    <input maxLength='4'
                         placeholder='height'
                         type='number'
                         value={height}
@@ -436,69 +471,94 @@ const Map_ = () => {
                     </input>
                 </div>
 
-                <button onClick={drawGrid}>
-                    Draw Grid
-                </button>
+                <div>
+                    <button onClick={drawGrid}>
+                        Draw Grid
+                    </button>
+
+                    <button onClick={removeGrid}>
+                        Remove Grid
+                    </button>
+                </div>
+
+                <div>
+                    <button onClick={clearTile} ref={clearB}>
+                        Clear Tile
+                    </button>
+
+                    <button onClick={cleanMap}>
+                        Clean Map
+                    </button>
+                </div>
+
                 <button ref={squareB} onClick={toggleFillSquare}>
                     Toggle Fill Square
                 </button>
-                <button onClick={startDfs}>
-                    DFS
-                </button>
-                <button onClick={startBfs}>
-                    BFS
-                </button>
 
-                <button className="start" ref={startB} onClick={toggleStart}>
-                    Set Start
-                </button>
-                <button className="end" ref={endB} onClick={toggleEnd}>
-                    Set End
-                </button>
+                <div>
+                    <button onClick={startDfs}>
+                        DFS
+                    </button>
+                    <button onClick={startBfs}>
+                        BFS
+                    </button>
+                </div>
+
+
+                <div>
+                    <button className="start" ref={startB} onClick={toggleStart}>
+                        Set Start
+                    </button>
+                    <button className="end" ref={endB} onClick={toggleEnd}>
+                        Set End
+                    </button>
+                </div>
                 <button className="activate" ref={nodeB} onClick={toggleNode}>
                     Activate Node
                 </button>
-                <button ref={tClick} onClick={toggleClick}>
-                    Toggle Click
-                </button>
-                <button ref={mousDownClick} onClick={toggleMouseDown}>
-                    Toggle Mouse Down
-                </button>
-                <button onClick={showLinkedList}>
-                    Show Linked List
-                </button>
-                <button onClick={traverseLL}>
-                    Traverse Link List
-                </button>
+
+                <div>
+                    <button ref={tClick} onClick={toggleClick}>
+                        Single Click
+                    </button>
+                    <button ref={mousDownClick} onClick={toggleMouseDown}>
+                        Hold Click
+                    </button>
+                </div>
+
+                <div>
+                    <button onClick={showLinkedList}>
+                        Show LL
+                    </button>
+                    <button onClick={traverseLL}>
+                        Travel LL
+                    </button>
+                </div>
+
                 <button onClick={showLLPath}>
-                    Show Linked List Path
-                </button>
-                <button onClick={clearTile} ref={clearB}>
-                    Clear Tile
-                </button>
-                <button onClick={shortestPath}>
-                    Shortest path
-                </button>
-                <button onClick={generateMapData}>
-                    Generate Map Data
-                </button>
-                <button onClick={getMap}>
-                    Get Map Data
-                </button>
-                <button onClick={onSubmit}>
-                    Save Map Data
-                </button>
-                <button onClick={loadMap}>
-                    Load Map Data
-                </button>
-                <button onClick={removeGrid}>
-                    Remove Grid
-                </button>
-                <button onClick={cleanMap}>
-                    Clean Map
+                    LL Path
                 </button>
 
+                <div>
+                    <button onClick={generateMapData}>
+                        Generate Map Data
+                    </button>
+                    <button onClick={getMap}>
+                        Get Map Data
+                    </button>
+                </div>
+
+                <div>
+                    <button onClick={onSubmit}>
+                        Save Map Data
+                    </button>
+                    <button onClick={loadMap}>
+                        Load Map Data
+                    </button>
+                </div>
+
                 <input
+                    className='map__id'
                     value={mapId}
                     name='mapId'
                     placeholder='map id'
@@ -508,6 +568,17 @@ const Map_ = () => {
                 </input>
 
             </div>
+            {/* <div ref={popUpTile}>
+                <div>
+
+                </div>
+                <div>
+
+                </div>
+                <div>
+
+                </div>
+            </div> */}
         </div>
     </>
     )

@@ -12,7 +12,7 @@ class Map(db.Model):
     __table_args__ = {'extend_existing': True}
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), nullable=False)
+    name = db.Column(db.String(50), nullable=False, unique=True)
     map_data = db.Column(db.Text, nullable=False)
     rows = db.Column(db.Integer, nullable=False)
     columns = db.Column(db.Integer, nullable=False)
@@ -29,6 +29,7 @@ class Map(db.Model):
             'name': self.id,
             'map_data': json.loads(self.map_data),
             'user_id': self.user_id,
+            'id': self.id,
             }
 
 # Credits

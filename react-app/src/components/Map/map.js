@@ -388,6 +388,11 @@ export default class Map{
     clearTile(x, y){
         this.context.fillStyle = this.tiles[8]
         this.context.fillRect(x * this.tileWidth, y * this.tileHeight, this.tileWidth, this.tileHeight)
+
+        this.context.strokeStyle = "rgba(255, 255, 255, 1)";
+        this.context.lineWidth   = 5;
+        this.context.strokeRect(x * this.tileWidth, y * this.tileHeight, this.tileWidth, this.tileHeight);
+
         this.matrix[y][x] = 0
         this.nodeMatrix[y][x] = 0
     }
@@ -549,7 +554,13 @@ export default class Map{
 
         const visited = {}
         visited[`${this.start[0]}, ${this.start[1]}`] = true
-        const result = this.LL(this.linkedlist.start, visited).reverse()
+        const result = this.LL(this.linkedlist.start, visited)
+        if(!result){
+            return
+        }
+
+        result.reverse()
+        
         const convertResultToCoords = []
         for (let i = 0; i < result.length; i++){
             let x = result[i] === 0 ? 0
@@ -565,6 +576,9 @@ export default class Map{
 
     LL(current, visited, result =[]){
         if(current === this.linkedlist.end){
+            if(!current){
+                return false
+            }
             return result.push(current.data)
         }
 
@@ -586,14 +600,17 @@ export default class Map{
         return false
     }
 
-    static loadMap(mapData, canvas){
+    static loadMap(mapData, canvas, grid = false){
 
         const {width, height, rows, columns, plotted_tiles} = mapData
 
         const newMap = new Map(width, height, canvas, rows, columns)
 
         newMap.setCanvasDimensions()
-        newMap.drawGrid()
+
+        if(grid){
+            newMap.drawGrid()
+        }
 
         Object.keys(plotted_tiles).map((key, id)=>{
             let x = plotted_tiles[key].x
@@ -606,6 +623,8 @@ export default class Map{
                 newMap.drawStart(x, y)
             } else if(end){
                 newMap.drawEnd(x, y)
+            } else if(key.slice(-1) === 'n') {
+                newMap.drawNode(x, y)
             } else {
                 newMap.drawTile(x, y)
             }
