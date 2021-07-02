@@ -86,33 +86,33 @@ const LoginForm = () => {
               <button type="submit">Login</button>
             </form>
 
-              <div className='footer'>
-                    <div>
-                        About me
-                    </div>
-                      <div
-                          onClick={()=>{
-                          window.location.href = 'https://github.com/AlexBetita/'
-                      }}>
-                          <img src={github} alt='github'>
-                          </img>
+                    <div className='footer'>
+                      <div>
+                          About me
                       </div>
-
-                      <div
-                          onClick={()=>{
-                          window.location.href = 'https://www.linkedin.com/in/alex-betita/'
-                          }}
-                      >
-                          <img src={linkedin} alt='linkedin'>
-                          </img>
-                      </div>
+                        <div
+                            onClick={()=>{
+                            window.location.href = 'https://github.com/AlexBetita/'
+                        }}>
+                            <img src={github} alt='github'>
+                            </img>
+                        </div>
 
                         <div
-                            onClick={()=> openEmail()}
+                            onClick={()=>{
+                            window.location.href = 'https://www.linkedin.com/in/alex-betita/'
+                            }}
                         >
-                          <img src={email_icon} alt='email'></img>
-                      </div>
-                  </div>
+                            <img src={linkedin} alt='linkedin'>
+                            </img>
+                        </div>
+
+                          <div
+                              onClick={()=> openEmail()}
+                          >
+                            <img src={email_icon} alt='email'></img>
+                        </div>
+                    </div>
                 </div>
           <div className='side__home'>
                 <div>

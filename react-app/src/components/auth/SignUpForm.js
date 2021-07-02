@@ -4,6 +4,10 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { signUp } from '../../store/session';
 
+import linkedin from '../img/linkedin.png';
+import email_icon from '../img/email.png';
+import github from '../img/github.png';
+
 import "./SignUpForm.css"
 
 const SignUpForm = () => {
@@ -28,6 +32,10 @@ const SignUpForm = () => {
       }
     }
   };
+
+  const openEmail = () =>{
+    window.open('mailto:alexbheb25@gmail.com')
+  }
 
   const updateUsername = (e) => {
     setUsername(e.target.value);
@@ -56,54 +64,100 @@ const SignUpForm = () => {
   }
 
   return (
-    <form onSubmit={onSignUp}>
-      <div>
-        <label>User Name</label>
-        <input
-          type="text"
-          name="username"
-          onChange={updateUsername}
-          value={username}
-        ></input>
-      </div>
-      <div>
-        <label>Email</label>
-        <input
-          type="text"
-          name="email"
-          onChange={updateEmail}
-          value={email}
-        ></input>
-      </div>
-      <div>
-        <label className="label__signup__form">Profile Image</label>
-        <input
-          className="input__signup__form"
-          type="file"
-          onChange={updateProfileImage}
-        ></input>
-      </div>
-      <div>
-        <label>Password</label>
-        <input
-          type="password"
-          name="password"
-          onChange={updatePassword}
-          value={password}
-        ></input>
-      </div>
-      <div>
-        <label>Repeat Password</label>
-        <input
-          type="password"
-          name="repeat_password"
-          onChange={updateRepeatPassword}
-          value={repeatPassword}
-          required={true}
-        ></input>
-      </div>
-      <button type="submit">Sign Up</button>
-    </form>
+    <div className='home__container'>
+
+        <div className='main__home'>
+          <form className='signup__form' onSubmit={onSignUp}>
+            <div>
+              <label>User Name</label>
+              <input
+                type="text"
+                name="username"
+                onChange={updateUsername}
+                value={username}
+              ></input>
+            </div>
+            <div>
+              <label>Email</label>
+              <input
+                type="text"
+                name="email"
+                onChange={updateEmail}
+                value={email}
+              ></input>
+            </div>
+            <div>
+              <label className="label__signup__form">Profile Image</label>
+              <input
+                className="input__signup__form"
+                type="file"
+                onChange={updateProfileImage}
+              ></input>
+            </div>
+            <div>
+              <label>Password</label>
+              <input
+                type="password"
+                name="password"
+                onChange={updatePassword}
+                value={password}
+              ></input>
+            </div>
+            <div>
+              <label>Repeat Password</label>
+              <input
+                type="password"
+                name="repeat_password"
+                onChange={updateRepeatPassword}
+                value={repeatPassword}
+                required={true}
+              ></input>
+            </div>
+            <button type="submit">Sign Up</button>
+          </form>
+
+              <div className='footer'>
+                <div>
+                    About me
+                </div>
+                  <div
+                      onClick={()=>{
+                      window.location.href = 'https://github.com/AlexBetita/'
+                  }}>
+                      <img src={github} alt='github'>
+                      </img>
+                  </div>
+
+                  <div
+                      onClick={()=>{
+                      window.location.href = 'https://www.linkedin.com/in/alex-betita/'
+                      }}
+                  >
+                      <img src={linkedin} alt='linkedin'>
+                      </img>
+                  </div>
+
+                    <div
+                        onClick={()=> openEmail()}
+                    >
+                      <img src={email_icon} alt='email'></img>
+                  </div>
+              </div>
+        </div>
+
+        <div className='side__home'>
+                <div>
+                    <label>
+                        LEADER BOARDS
+                    </label>
+                </div>
+                <div>
+                    <label>
+                        Map Dimensions
+                    </label>
+                </div>
+          </div>
+    </div>
   );
 };
 
