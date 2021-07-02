@@ -43,11 +43,29 @@ def create_map():
     return map_.to_dict()
 
 
-@map_routes.route('/<int:id>', methods=['GET'])
+@map_routes.route('/<int:id>', methods=['GET', 'DELETE', 'PUT'])
 @login_required
 def get_map(id):
-    print('AHHH AYEMBA MOMBA LEE')
     map_ = Map.query.get(id)
     if map_:
-        return map_.to_dict()
-    return {'errors': 'map does not exist'}, 400
+        if request.method == 'DELETE':
+            db.session.delete(map_)
+            db.session.commit()
+            return {'id', id}
+        if request.method == 'PUT':
+            data = request.get_json()
+            if map_.name != data['name']:
+                exists = Map.query.filter(Map.name == data['name']).first()
+                if exists:
+                    return {'errors': ['Name is already taken']}, 400
+            map_.width = data['width']
+            map_.height = data['height']
+            map_.rows = data['rows']
+            map_.columns = data['columns']
+            map_.map_data = json.dumps(data['map_data'])
+            map_.name = data['name']
+            db.session.commit()
+            return map_.to_dict()
+        else:
+            return map_.to_dict()
+    return {'errors': ['map does not exist']}, 400

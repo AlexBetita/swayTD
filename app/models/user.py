@@ -72,10 +72,22 @@ class User(db.Model, UserMixin):
         return check_password_hash(self.password, password)
 
     def to_dict(self):
+        maps = {}
+        for i in self.map.all():
+            maps[i.id] = {
+                'name': i.name,
+                'map_data': i.map_data,
+                'rows': i.rows,
+                'columns': i.columns,
+                'height': i.height,
+                'width': i.width,
+                'id': i.id
+            }
         return {
           "id": self.id,
           "username": self.username,
           "email": self.email,
           "currency": self.currency,
-          "profileImage": self.profileImage
+          "profileImage": self.profileImage,
+          "maps": maps
         }

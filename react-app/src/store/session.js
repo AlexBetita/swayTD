@@ -1,5 +1,6 @@
+import { ADD_MAP } from "./map"
 // constants
-const SET_USER = "session/SET_USER"
+export const SET_USER = "session/SET_USER"
 export const REMOVE_USER = "session/REMOVE_USER"
 
 // action creators
@@ -125,18 +126,31 @@ export const edit = payload => async (dispatch) => {
 }
 
 const initialState = {
-                    user: null
+                    user: null,
+                    maps: null,
             }
 
 export default function reducer(state = initialState, action) {
     let newState;
     switch (action.type) {
         case SET_USER:
-            newState = {...state}
+            newState = {...state.user, ...state.maps}
+            newState.maps = action.payload.maps
+
+            delete action.payload.maps
             newState.user = action.payload
             return newState
-        case REMOVE_USER:
+        case ADD_MAP:
             newState = {...state}
+            newState.maps = {
+                ...state.maps,
+                [action.payload.id] : {
+                    ...action.payload.map_data
+                }
+            }
+            return newState
+        case REMOVE_USER:
+            newState = {...state.user, ...state.maps}
             return newState.user = {}
         default:
             return state;

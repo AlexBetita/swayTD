@@ -428,25 +428,21 @@ export default class Map{
                     if(this.nodeMatrix[newY][newX] instanceof Node){
                         node.east = this.nodeMatrix[newY][newX]
                         this.nodeMatrix[newY][newX].west = this.nodeMatrix[y][x]
-                        console.log(this.nodeMatrix[newY][newX])
                     }
                 } else if(i === 1){
                     if(this.nodeMatrix[newY][newX] instanceof Node){
                         node.south = this.nodeMatrix[newY][newX]
                         this.nodeMatrix[newY][newX].north = this.nodeMatrix[y][x]
-                        console.log(this.nodeMatrix[newY][newX])
                     }
                 } else if(i === 2){
                     if(this.nodeMatrix[newY][newX] instanceof Node){
                         node.north = this.nodeMatrix[newY][newX]
                         this.nodeMatrix[newY][newX].south = this.nodeMatrix[y][x]
-                        console.log(this.nodeMatrix[newY][newX])
                     }
                 } else if(i === 3){
                     if(this.nodeMatrix[newY][newX] instanceof Node){
                         node.west = this.nodeMatrix[newY][newX]
                         this.nodeMatrix[newY][newX].east = this.nodeMatrix[y][x]
-                        console.log(this.nodeMatrix[newY][newX])
                     }
                 }
             }
@@ -560,7 +556,7 @@ export default class Map{
         }
 
         result.reverse()
-        
+
         const convertResultToCoords = []
         for (let i = 0; i < result.length; i++){
             let x = result[i] === 0 ? 0
