@@ -7,7 +7,7 @@ import React, {useRef, useEffect, useState} from 'react';
 import { useSelector, useDispatch } from "react-redux"
 import { useParams, useHistory } from 'react-router-dom';
 
-import {addMapData, fetchMapData, editMapData} from "../../store/map";
+import {addMapData, fetchMapData, editMapData, deleteMapData} from "../../store/map";
 import Map from './map';
 
 import coin from '../img/coin.png'
@@ -55,6 +55,7 @@ const Map_ = () => {
     const tClick = useRef();
     const mousDownClick = useRef();
     const clearB = useRef();
+    const deleteB = useRef();
     const popUpTile = useRef();
 
     const [canvas, setCanvas] = useState()
@@ -101,6 +102,7 @@ const Map_ = () => {
         if(data.errors){
             setErrors(data.errors);
         }
+        map_data = null
         history.push(`/maps/create/${data.id}`)
     }
 
@@ -128,6 +130,15 @@ const Map_ = () => {
             setErrors(data.errors);
         }
         alert("Succesfully Edited");
+    }
+
+    const deleteMap = async (e) =>{
+        e.preventDefault();
+        const data = await dispatch(deleteMapData({id}))
+        if(data.errors){
+            setErrors(data.errors);
+        }
+        history.push('/maps/create')
     }
 
     const clicky = (e) =>{
@@ -761,21 +772,19 @@ const Map_ = () => {
                         </div>
 
                         <div>
-                            <button onClick={showLinkedList}>
-                                Show LL
-                            </button>
                             <button onClick={traverseLL}>
                                 Travel LL
                             </button>
                         </div>
 
-                        <button onClick={showLLPath}>
-                            LL Path
-                        </button>
-
                         <div>
                             <button onClick={getMap}>
                                 Get Map Data
+                            </button>
+                            <button
+                            className='delete__button'
+                            ref={deleteB} onClick={deleteMap} >
+                                Delete Map
                             </button>
                         </div>
 

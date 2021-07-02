@@ -1,6 +1,7 @@
 //constants
 export const ADD_MAP = "maps/ADD_MAP"
 const GET_MAP = "maps/GET_MAP"
+export const DELETE_MAP = "maps/DELETE_MAP"
 
 //action creators
 const addMap = (payload) => ({
@@ -10,6 +11,11 @@ const addMap = (payload) => ({
 
 const getMap = (payload) => ({
     type: GET_MAP,
+    payload
+})
+
+const deleteMap = (payload) => ({
+    type: DELETE_MAP,
     payload
 })
 
@@ -69,6 +75,22 @@ export const editMapData = (payload) => async (dispatch) => {
     return data
 }
 
+export const deleteMapData = (payload) => async (dispatch) => {
+    const {id} = payload
+    const response = await fetch(`/api/maps/${id}`,{
+        method: 'DELETE',
+        headers: {
+            "Content-Type": "application/json",
+        },
+    })
+    const data = await response.json();
+    if (data.errors) {
+        return data;
+    }
+    dispatch(deleteMap(data))
+    return data
+}
+
 export const fetchMapData = (payload) => async (dispatch) => {
     const {id} = payload;
     const response = await fetch(`/api/maps/${id}`)
@@ -96,6 +118,10 @@ export default function reducer(state = initialState, action){
             newState = {
                 [action.payload.id] : action.payload
             }
+            return newState
+        case DELETE_MAP:
+            newState = {...state}
+            delete newState[action.payload.id]
             return newState
         default:
             return state;

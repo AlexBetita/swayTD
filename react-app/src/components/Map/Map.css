@@ -112,6 +112,11 @@ canvas{
     border: 3.5px dashed rgb(182, 26, 182);
 }
 
+.delete__button{
+    background-color: rgb(255, 112, 112);
+    font-weight: bolder;
+}
+
 .profile__details div{
     margin-left: 5px;
     min-width: 80px;
@@ -181,4 +186,3 @@ canvas{
     flex-direction: column;
     color: rgb(77, 6, 71);
 }
-

@@ -1,4 +1,4 @@
-import { ADD_MAP } from "./map"
+import { ADD_MAP, DELETE_MAP } from "./map"
 // constants
 export const SET_USER = "session/SET_USER"
 export const REMOVE_USER = "session/REMOVE_USER"
@@ -151,7 +151,13 @@ export default function reducer(state = initialState, action) {
             return newState
         case REMOVE_USER:
             newState = {...state.user, ...state.maps}
-            return newState.user = {}
+            return newState = {}
+        case DELETE_MAP:
+            newState = {...state}
+
+            delete newState.maps[action.payload.id]
+
+            return newState
         default:
             return state;
     }

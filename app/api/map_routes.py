@@ -51,7 +51,8 @@ def get_map(id):
         if request.method == 'DELETE':
             db.session.delete(map_)
             db.session.commit()
-            return {'id', id}
+            id_ = id
+            return {"id": id_}
         if request.method == 'PUT':
             data = request.get_json()
             if map_.name != data['name']:
