@@ -162,7 +162,7 @@ export default class Map{
 
 
     getDataUrl(){
-        return this.canvas.getDataUrl()
+        return this.canvas.current.toDataURL()
     }
 
     //resets map
@@ -189,7 +189,7 @@ export default class Map{
     //draw the clicked tile
     drawTile(x, y, color = false){
         let data = this.getTileNumber(x, y)
-        
+
         //HAD TO PUT IN TRY CATCH CAUSE MY INITIAL SOLUTION WAS NOT WORKING ON BIG BOY ROWS AND GRID
         try{
             if(this.matrix[y][x] !== 1){

@@ -107,9 +107,8 @@ const Map_ = () => {
         }
 
         const user_id = user.id;
-        // let map_data = canvas.mapData
-        let map_data = canvas.getDataUrl()
-        //break break break
+        let map_data = canvas.mapData
+        
         const data = await dispatch(addMapData({name, map_data, user_id}))
 
         if(data.errors){
@@ -360,9 +359,9 @@ const Map_ = () => {
         e = parseInt(e.target.value)
 
         if(!isNaN(e)){
-            if(e > 800 || e  < 50){
-                return
-            }
+            // if(e > 800 || e  < 50){
+            //     return
+            // }
             setWidth(e)
             canvas._width = e
             canvas.setCanvasDimensions()
@@ -373,9 +372,9 @@ const Map_ = () => {
         canvas.cleanMap()
         e = parseInt(e.target.value)
         if(!isNaN(e)){
-            if(e > 800 || e  < 50){
-                return
-            }
+            // if(e > 800 || e  < 50){
+            //     return
+            // }
             setHeight(e)
             canvas._height = e
             canvas.setCanvasDimensions()
