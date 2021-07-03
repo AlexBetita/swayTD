@@ -36,7 +36,8 @@ def create_map():
         rows=data['rows'],
         columns=data['columns'],
         width=data['width'],
-        height=data['height']
+        height=data['height'],
+        map_image=data['map_image']
     )
     db.session.add(map_)
     db.session.commit()
@@ -65,6 +66,7 @@ def get_map(id):
             map_.columns = data['columns']
             map_.map_data = json.dumps(data['map_data'])
             map_.name = data['name']
+            map_.map_image = data['name']
             db.session.commit()
             return map_.to_dict()
         else:

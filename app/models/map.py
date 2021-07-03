@@ -18,6 +18,7 @@ class Map(db.Model):
     columns = db.Column(db.Integer, nullable=False)
     height = db.Column(db.Integer, nullable=False)
     width = db.Column(db.Integer, nullable=False)
+    map_image = db.Column(db.Text, nullable=False)
     user_id = db.Column(db.Integer, ForeignKey('users.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
@@ -30,6 +31,7 @@ class Map(db.Model):
             'map_data': json.loads(self.map_data),
             'user_id': self.user_id,
             'id': self.id,
+            'map_image': self.map_image
             }
 
 # Credits

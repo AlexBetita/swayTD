@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Redirect } from "react-router-dom";
+import { Redirect, useHistory} from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 import { login, demologin } from "../../store/session";
@@ -14,6 +14,7 @@ import "./LoginForm.css";
 const LoginForm = () => {
 
   const dispatch = useDispatch();
+  const history = useHistory()
   const user = useSelector(state => state.session.user)
 
   const [errors, setErrors] = useState([]);
@@ -33,6 +34,10 @@ const LoginForm = () => {
     window.open('mailto:alexbheb25@gmail.com')
   }
 
+  const demo = async (e) => {
+    e.preventDefault()
+    await dispatch(demologin())
+  }
 
   const updateEmail = (e) => {
     setEmail(e.target.value);
@@ -41,6 +46,10 @@ const LoginForm = () => {
   const updatePassword = (e) => {
     setPassword(e.target.value);
   };
+
+  const signup = async () => {
+    history.push('/signup')
+  }
 
   if (user) {
     return <Redirect to="/profile" />;
@@ -83,9 +92,16 @@ const LoginForm = () => {
                   onChange={updatePassword}
                 />
               </div>
-              <button type="submit">Login</button>
+              <div>
+                <button type="submit">Login</button>
+                <button onClick={signup}>
+                  Signup
+                </button>
+              </div>
+              <button onClick={demo}>
+                    DEMO
+                  </button>
             </form>
-
                     <div className='footer'>
                       <div>
                           About me

@@ -1,3 +1,4 @@
+import { REMOVE_USER } from "./session";
 //constants
 export const ADD_MAP = "maps/ADD_MAP"
 const GET_MAP = "maps/GET_MAP"
@@ -21,7 +22,7 @@ const deleteMap = (payload) => ({
 
 //thunks
 export const addMapData = (payload) => async (dispatch) => {
-    const {name, map_data, user_id} = payload
+    const {name, map_data, user_id, map_image} = payload
     const {width, height, rows, columns} = map_data
     const response = await fetch("/api/maps/", {
         method: "POST",
@@ -35,7 +36,8 @@ export const addMapData = (payload) => async (dispatch) => {
             width,
             height,
             rows,
-            columns
+            columns,
+            map_image
         })
     });
 
@@ -49,7 +51,7 @@ export const addMapData = (payload) => async (dispatch) => {
 
 
 export const editMapData = (payload) => async (dispatch) => {
-    const {name, map_data, user_id, id} = payload
+    const {name, map_data, user_id, id, map_image} = payload
     const {width, height, rows, columns} = map_data
     const response = await fetch(`/api/maps/${id}`, {
         method: "PUT",
@@ -63,7 +65,8 @@ export const editMapData = (payload) => async (dispatch) => {
             width,
             height,
             rows,
-            columns
+            columns,
+            map_image
         })
     });
 
@@ -123,6 +126,8 @@ export default function reducer(state = initialState, action){
             newState = {...state}
             delete newState[action.payload.id]
             return newState
+        case REMOVE_USER:
+            return newState = {}
         default:
             return state;
     }

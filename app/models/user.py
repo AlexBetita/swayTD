@@ -81,7 +81,8 @@ class User(db.Model, UserMixin):
                 'columns': i.columns,
                 'height': i.height,
                 'width': i.width,
-                'id': i.id
+                'id': i.id,
+                'map_image': i.map_image
             }
         return {
           "id": self.id,

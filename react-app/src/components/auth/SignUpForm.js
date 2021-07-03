@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Redirect } from 'react-router-dom';
+import { Redirect, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
 
 import { signUp } from '../../store/session';
@@ -13,6 +13,7 @@ import "./SignUpForm.css"
 const SignUpForm = () => {
 
   const dispatch = useDispatch();
+  const history = useHistory();
   const user = useSelector(state => state.session.user)
 
   const [username, setUsername] = useState("");
@@ -56,6 +57,10 @@ const SignUpForm = () => {
   const updateProfileImage = (e) => {
     const file = e.target.files[0]; /* grabs first file and setting as profile image*/
     if (file) setProfileImage(file)
+  }
+
+  const login = () => {
+    history.push('/login')
   }
 
 
@@ -114,6 +119,9 @@ const SignUpForm = () => {
               ></input>
             </div>
             <button type="submit">Sign Up</button>
+            <button onClick={login}>
+              Login
+            </button>
           </form>
 
               <div className='footer'>

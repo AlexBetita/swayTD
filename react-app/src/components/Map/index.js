@@ -24,6 +24,7 @@ function removeClick(clicky){
 //moved color here to become big boy color
 let color = ''
 
+
 const Map_ = () => {
 
     let isPathing = false;
@@ -33,6 +34,11 @@ const Map_ = () => {
     const dispatch = useDispatch()
 
     const user = useSelector(state => state.session.user)
+
+    if(!user){
+        history.push('/login')
+    }
+
     const currentMap = useSelector(state=> {
         if(id){
             if(state.session.maps[id]){
@@ -108,8 +114,9 @@ const Map_ = () => {
 
         const user_id = user.id;
         let map_data = canvas.mapData
+        let map_image = canvas.getDataUrl()
 
-        const data = await dispatch(addMapData({name, map_data, user_id}))
+        const data = await dispatch(addMapData({name, map_data, user_id, map_image}))
 
         if(data.errors){
             setErrors(data.errors);
@@ -151,8 +158,11 @@ const Map_ = () => {
         e.preventDefault();
         setMapData(canvas.mapData)
         const user_id = user.id;
+
         let map_data = canvas.mapData
-        const data = await dispatch(editMapData({name, map_data, user_id, id}))
+        let map_image = canvas.getDataUrl()
+
+        const data = await dispatch(editMapData({name, map_data, user_id, id, map_image}))
         map_data = null
         if(data.errors){
             setErrors(data.errors);

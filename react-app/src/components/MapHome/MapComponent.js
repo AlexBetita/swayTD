@@ -9,6 +9,9 @@ const MapComponent = ({map}) => {
                 <label>
                     Map Name: {map.name}
                 </label>
+                <img src={map.map_image}>
+                    
+                </img>
             </div>
         </>
     )
