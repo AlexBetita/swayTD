@@ -305,6 +305,13 @@ export default class Map{
         } else if(type === 'll'){
             let pathLL = this.pathLL.slice(0, this.pathLL.length - 2)
 
+            // for (let i = 0; i < pathLL.length; i++){
+            //     this.context.fillStyle = this.tiles[6]
+            //     setTimeout(()=>{
+            //         this.fillRect(pathLL[i][0], pathLL[i][1])
+            //     }, i * 200)
+            // }
+
             for (let i = 0; i < pathLL.length; i++){
                 this.context.fillStyle = this.tiles[6]
                 this.fillRect(pathLL[i][0], pathLL[i][1])
@@ -574,14 +581,17 @@ export default class Map{
 
         result.reverse()
 
+        //converts path data to coordinates
         const convertResultToCoords = []
         for (let i = 0; i < result.length; i++){
-            let x = result[i] === 0 ? 0
-                    : result[i] <= this.column ? result[i] - 1
-                    : (result[i] % this.column) - 1 === -1 ? (result[i] - (result[i] - this.column)) - 1
-                    : (result[i] % this.column) - 1
-            let y = result[i] <= this.column ? 0
-                    : Math.floor((result[i] - 1) / this.column) % this.column
+            // let x = result[i] === 0 ? 0
+            //         : result[i] <= this.column ? result[i] - 1
+            //         : (result[i] % this.column) - 1 === -1 ? (result[i] - (result[i] - this.column)) - 1
+            //         : (result[i] % this.column) - 1
+            // let y = result[i] <= this.column ? 0
+            //         : Math.floor((result[i] - 1) / this.column) % this.column
+            let x = (result[i] - 1)% this.column
+            let y = Math.floor((result[i] - 1)/ this.column)
             convertResultToCoords.push([x, y])
         }
         this.pathLL=convertResultToCoords
