@@ -160,6 +160,11 @@ export default class Map{
         this.tileWidth = width / this.column
     }
 
+
+    getDataUrl(){
+        return this.canvas.getDataUrl()
+    }
+
     //resets map
     cleanMap(){
         this.setCanvasDimensions()
@@ -182,43 +187,53 @@ export default class Map{
     }
 
     //draw the clicked tile
-    drawTile(x, y){
+    drawTile(x, y, color = false){
         let data = this.getTileNumber(x, y)
+        
+        //HAD TO PUT IN TRY CATCH CAUSE MY INITIAL SOLUTION WAS NOT WORKING ON BIG BOY ROWS AND GRID
+        try{
+            if(this.matrix[y][x] !== 1){
+                if(!color){
+                    this.context.fillStyle = this.tiles[0]
+                } else {
+                    this.context.fillStyle = color
+                }
+                this.fillRect(x, y)
+                this.matrix[y][x] = 1
 
-        if(y < 0 || y >= this.column){
+                this.mapData = [data, data, false, false, x, y, this.tiles[0]]
+
+                return true
+            }
+        } catch {
             return false
         }
-
-        if(this.matrix[y][x] !== 1){
-            this.context.fillStyle = this.tiles[0]
-            this.fillRect(x, y)
-            this.matrix[y][x] = 1
-
-            this.mapData = [data, data, false, false, x, y, this.tiles[0]]
-
-            return true
-        }
-        return false
     }
 
     //draw node
-    drawNode(x, y){
+    drawNode(x, y, color = false){
         let data = this.getTileNumber(x, y)
 
-        if(y < 0 || y >= this.column){
+        //HAD TO PUT IN TRY CATCH CAUSE MY INITIAL SOLUTION WAS NOT WORKING ON BIG BOY ROWS AND GRID
+        try{
+            if(!(this.nodeMatrix[y][x] instanceof Node)){
+
+                if(!color){
+                    this.context.fillStyle = this.tiles[5]
+                } else {
+                    this.context.fillStyle = color
+                }
+
+                this.fillRect(x, y)
+                this.plotNode(x, y)
+
+                this.mapData = [data + 'n', data, false, false, x, y, this.tiles[5]]
+
+                return true
+            }
+        } catch {
             return false
         }
-
-        if(!(this.nodeMatrix[y][x] instanceof Node)){
-            this.context.fillStyle = this.tiles[5]
-            this.fillRect(x, y)
-            this.plotNode(x, y)
-
-            this.mapData = [data + 'n', data, false, false, x, y, this.tiles[5]]
-
-            return true
-        }
-        return false
     }
 
     //draw start

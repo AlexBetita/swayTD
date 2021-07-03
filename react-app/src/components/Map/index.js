@@ -21,6 +21,8 @@ function removeClick(clicky){
     window.removeEventListener('click', clicky)
 }
 
+//moved color here to become big boy color
+let color = ''
 
 const Map_ = () => {
 
@@ -29,6 +31,7 @@ const Map_ = () => {
 
     const history = useHistory()
     const dispatch = useDispatch()
+
     const user = useSelector(state => state.session.user)
     const currentMap = useSelector(state=> {
         if(id){
@@ -52,7 +55,6 @@ const Map_ = () => {
     const endB = useRef();
     const nodeB = useRef();
     const squareB = useRef();
-    const tClick = useRef();
     const mousDownClick = useRef();
     const clearB = useRef();
     const deleteB = useRef();
@@ -68,6 +70,7 @@ const Map_ = () => {
     const [column, setColumn] = useState(50)
     const [width, setWidth] = useState(700)
     const [height, setHeight] = useState(700)
+    const [stateColor, setStateColor] = useState(color)
 
     const m = (e) => {
         // setTimeout(()=>{
@@ -104,7 +107,9 @@ const Map_ = () => {
         }
 
         const user_id = user.id;
-        let map_data = canvas.mapData
+        // let map_data = canvas.mapData
+        let map_data = canvas.getDataUrl()
+        //break break break
         const data = await dispatch(addMapData({name, map_data, user_id}))
 
         if(data.errors){
@@ -117,17 +122,30 @@ const Map_ = () => {
         map_data = null
     }
 
-    const getMap = async (e) =>{
+    const loadMap = async (e) =>{
         e.preventDefault();
+        let newErrors = []
+        setErrors([])
+
         const id = mapId
-        console.log(id)
+        if(!mapId){
+            newErrors.push(['Please provide an id'])
+            setErrors(newErrors)
+            return
+        }
         const data = await dispatch(fetchMapData({id}))
         if(data.errors){
             setErrors(data.errors)
         }
-        setLoadMap(data['map_data'])
-        setMapId(data.id)
-        setName(data.name)
+        if(!data){
+            newErrors.push('Map Does not exist')
+            setErrors(newErrors)
+        } else {
+            setLoadMap(data['map_data'])
+            setCanvas(Map.loadMap(data['map_data'], canvasElement))
+            setMapId(data.id)
+            setName(data.name)
+        }
     }
 
     const editMap = async (e) =>{
@@ -153,10 +171,12 @@ const Map_ = () => {
     }
 
     const clicky = (e) =>{
+        if(!color){
+            color = stateColor
+        }
         if (e.target.tagName === 'CANVAS'){
             const y = Math.ceil(e.offsetY / (canvas.height / canvas.row)) - 1
             const x = Math.ceil(e.offsetX / (canvas.width/ canvas.column)) - 1
-
             if(startB.current.classList.contains('active')){
                 canvas.drawStart(x, y)
                 startB.current.classList.remove('active')
@@ -168,11 +188,11 @@ const Map_ = () => {
             }
 
             if(squareB.current.classList.contains('active')){
-                canvas.drawTile(x, y)
+                canvas.drawTile(x, y, color)
             }
 
             if(nodeB.current.classList.contains('active')){
-                canvas.drawNode(x, y)
+                canvas.drawNode(x, y, color)
             }
 
             if(clearB.current.classList.contains('active')){
@@ -182,6 +202,12 @@ const Map_ = () => {
     }
 
     const clickyGo = (trigger, e) =>{
+        if(!color){
+            color = stateColor
+        }
+        if(!mousDownClick.current.classList.contains('active')){
+            return
+        }
         if(trigger === 'down'){
             isPathing = true
             canvasElement.current.addEventListener('mousemove', (e)=> m(e))
@@ -207,11 +233,11 @@ const Map_ = () => {
             }
 
             if(squareB.current.classList.contains('active')){
-                canvas.drawTile(x, y)
+                canvas.drawTile(x, y, color)
             }
 
             if(nodeB.current.classList.contains('active')){
-                canvas.drawNode(x, y)
+                canvas.drawNode(x, y, color)
             }
 
             if(clearB.current.classList.contains('active')){
@@ -284,31 +310,12 @@ const Map_ = () => {
     const showLinkedList = () =>{
     }
 
-    const toggleClick = () => {
-        if(tClick.current.classList.contains('active')){
-            removeClick(clicky)
-            tClick.current.classList.remove('active')
-        } else{
-            addClick(clicky)
-            tClick.current.classList.add('active')
-        }
-    }
-
     const traverseLL = () => {
         canvas.startLL()
         canvas.drawPath('ll')
     }
 
     const showLLPath = () => {
-    }
-
-    const shortestPath = () => {
-        console.log(canvas.shortestPath)
-    }
-
-    const generateMapData = () => {
-        console.log(canvas.mapData)
-        setMapData(canvas.mapData)
     }
 
     function addMouseDown(clickyGo){
@@ -327,20 +334,17 @@ const Map_ = () => {
     }
 
     const toggleMouseDown = () => {
-        if(mousDownClick.current.classList.contains('active')){
 
+        if(mousDownClick.current.classList.contains('active')){
             canvasElement.current.removeEventListener('mousemove', (e)=> m(e))
             isPathing = false
-
+            removeClick(clicky)
             mousDownClick.current.classList.remove('active')
         } else{
             addMouseDown(clickyGo)
+            addClick(clicky)
             mousDownClick.current.classList.add('active')
         }
-    }
-
-    const loadMap = () =>{
-        setCanvas(Map.loadMap(load_map, canvasElement))
     }
 
     const cleanMap = () =>{
@@ -352,6 +356,7 @@ const Map_ = () => {
     }
 
     const canvasWidthChange = (e) =>{
+        canvas.cleanMap()
         e = parseInt(e.target.value)
 
         if(!isNaN(e)){
@@ -365,6 +370,7 @@ const Map_ = () => {
     }
 
     const canvasHeightChange = (e) =>{
+        canvas.cleanMap()
         e = parseInt(e.target.value)
         if(!isNaN(e)){
             if(e > 800 || e  < 50){
@@ -377,10 +383,7 @@ const Map_ = () => {
     }
 
     const canvasRowChange = (e) =>{
-
-        if(row >=column){
-            return
-        }
+        canvas.cleanMap()
 
         e = parseInt(e.target.value)
         if(!isNaN(e)){
@@ -395,7 +398,7 @@ const Map_ = () => {
 
     const canvasColumnChange = (e) =>{
         e = parseInt(e.target.value)
-
+        canvas.cleanMap()
         if(!isNaN(e)){
             if(e > 100 || e < 5){
                 return
@@ -404,6 +407,11 @@ const Map_ = () => {
             canvas._column= e
             canvas.adjustMatrix()
         }
+    }
+
+    const showColor = (e) => {
+        color = e.target.value
+        setStateColor(color)
     }
 
     return (
@@ -563,11 +571,18 @@ const Map_ = () => {
                                 Clean Map
                             </button>
                         </div>
-
-                        <button ref={squareB} onClick={toggleFillSquare}>
-                            Toggle Fill Square
-                        </button>
-
+                        <div>
+                            <input
+                                className='color__picker'
+                                type='color'
+                                onChange={(e)=>showColor(e)}
+                                >
+                            </input>
+                            {/* style={{ backgroundColor : color }} */}
+                            <button ref={squareB} onClick={toggleFillSquare}>
+                                Toggle Fill Square
+                            </button>
+                        </div>
                         <div>
                             <button onClick={startDfs}>
                                 DFS
@@ -591,11 +606,8 @@ const Map_ = () => {
                         </button>
 
                         <div>
-                            <button ref={tClick} onClick={toggleClick}>
-                                Single Click
-                            </button>
                             <button ref={mousDownClick} onClick={toggleMouseDown}>
-                                Hold Click
+                                Turn on click
                             </button>
                         </div>
 
@@ -611,12 +623,6 @@ const Map_ = () => {
                         <button onClick={showLLPath}>
                             LL Path
                         </button>
-
-                        <div>
-                            <button onClick={getMap}>
-                                Get Map Data
-                            </button>
-                        </div>
 
                         <div>
                             <button onClick={onSubmit}>
@@ -757,9 +763,18 @@ const Map_ = () => {
                             </button>
                         </div>
 
-                        <button ref={squareB} onClick={toggleFillSquare}>
-                            Toggle Fill Square
-                        </button>
+                        <div>
+                            <input
+                                className='color__picker'
+                                type='color'
+                                onChange={(e)=>showColor(e)}
+                                >
+                            </input>
+                            <button
+                                ref={squareB} onClick={toggleFillSquare}>
+                                Toggle Fill Square
+                            </button>
+                        </div>
 
                         <div>
                             <button onClick={startDfs}>
@@ -784,11 +799,8 @@ const Map_ = () => {
                         </button>
 
                         <div>
-                            <button ref={tClick} onClick={toggleClick}>
-                                Single Click
-                            </button>
                             <button ref={mousDownClick} onClick={toggleMouseDown}>
-                                Hold Click
+                                Turn on click
                             </button>
                         </div>
 
@@ -799,9 +811,6 @@ const Map_ = () => {
                         </div>
 
                         <div>
-                            <button onClick={getMap}>
-                                Get Map Data
-                            </button>
                             <button
                             className='delete__button'
                             ref={deleteB} onClick={deleteMap} >

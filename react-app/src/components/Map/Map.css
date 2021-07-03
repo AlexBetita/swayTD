@@ -12,7 +12,42 @@ canvas{
 .active {
     border: 1px solid orange;
     color: orangered;
-    background-color: yellow;
+    background-color: #ff9a8d;
+    box-shadow: 0px 0 0 1px #ff9a8d;
+    animation-duration: 4s;
+    animation-name: pulsing;
+    animation-iteration-count: infinite;
+}
+
+@keyframes pulsing {
+    from{
+        box-shadow: 0px 0 0 2px #ff9a8d;
+    }
+
+    25%{
+        box-shadow: 0px 0 0 3px #ff9a8dc5;
+    }
+
+    50%{
+        box-shadow: 0px 0 0 4px #ff9a8dce;
+    }
+
+    75%{
+        box-shadow: 0px 0 0 5px #ff9a8dc4;
+    }
+
+    100%{
+        box-shadow: 0px 0 0 4px #ff9a8db6;
+    }
+
+    to{
+        box-shadow: 0px 0 0 3px #ff9a8db0;
+    }
+
+    finally{
+        box-shadow: 0px 0 0 2px #ff9a8d;
+    }
+
 }
 
 .map__dimensions__text__900{
@@ -39,6 +74,10 @@ canvas{
     left: 10%;
     font-weight: bold;
     font-size: 25px;
+}
+
+.color__picker{
+    margin-left: 10px
 }
 
 .input__map__name{
