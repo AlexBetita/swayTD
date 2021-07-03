@@ -195,13 +195,13 @@ export default class Map{
             if(this.matrix[y][x] !== 1){
                 if(!color){
                     this.context.fillStyle = this.tiles[0]
+                    this.mapData = [data, data, false, false, x, y, this.tiles[0]]
                 } else {
                     this.context.fillStyle = color
+                    this.mapData = [data, data, false, false, x, y, color]
                 }
                 this.fillRect(x, y)
                 this.matrix[y][x] = 1
-
-                this.mapData = [data, data, false, false, x, y, this.tiles[0]]
 
                 return true
             }
@@ -220,8 +220,10 @@ export default class Map{
 
                 if(!color){
                     this.context.fillStyle = this.tiles[5]
+                    this.mapData = [data, data, false, false, x, y, this.tiles[5]]
                 } else {
                     this.context.fillStyle = color
+                    this.mapData = [data, data, false, false, x, y, color]
                 }
 
                 this.fillRect(x, y)
@@ -613,7 +615,7 @@ export default class Map{
 
     static loadMap(mapData, canvas, grid = false){
 
-        const {width, height, rows, columns, plotted_tiles} = mapData
+        const {width, height, rows, columns, plotted_tiles, fill_color} = mapData
 
         const newMap = new Map(width, height, canvas, rows, columns)
 
@@ -635,9 +637,9 @@ export default class Map{
             } else if(end){
                 newMap.drawEnd(x, y)
             } else if(key.slice(-1) === 'n') {
-                newMap.drawNode(x, y)
+                newMap.drawNode(x, y, fill_color)
             } else {
-                newMap.drawTile(x, y)
+                newMap.drawTile(x, y, fill_color)
             }
         })
 
