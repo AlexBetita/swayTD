@@ -92,6 +92,20 @@
     font-size: 60px;
 }
 
+.logout__home{
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    position: relative;
+    top: 10px;
+    margin-left: 10px;
+    display: flex;
+}
+
+.logout__home:hover{
+    box-shadow: 0 0 0 3px #aed6dc;
+}
+
 .home__coin{
     display:inline-block;
     margin:auto;

@@ -4,20 +4,24 @@
 
 import React from 'react';
 import { useHistory} from 'react-router';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 
 import MapHome from '../MapHome/index';
+import { logout } from '../../store/session';
 
 import coin from '../img/coin.png';
 import linkedin from '../img/linkedin.png';
 import email from '../img/email.png';
 import github from '../img/github.png';
+import logoutIcon from '../img/logout.png';
 
 import './Home.css';
 
 const Home = () => {
     const history = useHistory();
+    const dispatch = useDispatch();
+
     const user = useSelector((state)=> state.session.user)
 
 
@@ -27,6 +31,13 @@ const Home = () => {
 
     const openEmail = () =>{
         window.open('mailto:alexbheb25@gmail.com')
+    }
+
+    const onLogout = () =>{
+        setTimeout(async ()=>{
+            await dispatch(logout())
+        }, 0)
+        history.push('/login')
     }
 
     return (
@@ -43,6 +54,12 @@ const Home = () => {
                             <button className='edit__profile__button'>
                                 Edit Profile
                             </button>
+                            <img
+                                className='logout__home'
+                                src={logoutIcon} alt='logout'
+                                onClick={onLogout}
+                                >
+                            </img>
                         </div>
                     </div>
                     <div>
