@@ -378,6 +378,10 @@ const Map_ = () => {
 
     const canvasRowChange = (e) =>{
 
+        if(row >=column){
+            return
+        }
+
         e = parseInt(e.target.value)
         if(!isNaN(e)){
             if(e > 100 || e < 5){
@@ -391,10 +395,6 @@ const Map_ = () => {
 
     const canvasColumnChange = (e) =>{
         e = parseInt(e.target.value)
-
-        if (column >= row){
-            return
-        }
 
         if(!isNaN(e)){
             if(e > 100 || e < 5){
