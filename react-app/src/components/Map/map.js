@@ -632,6 +632,8 @@ export default class Map{
             let start = plotted_tiles[key].start
             let end = plotted_tiles[key].end
 
+            let fill_color = plotted_tiles[key].fill_color
+
             if(start){
                 newMap.drawStart(x, y)
             } else if(end){

@@ -5,12 +5,13 @@
 */
 import React, {useRef, useEffect, useState} from 'react';
 import { useSelector, useDispatch } from "react-redux"
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams, useHistory, NavLink } from 'react-router-dom';
 
 import {addMapData, fetchMapData, editMapData, deleteMapData} from "../../store/map";
 import Map from './map';
 
-import coin from '../img/coin.png'
+import coin from '../img/coin.png';
+import arrow from '../img/arrow.png';
 import './Map.css';
 
 function addClick(clicky){
@@ -71,7 +72,13 @@ const Map_ = () => {
     const [map_data, setMapData] = useState()
     const [errors, setErrors] = useState([]);
     const [load_map, setLoadMap] = useState()
-    const [mapId, setMapId] = useState('')
+    const [mapId, setMapId] = useState(()=>{
+        if(id){
+            return id
+        } else {
+            return ''
+        }
+    })
     const [row, setRow] = useState(50)
     const [column, setColumn] = useState(50)
     const [width, setWidth] = useState(700)
@@ -108,7 +115,7 @@ const Map_ = () => {
         let newErrors = []
         setErrors([])
 
-        if(name.length <= 2){
+        if(name.length < 2 || !name){
             newErrors.push('name is too short, minimum 3')
         }
 
@@ -116,17 +123,22 @@ const Map_ = () => {
         let map_data = canvas.mapData
         let map_image = canvas.getDataUrl()
 
-        const data = await dispatch(addMapData({name, map_data, user_id, map_image}))
+        if(!newErrors.length){
+            const data = await dispatch(addMapData({name, map_data, user_id, map_image}))
 
-        if(data.errors){
-            setErrors(data.errors);
-        } else if (newErrors.length) {
-            setErrors(newErrors)
-        } else {
-            history.push(`/maps/create/${data.id}`)
+            if(data.errors){
+                setErrors(data.errors);
+            } else if (newErrors.length) {
+                setErrors(newErrors)
+            } else {
+                history.push(`/maps/create/${data.id}`)
+            }
         }
+
+        setErrors(newErrors)
         map_data = null
     }
+
 
     const loadMap = async (e) =>{
         e.preventDefault();
@@ -151,6 +163,7 @@ const Map_ = () => {
             setCanvas(Map.loadMap(data['map_data'], canvasElement))
             setMapId(data.id)
             setName(data.name)
+            history.push(`/maps/create/${data.id}`)
         }
     }
 
@@ -453,10 +466,15 @@ const Map_ = () => {
                         </label>
                     </div>
                 }
-
+                    <NavLink
+                        className='arrowMap'
+                        to='/maps'>
+                    <img src={arrow} alt='arrow'>
+                    </img>
+                    </NavLink>
                 <ul>
                     {errors.map((error, idx) => (
-                        <li key={idx} className="error">{error}</li>
+                        <li key={idx} className="error_map">{error}</li>
                     ))}
                 </ul>
 
@@ -616,7 +634,7 @@ const Map_ = () => {
 
                         <div>
                             <button ref={mousDownClick} onClick={toggleMouseDown}>
-                                Turn on click
+                                Turn on Draw
                             </button>
                         </div>
 
@@ -809,7 +827,7 @@ const Map_ = () => {
 
                         <div>
                             <button ref={mousDownClick} onClick={toggleMouseDown}>
-                                Turn on click
+                                Turn on Draw
                             </button>
                         </div>
 

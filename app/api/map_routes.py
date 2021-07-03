@@ -53,7 +53,9 @@ def get_map(id):
             db.session.delete(map_)
             db.session.commit()
             id_ = id
-            return {"id": id_}
+            if id_:
+                return {"id": id_}
+            return {'errors': ['map does not exist']}, 400
         if request.method == 'PUT':
             data = request.get_json()
             if map_.name != data['name']:

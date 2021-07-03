@@ -178,6 +178,12 @@ canvas{
     color: rgb(77, 6, 71);
 }
 
+.error_map{
+    position: absolute;
+    top: 7%;
+    left: 44%;
+}
+
 .coin{
     max-width: 20px;
     max-height: 20px;
@@ -192,6 +198,16 @@ canvas{
     position: relative;
     left: 22px;
     color: rgb(255, 217, 0);
+}
+
+.arrowMap{
+    all: revert;
+    transform: scaleX(-1);
+    -moz-transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    -ms-transform: scaleX(-1);
+    position: absolute;
+    left: 5%;
 }
 
 .star{
