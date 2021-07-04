@@ -40,9 +40,6 @@ export default class Map{
         //2d matrix
         this.matrix = Array.from(Array(row), () => new Array(column).fill(0))
 
-        //node matrix
-        this.nodeMatrix = Array.from(Array(row), () => new Array(column).fill(0))
-
         //start and end coordinates
         this.start = [0,0]
         this.end = [0,1]
@@ -169,7 +166,6 @@ export default class Map{
     cleanMap(){
         this.setCanvasDimensions()
         this.matrix = Array.from(Array(this.row), () => new Array(this.column).fill(0))
-        this.nodeMatrix = Array.from(Array(this.row), () => new Array(this.column).fill(0))
         this.linkedlist = new LinkedList()
         this.start = [0,0]
         this.end = [0,1]
@@ -186,13 +182,14 @@ export default class Map{
         }
     }
 
-    //draw the clicked tile
+    //draw tile
     drawTile(x, y, color = false){
         let data = this.getTileNumber(x, y)
 
         //HAD TO PUT IN TRY CATCH CAUSE MY INITIAL SOLUTION WAS NOT WORKING ON BIG BOY ROWS AND GRID
         try{
-            if(this.matrix[y][x] !== 1){
+            if(!(this.matrix[y][x] instanceof Node)){
+
                 if(!color){
                     this.context.fillStyle = this.tiles[0]
                     this.mapData = [data, data, false, false, x, y, this.tiles[0]]
@@ -200,36 +197,9 @@ export default class Map{
                     this.context.fillStyle = color
                     this.mapData = [data, data, false, false, x, y, color]
                 }
-                this.fillRect(x, y)
-                this.matrix[y][x] = 1
-
-                return true
-            }
-        } catch {
-            return false
-        }
-    }
-
-    //draw node
-    drawNode(x, y, color = false){
-        let data = this.getTileNumber(x, y)
-
-        //HAD TO PUT IN TRY CATCH CAUSE MY INITIAL SOLUTION WAS NOT WORKING ON BIG BOY ROWS AND GRID
-        try{
-            if(!(this.nodeMatrix[y][x] instanceof Node)){
-
-                if(!color){
-                    this.context.fillStyle = this.tiles[5]
-                    this.mapData = [data, data, false, false, x, y, this.tiles[5]]
-                } else {
-                    this.context.fillStyle = color
-                    this.mapData = [data, data, false, false, x, y, color]
-                }
 
                 this.fillRect(x, y)
                 this.plotNode(x, y)
-
-                this.mapData = [data + 'n', data, false, false, x, y, this.tiles[5]]
 
                 return true
             }
@@ -243,12 +213,7 @@ export default class Map{
         let data = this.getTileNumber(x, y)
 
         //These two if statements can cause bugs
-        if(this.matrix[this.start[1]][this.start[0]] === 1){
-
-            this.clearTile(this.start[0], this.start[1])
-        }
-
-        if(this.nodeMatrix[this.start[1]][this.start[0]] instanceof Node){
+        if(this.matrix[this.start[1]][this.start[0]] instanceof Node){
 
             this.clearTile(this.start[0], this.start[1])
         }
@@ -258,7 +223,6 @@ export default class Map{
         this.context.fillStyle = this.tiles[1]
 
         this.plotNode(x, y, 'start')
-        this.matrix[y][x] = 1
         this.start = [x, y]
         this.fillRect(x, y)
     }
@@ -267,12 +231,7 @@ export default class Map{
     drawEnd(x, y){
         let data = this.getTileNumber(x, y)
 
-        //These two if statements can cause bugs
-        if(this.matrix[this.end[1]][this.end[0]] === 1 && this.end[0]){
-            this.clearTile(this.end[0], this.end[1])
-        }
-
-        if(this.nodeMatrix[this.end[1]][this.end[0]] instanceof Node){
+        if(this.matrix[this.end[1]][this.end[0]] instanceof Node){
             this.clearTile(this.end[0], this.end[1])
         }
 
@@ -283,7 +242,6 @@ export default class Map{
         this.end = [x, y]
         this.fillRect(x, y)
         this.plotNode(x, y, 'end')
-        this.matrix[y][x] = 1
     }
 
     //draw path
@@ -376,7 +334,7 @@ export default class Map{
 
         //starting position of x
         let posX = this.tileWidth
-        this.context.lineWidth = 1.7
+        this.context.lineWidth = 1.5
         this.context.strokeStyle = "rgba(255, 255, 255, 1)";
 
         for (let i = 0; i < this.column; i ++){
@@ -418,7 +376,6 @@ export default class Map{
         this.context.strokeRect(x * this.tileWidth, y * this.tileHeight, this.tileWidth, this.tileHeight);
 
         this.matrix[y][x] = 0
-        this.nodeMatrix[y][x] = 0
     }
 
     //get exact number of tile in grid
@@ -433,7 +390,7 @@ export default class Map{
 
         const node = new Node(data)
 
-        this.nodeMatrix[y][x] = node
+        this.matrix[y][x] = node
 
         if(position === 'start'){
             this.linkedlist.start = node
@@ -446,27 +403,27 @@ export default class Map{
             let newY = y + this.directions[i][0]
             let newX = x + this.directions[i][1]
 
-            if(newY >= 0 && newY < this.nodeMatrix.length && newX >= 0 && newX < this.nodeMatrix[newY].length){
+            if(newY >= 0 && newY < this.matrix.length && newX >= 0 && newX < this.matrix[newY].length){
 
                 if (i === 0){
-                    if(this.nodeMatrix[newY][newX] instanceof Node){
-                        node.east = this.nodeMatrix[newY][newX]
-                        this.nodeMatrix[newY][newX].west = this.nodeMatrix[y][x]
+                    if(this.matrix[newY][newX] instanceof Node){
+                        node.east = this.matrix[newY][newX]
+                        this.matrix[newY][newX].west = this.matrix[y][x]
                     }
                 } else if(i === 1){
-                    if(this.nodeMatrix[newY][newX] instanceof Node){
-                        node.south = this.nodeMatrix[newY][newX]
-                        this.nodeMatrix[newY][newX].north = this.nodeMatrix[y][x]
+                    if(this.matrix[newY][newX] instanceof Node){
+                        node.south = this.matrix[newY][newX]
+                        this.matrix[newY][newX].north = this.matrix[y][x]
                     }
                 } else if(i === 2){
-                    if(this.nodeMatrix[newY][newX] instanceof Node){
-                        node.north = this.nodeMatrix[newY][newX]
-                        this.nodeMatrix[newY][newX].south = this.nodeMatrix[y][x]
+                    if(this.matrix[newY][newX] instanceof Node){
+                        node.north = this.matrix[newY][newX]
+                        this.matrix[newY][newX].south = this.matrix[y][x]
                     }
                 } else if(i === 3){
-                    if(this.nodeMatrix[newY][newX] instanceof Node){
-                        node.west = this.nodeMatrix[newY][newX]
-                        this.nodeMatrix[newY][newX].east = this.nodeMatrix[y][x]
+                    if(this.matrix[newY][newX] instanceof Node){
+                        node.west = this.matrix[newY][newX]
+                        this.matrix[newY][newX].east = this.matrix[y][x]
                     }
                 }
             }
@@ -477,9 +434,6 @@ export default class Map{
     adjustMatrix(){
         //2d matrix
         this.matrix = Array.from(Array(this.row), () => new Array(this.column).fill(0))
-
-        //node matrix
-        this.nodeMatrix = Array.from(Array(this.row), () => new Array(this.column).fill(0))
     }
 
     //checks if possible to traverse
@@ -625,7 +579,7 @@ export default class Map{
 
     static loadMap(mapData, canvas, grid = false){
 
-        const {width, height, rows, columns, plotted_tiles, fill_color} = mapData
+        const {width, height, rows, columns, plotted_tiles} = mapData
 
         const newMap = new Map(width, height, canvas, rows, columns)
 
@@ -648,8 +602,6 @@ export default class Map{
                 newMap.drawStart(x, y)
             } else if(end){
                 newMap.drawEnd(x, y)
-            } else if(key.slice(-1) === 'n') {
-                newMap.drawNode(x, y, fill_color)
             } else {
                 newMap.drawTile(x, y, fill_color)
             }

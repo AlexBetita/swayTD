@@ -1,8 +1,9 @@
 /*
     Credits:
     https://www.iconpacks.net/free-icon/coin-dollar-2686.html
-
+    https://iconmonstr.com/license/
 */
+
 import React, {useRef, useEffect, useState} from 'react';
 import { useSelector, useDispatch } from "react-redux"
 import { useParams, useHistory, NavLink } from 'react-router-dom';
@@ -12,6 +13,20 @@ import Map from './map';
 
 import coin from '../img/coin.png';
 import arrow from '../img/arrow.png';
+import start from '../img/start.png';
+import stop from '../img/stop.png';
+import pencil from '../img/pencil.png';
+import eraser from '../img/eraser.png';
+import grid from '../img/grid.png';
+import path from '../img/path.png';
+import save from '../img/save.png';
+import fill from '../img/fill.png';
+import square from '../img/square.png';
+import edit from '../img/edit.png';
+import delete_icon from '../img/delete_red.png';
+import load from '../img/load.png';
+import search from '../img/search.png';
+
 import './Map.css';
 
 function addClick(clicky){
@@ -35,41 +50,56 @@ const Map_ = () => {
     const dispatch = useDispatch()
 
     const user = useSelector(state => state.session.user)
-
-    if(!user){
-        history.push('/login')
-    }
-
     const currentMap = useSelector(state=> {
         if(id){
             if(state.session.maps[id]){
+                console.log('hmm')
                 return {'owner' : true,
                         ...state.session.maps[id]
                         }
             } else if(state.map[id]) {
+                console.log('hmm')
                 return {'owner' : false,
                         ...state.map[id]
                        }
             } else {
+                // let keys = Object.keys(state.session.maps)
+                // for (let i = 0; i < keys.length; i++){
+                //     if(state.session.maps[keys[i]].name === id){
+                //         console.log('woah')
+                //         return {'owner' : true,
+                //             ...state.session.maps[id]
+                //         }
+                //     } else {
+                //         history.push('/maps/create')
+                //     }
+                // }
                 history.push('/maps/create')
             }
         }
         return false
     })
 
+    if(!user){
+        history.push('/login')
+    }
+
+
     const canvasElement = useRef();
     const startB = useRef();
     const endB = useRef();
-    const nodeB = useRef();
     const squareB = useRef();
     const mousDownClick = useRef();
     const clearB = useRef();
-    const deleteB = useRef();
-    const popUpTile = useRef();
+    const pathPopUp = useRef();
+    const pathPopUpB = useRef();
+    const mapIdDiv = useRef();
+
+    const searchPopUp = useRef();
+    const searchPopUpB = useRef();
 
     const [canvas, setCanvas] = useState()
     const [name, setName] = useState('')
-    const [map_data, setMapData] = useState()
     const [errors, setErrors] = useState([]);
     const [load_map, setLoadMap] = useState()
     const [mapId, setMapId] = useState(()=>{
@@ -108,6 +138,17 @@ const Map_ = () => {
             c.setCanvasDimensions()
         }
 
+        if(id){
+            mapIdDiv.current.setAttribute("disabled", true);
+        }
+
+        document.addEventListener('mousedown', handlePathPopUpClick)
+        document.addEventListener('mousedown', handleLoadPopUpClick)
+        return ()=> {
+            document.removeEventListener("mousedown", handlePathPopUpClick);
+            document.removeEventListener("mousedown", handleLoadPopUpClick);
+        };
+
     },[])
 
     const onSubmit = async (e) =>{
@@ -123,6 +164,8 @@ const Map_ = () => {
         let map_data = canvas.mapData
         let map_image = canvas.getDataUrl()
 
+        setErrors(newErrors)
+
         if(!newErrors.length){
             const data = await dispatch(addMapData({name, map_data, user_id, map_image}))
 
@@ -131,11 +174,12 @@ const Map_ = () => {
             } else if (newErrors.length) {
                 setErrors(newErrors)
             } else {
-                history.push(`/maps/create/${data.id}`)
+                alert('Successfully Saved')
+                setTimeout(()=>{
+                    history.push(`/maps/create/${data.id}`)
+                }, 0)
             }
         }
-
-        setErrors(newErrors)
         map_data = null
     }
 
@@ -169,7 +213,7 @@ const Map_ = () => {
 
     const editMap = async (e) =>{
         e.preventDefault();
-        setMapData(canvas.mapData)
+        setErrors([])
         const user_id = user.id;
 
         let map_data = canvas.mapData
@@ -179,17 +223,23 @@ const Map_ = () => {
         map_data = null
         if(data.errors){
             setErrors(data.errors);
+        } else{
+            alert("Succesfully Edited");
         }
-        alert("Succesfully Edited");
     }
 
     const deleteMap = async (e) =>{
         e.preventDefault();
+        setErrors([])
         const data = await dispatch(deleteMapData({id}))
         if(data.errors){
             setErrors(data.errors);
+        } else{
+            alert('Succesfully deleted')
+            setTimeout(()=>{
+                history.push('/maps/create')
+            },0)
         }
-        history.push('/maps/create')
     }
 
     const clicky = (e) =>{
@@ -211,10 +261,6 @@ const Map_ = () => {
 
             if(squareB.current.classList.contains('active')){
                 canvas.drawTile(x, y, color)
-            }
-
-            if(nodeB.current.classList.contains('active')){
-                canvas.drawNode(x, y, color)
             }
 
             if(clearB.current.classList.contains('active')){
@@ -258,10 +304,6 @@ const Map_ = () => {
                 canvas.drawTile(x, y, color)
             }
 
-            if(nodeB.current.classList.contains('active')){
-                canvas.drawNode(x, y, color)
-            }
-
             if(clearB.current.classList.contains('active')){
                 canvas.clearTile(x, y)
             }
@@ -293,6 +335,7 @@ const Map_ = () => {
             startB.current.classList.remove('active')
         } else{
             startB.current.classList.add('active')
+            endB.current.classList.remove('active')
         }
     }
 
@@ -301,14 +344,7 @@ const Map_ = () => {
             endB.current.classList.remove('active')
         } else{
             endB.current.classList.add('active')
-        }
-    }
-
-    const toggleNode = () => {
-        if(nodeB.current.classList.contains('active')){
-            nodeB.current.classList.remove('active')
-        } else{
-            nodeB.current.classList.add('active')
+            startB.current.classList.remove('active')
         }
     }
 
@@ -317,27 +353,59 @@ const Map_ = () => {
             squareB.current.classList.remove('active')
         } else{
             squareB.current.classList.add('active')
+            clearB.current.classList.remove('active')
         }
     }
 
-    const clearTile = () => {
+    const togglePopUpPath = (e) =>{
+        if(pathPopUpB.current.classList.contains('active')){
+            pathPopUpB.current.classList.remove('active')
+            pathPopUp.current.classList.add('hidden')
+        } else{
+            pathPopUpB.current.classList.add('active')
+            pathPopUp.current.classList.remove('hidden')
+        }
+    }
+
+
+    const togglePopUpSearch = (e) =>{
+        if(searchPopUpB.current.classList.contains('active')){
+            searchPopUpB.current.classList.remove('active')
+            searchPopUp.current.classList.add('hidden')
+        } else{
+            searchPopUpB.current.classList.add('active')
+            searchPopUp.current.classList.remove('hidden')
+        }
+    }
+
+    const handlePathPopUpClick = (e) =>{
+        if(pathPopUp.current.contains(e.target)){
+            return
+        }
+        pathPopUp.current.classList.add('hidden')
+        pathPopUpB.current.classList.remove('active')
+    }
+
+    const handleLoadPopUpClick = (e) =>{
+        if(searchPopUp.current.contains(e.target)){
+            return
+        }
+        searchPopUp.current.classList.add('hidden')
+        searchPopUpB.current.classList.remove('active')
+    }
+
+    const toggleClearTile = () => {
         if(clearB.current.classList.contains('active')){
             clearB.current.classList.remove('active')
         } else{
             clearB.current.classList.add('active')
+            squareB.current.classList.remove('active')
         }
-    }
-
-
-    const showLinkedList = () =>{
     }
 
     const traverseLL = () => {
         canvas.startLL()
         canvas.drawPath('ll')
-    }
-
-    const showLLPath = () => {
     }
 
     function addMouseDown(clickyGo){
@@ -436,6 +504,7 @@ const Map_ = () => {
         setStateColor(color)
     }
 
+
     return (
     <>
 
@@ -497,6 +566,19 @@ const Map_ = () => {
 
                         </input>
                     </div>
+
+                    <div className='map__id__div'>
+                        Map Id:
+                        <input
+                            className='map__id'
+                            value={mapId}
+                            name='mapId'
+                            ref={mapIdDiv}
+                            disabled
+                            >
+                        </input>
+                    </div>
+
                     <div className='map__ui'>
                         <div className=''>
                             <img
@@ -580,23 +662,40 @@ const Map_ = () => {
                         </div>
 
                         <div>
-                            <button onClick={drawGrid}>
-                                Draw Grid
-                            </button>
-
-                            <button onClick={removeGrid}>
-                                Remove Grid
-                            </button>
+                            <div className='map__icon__container' ref={mousDownClick}>
+                                <img className='map__icon' src={pencil} alt='pencil' onClick={toggleMouseDown}/>
+                            </div>
                         </div>
 
                         <div>
-                            <button onClick={clearTile} ref={clearB}>
-                                Clear Tile
-                            </button>
+                            <div className='map__icon__container'>
+                                <img className='map__icon' src={grid} alt='grid' onClick={drawGrid}/>
+                            </div>
 
-                            <button onClick={cleanMap}>
-                                Clean Map
-                            </button>
+                            <div className='map__icon__container'>
+                                <img className='map__icon'
+                                    src={grid} alt='grid' onClick={removeGrid}
+                                    style={{
+                                        /*  credits
+                                            https://www.domysee.com/blogposts/coloring-white-images-css-filter
+                                        */
+                                        // 'filter': `opacity(0.6) drop-shadow(0 0 0 rgb(255, 0, 0)`
+                                        'filter' : 'brightness(0.5) sepia(1) saturate(1000000%)'
+                                    }}
+                                    />
+                            </div>
+                        </div>
+
+                        <div>
+
+                            <div className='map__icon__container' ref={clearB}>
+                                <img className='map__icon' src={eraser} alt='eraser' onClick={toggleClearTile}/>
+                            </div>
+
+                            <div className='map__icon__container'>
+                                <img className='map__icon' src={square} alt='square' onClick={cleanMap}/>
+                            </div>
+
                         </div>
                         <div>
                             <input
@@ -605,70 +704,82 @@ const Map_ = () => {
                                 onChange={(e)=>showColor(e)}
                                 >
                             </input>
-                            {/* style={{ backgroundColor : color }} */}
-                            <button ref={squareB} onClick={toggleFillSquare}>
-                                Toggle Fill Square
-                            </button>
-                        </div>
-                        <div>
-                            <button onClick={startDfs}>
-                                DFS
-                            </button>
-                            <button onClick={startBfs}>
-                                BFS
-                            </button>
-                        </div>
+                            <div className='map__icon__container' ref={squareB} >
+                                <img
+                                    className='map__icon' src={fill} alt='fill'
+                                    onClick={toggleFillSquare}
+                                    // style={{
+                                    //     'filter': `opacity(0.5) drop-shadow(0 0 0 ${color}})`
+                                    // }}
+                                    />
+                            </div>
 
-
-                        <div>
-                            <button className="start" ref={startB} onClick={toggleStart}>
-                                Set Start
-                            </button>
-                            <button className="end" ref={endB} onClick={toggleEnd}>
-                                Set End
-                            </button>
-                        </div>
-                        <button className="activate" ref={nodeB} onClick={toggleNode}>
-                            Activate Node
-                        </button>
-
-                        <div>
-                            <button ref={mousDownClick} onClick={toggleMouseDown}>
-                                Turn on Draw
-                            </button>
                         </div>
 
                         <div>
-                            <button onClick={showLinkedList}>
-                                Show LL
-                            </button>
-                            <button onClick={traverseLL}>
-                                Travel LL
-                            </button>
+
+                            <div className='map__icon__container' ref={pathPopUpB}>
+                                <img className='map__icon' src={path} alt='path' onClick={togglePopUpPath}/>
+                            </div>
+
+                            <div className='popup__path hidden' ref={pathPopUp}>
+                                <button onClick={startDfs}>
+                                    DFS
+                                </button>
+                                <button onClick={startBfs}>
+                                    BFS
+                                </button>
+                                <button onClick={traverseLL}>
+                                    Shortest Path
+                                </button>
+                            </div>
+
                         </div>
 
-                        <button onClick={showLLPath}>
-                            LL Path
-                        </button>
+                        <div>
+                            <div className='map__icon__container' ref={startB}>
+                                <img className='map__icon' src={start} alt='start' onClick={toggleStart}/>
+                            </div>
+
+                            <div className='map__icon__container' ref={endB}>
+                                <img className='map__icon' src={stop} alt='stop' onClick={toggleEnd}/>
+                            </div>
+                        </div>
+
 
                         <div>
-                            <button onClick={onSubmit}>
+                            {/* <button onClick={onSubmit}>
                                 Save Map Data
-                            </button>
-                            <button onClick={loadMap}>
+                            </button> */}
+
+                            <div className='map__icon__container'>
+                                <img className='map__icon' src={save} alt='save' onClick={onSubmit}/>
+                            </div>
+
+                            {/* <button onClick={loadMap}>
                                 Load Map Data
-                            </button>
+                            </button> */}
                         </div>
 
-                        <input
-                            className='map__id'
-                            value={mapId}
-                            name='mapId'
-                            placeholder='map id'
-                            onChange={(e)=>setMapId(e.target.value)}
-                        >
-
-                        </input>
+                        <div>
+                            <div className='map__icon__container' ref={searchPopUpB}>
+                                <img className='map__icon' src={search} alt='search' onClick={togglePopUpSearch}/>
+                            </div>
+                            <div className='popup__search' ref={searchPopUp}>
+                                <input
+                                    className='map__id'
+                                    value={mapId}
+                                    name='mapId'
+                                    ref={mapIdDiv}
+                                    placeholder='map id'
+                                    onChange={(e)=>setMapId(e.target.value)}
+                                >
+                                </input>
+                                <div className='map__icon__container'>
+                                    <img className='map__icon' src={load} alt='load' onClick={loadMap}/>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     </>
                 }
@@ -696,6 +807,7 @@ const Map_ = () => {
                                 alt='profileImage'>
                             </img>
                         </div>
+
                         <div className='profile__details'>
                             <div>
                                 <label className='map__username'>
@@ -710,6 +822,7 @@ const Map_ = () => {
                                 </label>
                             </div>
                         </div>
+
                         <div className='dimension__names'>
                             <label>
                                 Row
@@ -771,23 +884,38 @@ const Map_ = () => {
                         </div>
 
                         <div>
-                            <button onClick={drawGrid}>
-                                Draw Grid
-                            </button>
-
-                            <button onClick={removeGrid}>
-                                Remove Grid
-                            </button>
+                            <div className='map__icon__container' ref={mousDownClick}>
+                                <img className='map__icon' src={pencil} alt='pencil' onClick={toggleMouseDown}/>
+                            </div>
                         </div>
 
                         <div>
-                            <button onClick={clearTile} ref={clearB}>
-                                Clear Tile
-                            </button>
+                            <div className='map__icon__container'>
+                                <img className='map__icon' src={grid} alt='grid' onClick={drawGrid}/>
+                            </div>
 
-                            <button onClick={cleanMap}>
-                                Clean Map
-                            </button>
+                            <div className='map__icon__container'>
+                                <img className='map__icon'
+                                    src={grid} alt='grid' onClick={removeGrid}
+                                    style={{
+                                        /*  credits
+                                            https://www.domysee.com/blogposts/coloring-white-images-css-filter
+                                        */
+                                        // 'filter': `opacity(0.6) drop-shadow(0 0 0 rgb(255, 0, 0)`
+                                        'filter' : 'brightness(0.5) sepia(1) saturate(1000000%)'
+                                    }}
+                                    />
+                            </div>
+                        </div>
+
+                        <div>
+                            <div className='map__icon__container' ref={clearB}>
+                                <img className='map__icon' src={eraser} alt='eraser' onClick={toggleClearTile}/>
+                            </div>
+
+                            <div className='map__icon__container'>
+                                <img className='map__icon' src={square} alt='square' onClick={cleanMap}/>
+                            </div>
                         </div>
 
                         <div>
@@ -797,86 +925,88 @@ const Map_ = () => {
                                 onChange={(e)=>showColor(e)}
                                 >
                             </input>
-                            <button
-                                ref={squareB} onClick={toggleFillSquare}>
-                                Toggle Fill Square
-                            </button>
+                            <div className='map__icon__container' ref={squareB} >
+                                <img className='map__icon' src={fill} alt='fill' onClick={toggleFillSquare}/>
+                            </div>
                         </div>
 
                         <div>
-                            <button onClick={startDfs}>
-                                DFS
-                            </button>
-                            <button onClick={startBfs}>
-                                BFS
-                            </button>
+                            <div className='map__icon__container' ref={pathPopUpB}>
+                                <img className='map__icon' src={path} alt='path' onClick={togglePopUpPath}/>
+                            </div>
+
+                            <div className='popup__path hidden' ref={pathPopUp}>
+                                <button onClick={startDfs}>
+                                    DFS
+                                </button>
+                                <button onClick={startBfs}>
+                                    BFS
+                                </button>
+                                <button onClick={traverseLL}>
+                                    Shortest Path
+                                </button>
+                            </div>
+
                         </div>
 
 
                         <div>
-                            <button className="start" ref={startB} onClick={toggleStart}>
-                                Set Start
-                            </button>
-                            <button className="end" ref={endB} onClick={toggleEnd}>
-                                Set End
-                            </button>
-                        </div>
-                        <button className="activate" ref={nodeB} onClick={toggleNode}>
-                            Activate Node
-                        </button>
+                            <div className='map__icon__container' ref={startB}>
+                                <img className='map__icon' src={start} alt='start' onClick={toggleStart}/>
+                            </div>
 
-                        <div>
-                            <button ref={mousDownClick} onClick={toggleMouseDown}>
-                                Turn on Draw
-                            </button>
+                            <div className='map__icon__container' ref={endB}>
+                                <img className='map__icon' src={stop} alt='stop' onClick={toggleEnd}/>
+                            </div>
                         </div>
 
                         <div>
-                            <button onClick={traverseLL}>
-                                Travel LL
-                            </button>
-                        </div>
-
-                        <div>
-                            <button
-                            className='delete__button'
-                            ref={deleteB} onClick={deleteMap} >
-                                Delete Map
-                            </button>
-                        </div>
-
-                        <div>
-                            <button onClick={editMap}>
+                            {/* <button onClick={editMap}>
                                 Edit Map Data
                             </button>
                             <button onClick={loadMap}>
                                 Load Map Data
-                            </button>
+                            </button> */}
+
+                            <div className='map__icon__container'>
+                                <img className='map__icon' src={edit} alt='edit' onClick={editMap}/>
+                            </div>
+
                         </div>
 
-                        <input
-                            className='map__id'
-                            value={mapId}
-                            name='mapId'
-                            placeholder='map id'
-                            onChange={(e)=>setMapId(e.target.value)}
-                        >
+                        <div>
+                            {/* <button
+                            className='delete__button'
+                            ref={deleteB} onClick={deleteMap} >
+                                Delete Map
+                            </button> */}
+                            <div className='map__icon__container'>
+                                <img className='map__icon' src={delete_icon} alt='delete_icon' onClick={deleteMap}/>
+                            </div>
+                        </div>
 
-                        </input>
+                            <div>
+                                <div className='map__icon__container' ref={searchPopUpB}>
+                                    <img className='map__icon' src={search} alt='search' onClick={togglePopUpSearch}/>
+                                </div>
+                                <div className='popup__search hidden' ref={searchPopUp}>
+                                    <input
+                                        className='map__id'
+                                        value={mapId}
+                                        name='mapId'
+                                        ref={mapIdDiv}
+                                        placeholder='map id'
+                                        onChange={(e)=>setMapId(e.target.value)}
+                                    >
+                                    </input>
+                                    <div className='map__icon__container'>
+                                        <img className='map__icon' src={load} alt='load' onClick={loadMap}/>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </>
                 }
-                {/* <div ref={popUpTile}>
-                    <div>
-
-                    </div>
-                    <div>
-
-                    </div>
-                    <div>
-
-                    </div>
-                </div> */}
             </div>
     </>
     )
