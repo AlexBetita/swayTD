@@ -113,6 +113,7 @@ export default function reducer(state = initialState, action){
         case ADD_MAP:
             newState = {...state}
             newState = {
+                ...state,
                 [action.payload.id] : action.payload
             }
             return newState

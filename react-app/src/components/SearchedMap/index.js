@@ -8,10 +8,9 @@ import React, {useRef, useEffect, useState} from 'react';
 import { useSelector, useDispatch } from "react-redux"
 import { useParams, useHistory, NavLink } from 'react-router-dom';
 
-import {addMapData, fetchMapData, editMapData, deleteMapData} from "../../store/map";
+import { fetchMapData } from "../../store/map";
 import Map from '../Map/map';
 
-import coin from '../img/coin.png';
 import arrow from '../img/arrow.png';
 import path from '../img/path.png';
 import load from '../img/load.png';
@@ -19,10 +18,6 @@ import search from '../img/search.png';
 
 
 import './SearchedMap.css';
-
-
-//moved color here to become big boy color
-let color = ''
 
 
 const SearchedMap = () => {
@@ -271,7 +266,7 @@ const SearchedMap = () => {
                                     BFS
                                 </button>
                                 <button onClick={traverseLL}>
-                                    Shortest Path
+                                    Linked List
                                 </button>
                             </div>
 

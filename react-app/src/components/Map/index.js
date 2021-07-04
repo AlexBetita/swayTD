@@ -198,11 +198,13 @@ const Map_ = () => {
 
             if(startB.current.classList.contains('active')){
                 canvas.drawStart(x, y)
+                setErrors([])
                 startB.current.classList.remove('active')
             }
 
             if(endB.current.classList.contains('active')){
                 canvas.drawEnd(x, y)
+                setErrors([])
                 endB.current.classList.remove('active')
             }
 
@@ -319,18 +321,34 @@ const Map_ = () => {
     }
 
     const startDfs = () =>{
-        canvas.startDFS()
-        // let type = 'dfs'
-        // canvas.drawPath(type)
-        canvas.drawPaths()
+        const dfs = canvas.startDFS()
+        if(dfs === undefined){
+            canvas.drawPath('dfs')
+        }
+        else if('status' in dfs){
+            setErrors([dfs['status']])
+        }
     }
 
     const startBfs = () => {
-        canvas.startBFS()
-        let type = 'bfs'
-        canvas.drawPath(type)
+        const bfs = canvas.startBFS()
+        if(bfs === undefined){
+            canvas.drawPath('bfs')
+        } else if('status' in bfs){
+            setErrors([bfs['status']])
+        }
     }
 
+    const traverseLL = () => {
+        const ll = canvas.startLL()
+        if(ll === undefined){
+            alert('Start and end nodes are not connected so no path found')
+        } else if('status' in ll){
+            setErrors([ll['status']])
+        } else {
+            canvas.drawPath('ll')
+        }
+    }
 
     const toggleStart = () => {
         if(startB.current.classList.contains('active')){
@@ -406,10 +424,6 @@ const Map_ = () => {
         }
     }
 
-    const traverseLL = () => {
-        canvas.startLL()
-        canvas.drawPath('ll')
-    }
 
 
     const cleanMap = () =>{
@@ -695,7 +709,7 @@ const Map_ = () => {
                                     BFS
                                 </button>
                                 <button onClick={traverseLL}>
-                                    Shortest Path
+                                    LinkedList
                                 </button>
                             </div>
 
@@ -920,7 +934,7 @@ const Map_ = () => {
                                     BFS
                                 </button>
                                 <button onClick={traverseLL}>
-                                    Shortest Path
+                                    LinkedList
                                 </button>
                             </div>
 

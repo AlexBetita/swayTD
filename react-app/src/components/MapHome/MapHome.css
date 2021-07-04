@@ -27,6 +27,7 @@
     width: 35%;
     min-width: 35%;
     height: 70%;
+    overflow: auto;
     animation-duration: 10s;
     animation-name: bordercolorchange;
     animation-iteration-count: infinite;

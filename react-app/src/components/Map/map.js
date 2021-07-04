@@ -41,8 +41,8 @@ export default class Map{
         this.matrix = Array.from(Array(row), () => new Array(column).fill(0))
 
         //start and end coordinates
-        this.start = [0,0]
-        this.end = [0,1]
+        this.start = null
+        this.end = null
 
 
         //linked list
@@ -167,8 +167,8 @@ export default class Map{
         this.setCanvasDimensions()
         this.matrix = Array.from(Array(this.row), () => new Array(this.column).fill(0))
         this.linkedlist = new LinkedList()
-        this.start = [0,0]
-        this.end = [0,1]
+        this.start = null
+        this.end = null
         this.pathBFS = []
         this.pathDFS = []
         this.pathLL = []
@@ -213,10 +213,11 @@ export default class Map{
     drawStart(x, y){
         let data = this.getTileNumber(x, y)
 
-        //These two if statements can cause bugs
-        if(this.matrix[this.start[1]][this.start[0]] instanceof Node){
+        if(this.start){
+            if(this.matrix[this.start[1]][this.start[0]] instanceof Node){
 
-            this.clearTile(this.start[0], this.start[1])
+                this.clearTile(this.start[0], this.start[1])
+            }
         }
 
         this.mapData = [data, data, true, false, x, y, this.tiles[1]]
@@ -232,17 +233,20 @@ export default class Map{
     drawEnd(x, y){
         let data = this.getTileNumber(x, y)
 
-        if(this.matrix[this.end[1]][this.end[0]] instanceof Node){
-            this.clearTile(this.end[0], this.end[1])
+        if(this.end){
+            if(this.matrix[this.end[1]][this.end[0]] instanceof Node){
+
+                this.clearTile(this.end[0], this.end[1])
+            }
         }
 
         this.mapData = [data, data, false, true, x, y, this.tiles[4]]
 
         this.context.fillStyle = this.tiles[4]
 
+        this.plotNode(x, y, 'end')
         this.end = [x, y]
         this.fillRect(x, y)
-        this.plotNode(x, y, 'end')
     }
 
     //draw path
@@ -456,6 +460,16 @@ export default class Map{
         const visited = {}
         let current = this.start
 
+        if(!this.start){
+            return {
+                'status' : 'Please input a start node'
+            }
+        } else if (!this.end){
+            return {
+                'status' : 'Please input a end node even though its not necessary for dfs'
+            }
+        }
+
         visited[`${current[0]}, ${current[1]}`] = true
         this.pathDFS.push(current)
         this.DFS(current, visited)
@@ -491,6 +505,16 @@ export default class Map{
 
         const visited = {}
         let current = this.start
+
+        if(!this.start){
+            return {
+                'status' : 'Please input a start node'
+            }
+        } else if (!this.end){
+            return {
+                'status' : 'Please input a end node even though its not necessary for bfs'
+            }
+        }
 
         visited[`${current[0]}, ${current[1]}`] = true
         this.pathBFS.push(current)
@@ -529,6 +553,16 @@ export default class Map{
         //reset path
         this.pathLL = []
 
+        if(!this.start){
+            return {
+                'status' : 'Please input a start node'
+            }
+        } else if (!this.end){
+            return {
+                'status' : 'Please input a end node'
+            }
+        }
+
         const visited = {}
         visited[`${this.start[0]}, ${this.start[1]}`] = true
         const result = this.LL(this.linkedlist.start, visited)
@@ -551,7 +585,7 @@ export default class Map{
             let y = Math.floor((result[i] - 1)/ this.column)
             convertResultToCoords.push([x, y])
         }
-        this.pathLL=convertResultToCoords
+        return this.pathLL=convertResultToCoords
     }
 
     LL(current, visited, result =[]){
