@@ -10,7 +10,9 @@ map_routes = Blueprint('maps', __name__)
 
 
 @map_routes.route('/', methods=['GET'])
+# @login_required
 def maps():
+    print('im here??')
     maps = db.session.query(Map).limit(10).all()
     return {'maps': {maps[i].id: maps[i].to_dict() for i in range(len(maps))}}
 
@@ -51,6 +53,8 @@ def create_map():
 @map_routes.route('/<value>', methods=['GET', 'DELETE', 'PUT'])
 @login_required
 def get_map(value):
+    print('im here?? or herrr??/')
+
     def isInt(value):
         try:
             int(value)

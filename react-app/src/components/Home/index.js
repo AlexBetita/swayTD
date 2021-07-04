@@ -2,7 +2,7 @@
     https://iconmonstr.com/license/
 */
 
-import React from 'react';
+import React, {useEffect} from 'react';
 import { useHistory} from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 import { NavLink } from 'react-router-dom';
@@ -14,6 +14,7 @@ import linkedin from '../img/linkedin.png';
 import email from '../img/email.png';
 import github from '../img/github.png';
 import logoutIcon from '../img/logout.png';
+import { setMapData } from "../../store/map";
 
 import './Home.css';
 
@@ -39,6 +40,13 @@ const Home = () => {
 
         history.push('/login')
     }
+
+    useEffect(()=>{
+        const setMap  =async () =>{
+            await dispatch(setMapData())
+        }
+        setMap()
+    })
 
     const editProfile = () =>{
         history.push('/edit_profile')

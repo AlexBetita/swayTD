@@ -12,8 +12,6 @@ import SearchedMap from "./components/SearchedMap";
 
 // import NavBar from "./components/NavBar";
 import { authenticate } from "./store/session";
-import { setMapData } from "./store/map";
-
 
 function App() {
   const dispatch = useDispatch();
@@ -21,10 +19,7 @@ function App() {
 
   useEffect(() => {
     (async() => {
-      const data = await dispatch(authenticate());
-      if(data){
-        await dispatch(setMapData())
-      }
+      await dispatch(authenticate());
       setLoaded(true);
     })();
   }, [dispatch]);
