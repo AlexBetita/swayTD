@@ -21,8 +21,10 @@ function App() {
 
   useEffect(() => {
     (async() => {
-      await dispatch(authenticate());
-      await dispatch(setMapData())
+      const data = await dispatch(authenticate());
+      if(data){
+        await dispatch(setMapData())
+      }
       setLoaded(true);
     })();
   }, [dispatch]);

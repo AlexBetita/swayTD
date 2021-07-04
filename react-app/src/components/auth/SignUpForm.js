@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { isEmail } from "../utils";
 import { signUp } from '../../store/session';
+import { setMapData } from "../../store/map";
 
 import linkedin from '../img/linkedin.png';
 import email_icon from '../img/email.png';
@@ -50,10 +51,13 @@ const SignUpForm = () => {
 
     if (!newErrors.length) {
       const data = await dispatch(signUp(username, email, password, profileImage));
-
+      if(!data.errors){
+        await dispatch(setMapData())
+      }
       if (data.errors) {
         setErrors(data.errors);
       } else {
+
         setTimeout(()=>{
           history.push('/')
         },0)

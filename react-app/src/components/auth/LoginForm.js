@@ -3,6 +3,7 @@ import { Redirect, useHistory} from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 import { login, demologin } from "../../store/session";
+import { setMapData } from "../../store/map";
 
 import linkedin from '../img/linkedin.png';
 import email_icon from '../img/email.png';
@@ -24,7 +25,9 @@ const LoginForm = () => {
   const onLogin = async (e) => {
     e.preventDefault();
     const data = await dispatch(login(email, password));
-
+    if(data){
+      await dispatch(setMapData())
+    }
     if (data.errors) {
       setErrors(data.errors);
     } else {
@@ -39,6 +42,7 @@ const LoginForm = () => {
   const demo = async (e) => {
     e.preventDefault()
     await dispatch(demologin())
+    await dispatch(setMapData())
     history.push('/profile')
   }
 
