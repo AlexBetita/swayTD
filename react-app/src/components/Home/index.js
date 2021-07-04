@@ -7,7 +7,6 @@ import { useHistory} from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 
-import MapHome from '../MapHome/index';
 import { logout } from '../../store/session';
 
 import coin from '../img/coin.png';
@@ -41,6 +40,10 @@ const Home = () => {
         history.push('/login')
     }
 
+    const editProfile = () =>{
+        history.push('/edit_profile')
+    }
+
     return (
         <>
         {user &&
@@ -52,7 +55,7 @@ const Home = () => {
                             src={user.profileImage} alt='profileImage'>
                         </img>
                         <div className='home__edit'>
-                            <button className='edit__profile__button'>
+                            <button className='edit__profile__button' onClick={editProfile}>
                                 Edit Profile
                             </button>
                             <img

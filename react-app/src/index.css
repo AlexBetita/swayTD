@@ -12,6 +12,7 @@ div{
 input{
     background-color: rgba(241, 241, 241, 0.575);
     border: 0.01rem solid rgba(204, 180, 180, 0.575);
+    text-align: center;
 }
 
 input:focus{

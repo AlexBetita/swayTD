@@ -39,7 +39,6 @@ const Map_ = () => {
 
     let isPathing = false;
     let { id } = useParams()
-    let click;
 
     const history = useHistory()
     const dispatch = useDispatch()
@@ -79,9 +78,12 @@ const Map_ = () => {
     const mapEditorBody = useRef();
 
     if(id && !currentMap['owner']){
-
+        //not a good fix
+        try{
             mapEditorBody.current.classList.add('invi')
-
+        } catch {
+            //
+        }
     }
 
     const searchPopUp = useRef();
@@ -90,7 +92,6 @@ const Map_ = () => {
     const [canvas, setCanvas] = useState()
     const [name, setName] = useState('')
     const [errors, setErrors] = useState([]);
-    const [load_map, setLoadMap] = useState()
     const [mapId, setMapId] = useState(()=>{
         if(id){
             return id
@@ -130,6 +131,16 @@ const Map_ = () => {
         document.addEventListener('mousedown', handlePathPopUpClick)
         document.addEventListener('mousedown', handleLoadPopUpClick)
         return ()=> {
+            canvasElement.current = false
+            startB.current = false
+            endB.current = false
+            squareB.current = false
+            mousDownClick.current = false
+            clearB.current = false
+            pathPopUp.current = false
+            pathPopUpB.current = false
+            mapEditorBody.current = false
+            mapIdDiv.current = false
             document.removeEventListener("mousedown", handlePathPopUpClick);
             document.removeEventListener("mousedown", handleLoadPopUpClick);
         };
@@ -173,6 +184,7 @@ const Map_ = () => {
             color = stateColor
         }
         if(!mousDownClick.current.classList.contains('active')){
+
             return
         }
         if(trigger === 'down'){
@@ -185,7 +197,7 @@ const Map_ = () => {
             canvasElement.current.removeEventListener('mousemove', (e)=> m(e))
         }
 
-        if (e.target.tagName === 'CANVAS' && isPathing && trigger === 'move'){
+        if (e.target.tagName === 'CANVAS' && isPathing && (trigger === 'move' || trigger === 'down')){
             const y = Math.ceil(e.offsetY / (canvas.height / canvas.row)) - 1
             const x = Math.ceil(e.offsetX / (canvas.width/ canvas.column)) - 1
 
@@ -256,7 +268,6 @@ const Map_ = () => {
             newErrors.push('Map Does not exist')
             setErrors(newErrors)
         } else {
-            setLoadMap(data['map_data'])
             setCanvas(Map.loadMap(data['map_data'], canvasElement))
             setMapId(data.id)
             setName(data.name)
@@ -308,7 +319,7 @@ const Map_ = () => {
 
     const startDfs = () =>{
         canvas.startDFS()
-        let type = 'dfs'
+        // let type = 'dfs'
         // canvas.drawPath(type)
         canvas.drawPaths()
     }
@@ -372,6 +383,7 @@ const Map_ = () => {
         if(pathPopUp.current.contains(e.target)){
             return
         }
+
         pathPopUp.current.classList.add('hidden')
         pathPopUpB.current.classList.remove('active')
     }
@@ -515,20 +527,38 @@ const Map_ = () => {
 
             {
                 id && !currentMap['owner'] &&
-                <div className='map__name'>
-                        Map Name:
-                        <input
-                            maxLength = "9"
-                            className='input__map__name'
-                            type='text'
-                            name='name'
-                            value={name}
-                            disabled
-                            onChange={(e)=>setName(e.target.value)}
-                        >
+                <>
+                    <div className='map__name'>
+                            Map Name:
+                            <input
+                                className='input__map__name'
+                                type='text'
+                                name='name'
+                                value={name}
+                                disabled
+                                onChange={(e)=>setName(e.target.value)}
+                            >
 
-                        </input>
+                            </input>
+
                     </div>
+
+                    <div className='not__user'>
+
+                        <div className='not__user__pop__up' ref={pathPopUp}>
+                            <button onClick={startDfs}>
+                                DFS
+                            </button>
+                            <button onClick={startBfs}>
+                                BFS
+                            </button>
+                            <button onClick={traverseLL}>
+                                Shortest Path
+                            </button>
+                        </div>
+
+                    </div>
+                </>
             }
 
             <div className='hide'ref={mapEditorBody}>
@@ -538,7 +568,7 @@ const Map_ = () => {
                     <div className='map__name'>
                         Map Name:
                         <input
-                            maxLength = "9"
+                            maxLength = "50"
                             className='input__map__name'
                             type='text'
                             name='name'
@@ -758,7 +788,7 @@ const Map_ = () => {
                         <div className='map__name'>
                         Map Name:
                             <input
-                                maxLength = "9"
+                                maxLength = "50"
                                 className='input__map__name'
                                 type='text'
                                 name='name'

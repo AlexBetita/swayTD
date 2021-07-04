@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Redirect, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
 
+import { isEmail } from "../utils";
 import { signUp } from '../../store/session';
 
 import linkedin from '../img/linkedin.png';
@@ -21,16 +22,44 @@ const SignUpForm = () => {
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
   const [profileImage, setProfileImage] = useState("");
-  const [errors, setErrors] = useState("");
+  const [errors, setErrors] = useState([]);
 
   const onSignUp = async (e) => {
     e.preventDefault();
-    if (password === repeatPassword) {
+    setErrors([])
+
+    let newErrors = []
+
+    if(!isEmail(email)){
+      newErrors.push('Please provide a valid email')
+    }
+
+    if(password !== repeatPassword){
+      newErrors.push("Passwords don't match")
+    }
+
+    if(username.length < 3){
+      newErrors.push("Username is too short. Minimum is 3")
+    } else if(username.length > 40){
+      newErrors.push("Username is too long. Maximum is 40")
+    }
+
+    if(!profileImage){
+      newErrors.push("Please provide a profile image")
+    }
+
+    if (!newErrors.length) {
       const data = await dispatch(signUp(username, email, password, profileImage));
 
       if (data.errors) {
         setErrors(data.errors);
+      } else {
+        setTimeout(()=>{
+          history.push('/')
+        },0)
       }
+    } else {
+      setErrors(newErrors)
     }
   };
 
@@ -63,16 +92,22 @@ const SignUpForm = () => {
     history.push('/login')
   }
 
-
   if (user) {
     return <Redirect to="/" />;
   }
 
   return (
     <div className='home__container'>
-
         <div className='main__home'>
+          <div className='title'>
+                SWAY TD
+          </div>
           <form className='signup__form' onSubmit={onSignUp}>
+              <div>
+                {errors.map((error, id) => (
+                  <div key={id}>{error}</div>
+                ))}
+              </div>
             <div>
               <label>User Name</label>
               <input

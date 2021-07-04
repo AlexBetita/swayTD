@@ -4,9 +4,10 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 
 import LoginForm from "./components/auth/LoginForm";
 import SignUpForm from "./components/auth/SignUpForm";
-import Map_ from './components/Map';
+import Map from './components/Map';
 import Home from './components/Home';
 import MapHome from './components/MapHome';
+import EditForm from './components/EditForm';
 
 // import NavBar from "./components/NavBar";
 import { authenticate } from "./store/session";
@@ -21,7 +22,7 @@ function App() {
       await dispatch(authenticate());
       setLoaded(true);
     })();
-  }, []);
+  }, [dispatch]);
 
   if (!loaded) {
     return null;
@@ -32,10 +33,10 @@ function App() {
       {/* <NavBar /> */}
       <Switch>
         <Route path="/maps/create" exact={true}>
-          <Map_ />
+          <Map />
         </Route>
         <Route path="/maps/create/:id">
-          <Map_ />
+          <Map />
         </Route>
         <Route path="/login" exact={true}>
           <LoginForm
@@ -45,12 +46,15 @@ function App() {
           <SignUpForm  />
         </Route>
         <Route path='/' exact={true}>
-           <Home />
+            <Home />
+        </Route>
+        <Route path='/edit_profile' exact={true}>
+            <EditForm />
         </Route>
         <Route path="/maps" exact={true}>
           <MapHome />
         </Route>
-        <Route pathe='/*'>
+        <Route path='/*'>
           <SignUpForm />
         </Route>
       </Switch>

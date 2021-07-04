@@ -1,3 +1,5 @@
+from dateutil import parser
+
 from flask import Blueprint, jsonify, request
 from flask_login import login_required
 
@@ -26,44 +28,52 @@ def user(id):
 @user_routes.route('/<int:id>', methods=['PUT'])
 @login_required
 def edit_user(id):
-
-    url = ''
     user = User.query.get(id)
 
-    if "image" not in request.files:
-        return {'errors': 'image required'}, 400
+    url = ''
+    username = request.form['username']
+    email = request.form['email']
+    date = parser.parse(request.form['updated_at'], fuzzy=True)
 
-    image = request.files["image"]
+    if request.method == 'PUT':
+        if "image" not in request.files:
+            profileImage = request.form['image']
 
-    if image:
-        if not allowed_file(image.filename):
-            return {"errors": "file type not permitted"}, 400
+            if(profileImage != user.profileImage):
+                return {'errors': ['Not a valid file']}, 400
 
-        image.filename = get_unique_filename(image.filename)
+            user.username = username
+            user.email = email
+            user.updated_at = date
+            db.session.commit()
+            return user.to_dict()
 
-        upload = upload_file_to_s3(image)
+        image = request.files["image"]
 
-        if "url" not in upload:
-            # if the dictionary doesn't have a url key
-            # it means that there was an error when we tried to upload
-            # so we send back that error message
-            return upload, 400
+        if image:
+            if not allowed_file(image.filename):
+                return {"errors": ["file type not permitted"]}, 400
 
-        url = upload["url"]
+            image.filename = get_unique_filename(image.filename)
 
-    else:
-        url = user.profileImage
+            upload = upload_file_to_s3(image)
 
-    form = EditForm()
-    form['csrf_token'].data = request.cookies['csrf_token']
-    if form.validate_on_submit():
-        data = form.data
-        username = data['username']
-        email = data['email']
+            if "url" not in upload:
+                # if the dictionary doesn't have a url key
+                # it means that there was an error when we tried to upload
+                # so we send back that error message
+                return upload, 400
+
+            url = upload["url"]
+
+        else:
+            url = user.profileImage
 
         user.username = username
         user.email = email
+        user.profileImage = url
+        user.updated_at = date
         db.session.commit()
         return user.to_dict()
 
-    return user.to_dict()
+    return {'errors': ['Broken']}, 400

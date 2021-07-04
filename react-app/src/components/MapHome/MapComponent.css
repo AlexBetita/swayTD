@@ -13,11 +13,15 @@
 }
 
 .map__component__image.active{
-    border: 2px solid  #ff9a8d;
+    border: 2px solid #ff9a8d;
     position: absolute;
     z-index: 100;
-    top: 15%;
+    /* top: 20%; */
+    left: 30vw;
     background-color: white;
+    width: 50vw;
+    height: 50vh;
+    top: 20vh;
 }
 
 .map__component__container{
@@ -41,8 +45,8 @@
 }
 
 .map__component__buttons img{
-    width: 30px;
-    max-height: 30px;
+    width: 20px;
+    max-height: 20px;
     cursor: pointer;
     margin-left: 15px;
     margin-top: 5px;

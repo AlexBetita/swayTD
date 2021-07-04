@@ -5,11 +5,12 @@ import { useDispatch } from 'react-redux';
 import { deleteMapData } from '../../store/map';
 
 import edit from '../img/edit.png';
-import delete_red from '../img/delete_red.png'
+import delete_red from '../img/delete_red.png';
+import view from '../img/view.png';
 
 import './MapComponent.css';
 
-const MapComponent = ({map}) => {
+const MapComponent = ({map, user}) => {
 
     const history = useHistory()
     const dispatch = useDispatch();
@@ -24,13 +25,13 @@ const MapComponent = ({map}) => {
     const enlargeImage = (e) =>{
         e.preventDefault();
         if(mapImageElement.current.classList.contains('active')){
-            mapImageElement.current.style.width = `60px`
-            mapImageElement.current.style.height = `60px`
+            // mapImageElement.current.style.width = `60px`
+            // mapImageElement.current.style.height = `60px`
             mapImageElement.current.classList.remove('active');
         } else {
             mapImageElement.current.classList.add('active');
-            mapImageElement.current.style.width = `${map.width}px`
-            mapImageElement.current.style.height = `${map.height}px`
+            // mapImageElement.current.style.width = `${map.width}px`
+            // mapImageElement.current.style.height = `${map.height}px`
         }
     }
 
@@ -51,6 +52,10 @@ const MapComponent = ({map}) => {
         }
     }
 
+    const viewMap = () =>{
+        history.push(`maps/create/${map.id}`)
+    }
+
     return (
         <>
         {map &&
@@ -66,6 +71,7 @@ const MapComponent = ({map}) => {
                         className='map__component__image'
                         src={map.map_image}
                         onClick={enlargeImage}
+                        alt='maps icon'
                         >
                     </img>
                 </div>
@@ -80,10 +86,17 @@ const MapComponent = ({map}) => {
                         {map.rows} x {map.columns}
                     </div>
                 </div>
-                <div className='map__component__buttons'>
-                    <img src={delete_red} alt='delete' onClick={deleteMap}/>
-                    <img src={edit} alt='edit' onClick={editMap}/>
-                </div>
+                {user === map.user_id &&
+                    <div className='map__component__buttons'>
+                        <img src={delete_red} alt='delete' onClick={deleteMap}/>
+                        <img src={edit} alt='edit' onClick={editMap}/>
+                    </div>
+                }
+                {user !== map.user_id &&
+                    <div className='map__component__buttons'>
+                        <img src={view} alt='view' onClick={viewMap}></img>
+                    </div>
+                }
             </div>
         }
         </>

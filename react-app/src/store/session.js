@@ -69,6 +69,9 @@ export const logout = () => async (dispatch) => {
         }
     });
     const data = await response.json();
+    if(data.errors){
+        return data
+    }
     dispatch(removeUser());
 };
 
@@ -111,17 +114,20 @@ export const edit = payload => async (dispatch) => {
 
     if (profileImage) formData.append("image", profileImage);
 
-    const response = await fetch(`/api/users/edit/${id}`, {
+    const response = await fetch(`/api/users/${id}`, {
         method: "PUT",
         headers: {
             "enctype": "multipart/form-data",
         },
         body: formData,
     });
+
     const data = await response.json();
+
     if (data.errors) {
         return data;
     }
+    
     dispatch(setUser(data))
 }
 
@@ -137,6 +143,7 @@ export default function reducer(state = initialState, action) {
             newState = {...state.user, ...state.maps}
             newState.maps = action.payload.maps
 
+            //save memory? i guess
             delete action.payload.maps
             newState.user = action.payload
             return newState

@@ -498,7 +498,7 @@ export default class Map{
     BFS(current, visited){
         const queue = [current];
 
-        while (queue.length != 0) {
+        while (queue.length !== 0) {
 
             current = queue[0]
             let neighbors;
@@ -603,6 +603,7 @@ export default class Map{
             } else {
                 newMap.drawTile(x, y, fill_color)
             }
+            return id
         })
         return newMap
     }

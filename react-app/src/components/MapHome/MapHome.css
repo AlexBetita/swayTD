@@ -31,3 +31,12 @@
     animation-name: bordercolorchange;
     animation-iteration-count: infinite;
 }
+
+.map__home__load{
+    width: 30px;
+    height: 30px;
+    position: relative;
+    top: 10px;
+    left: 10px;
+    cursor: pointer;
+}

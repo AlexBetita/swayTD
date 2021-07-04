@@ -58,7 +58,7 @@ const LoginForm = () => {
     if (user) {
       return <Redirect to="/profile" />;
     }
-  },[])
+  },[user])
 
   return (
     <>
@@ -73,8 +73,8 @@ const LoginForm = () => {
             </div>
             <form className='login__form' onSubmit={onLogin}>
               <div>
-                {errors.map((error) => (
-                  <div>{error}</div>
+                {errors.map((error, id) => (
+                  <div key={id}>{error}</div>
                 ))}
               </div>
               <div>
