@@ -63,7 +63,7 @@ export default class Map{
 
         //tiles
         this.tiles = [
-            `rgba(0, 0, 0, 0.5)`, // black
+            `rgba(0, 0, 0, 1)`, // black
             `rgba(15, 112, 15, 1)`, // dark green
             `rgba(255, 253, 23, 1)`, // bright yellow
             `rgba(28, 168, 218, 0.54)`, // sky blue
@@ -369,14 +369,16 @@ export default class Map{
 
     //remove fill rect
     clearTile(x, y){
+        let data = this.getTileNumber(x, y)
         this.context.fillStyle = this.tiles[8]
         this.context.fillRect(x * this.tileWidth, y * this.tileHeight, this.tileWidth, this.tileHeight)
 
         this.context.strokeStyle = "rgba(255, 255, 255, 1)";
-        this.context.lineWidth   = 5;
+        this.context.lineWidth  = 2;
         this.context.strokeRect(x * this.tileWidth, y * this.tileHeight, this.tileWidth, this.tileHeight);
 
         this.matrix[y][x] = 0
+        this.mapData = [data, data, false, true, x, y, this.tiles[8]]
     }
 
     //get exact number of tile in grid
