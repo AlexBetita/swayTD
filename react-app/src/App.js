@@ -8,6 +8,7 @@ import Map from './components/Map';
 import Home from './components/Home';
 import MapHome from './components/MapHome';
 import EditForm from './components/EditForm';
+import SearchedMap from "./components/SearchedMap";
 
 // import NavBar from "./components/NavBar";
 import { authenticate } from "./store/session";
@@ -54,9 +55,13 @@ function App() {
         <Route path="/maps" exact={true}>
           <MapHome />
         </Route>
+        <Route path="/maps/:id">
+          <SearchedMap />
+        </Route>
         <Route path='/*'>
           <SignUpForm />
         </Route>
+
       </Switch>
     </BrowserRouter>
   );

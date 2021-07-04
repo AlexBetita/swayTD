@@ -36,6 +36,8 @@ class Map(db.Model):
             'columns': self.columns,
             'height': self.height,
             'width': self.width,
+            'username': self.user.username,
+            'profileImage': self.user.profileImage,
             }
 
 # Credits

@@ -15,9 +15,9 @@ const MapHome = () => {
     const dispatch = useDispatch();
 
     const user = useSelector((state)=>{
-        return {
-            ...state.session.user
-        }})
+        return state.session.user
+        })
+
     const maps = useSelector((state)=>{
         return {
             ...state.session.maps

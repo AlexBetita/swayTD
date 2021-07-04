@@ -77,20 +77,6 @@ const Map_ = () => {
     const mapIdDiv = useRef();
     const mapEditorBody = useRef();
 
-    if(id && !currentMap['owner']){
-        //not a good fix
-        /*
-            im catching this because im rendering the element to be hidden if
-            a player is looking at a map the player doesn't own making it
-            impossible for them to edit
-        */
-        try{
-            mapEditorBody.current.classList.add('invi')
-        } catch {
-            //
-        }
-    }
-
     const searchPopUp = useRef();
     const searchPopUpB = useRef();
 
@@ -120,14 +106,18 @@ const Map_ = () => {
 
     useEffect(() =>{
         if(currentMap){
-            let c = Map.loadMap(currentMap.map_data, canvasElement)
-            setCanvas(c)
-            setName(currentMap['name'])
-            setRow(currentMap['rows'])
-            setColumn(currentMap['columns'])
-            setWidth(currentMap['width'])
-            setHeight(currentMap['height'])
-            setMapId(currentMap['id'])
+            if(!currentMap['owner']){
+                history.push(`/maps/${id}`)
+            } else {
+                let c = Map.loadMap(currentMap.map_data, canvasElement)
+                setCanvas(c)
+                setName(currentMap['name'])
+                setRow(currentMap['rows'])
+                setColumn(currentMap['columns'])
+                setWidth(currentMap['width'])
+                setHeight(currentMap['height'])
+                setMapId(currentMap['id'])
+            }
         } else {
             let c = new Map(width, height, canvasElement, row, column)
             setCanvas(c)
@@ -276,9 +266,15 @@ const Map_ = () => {
             setCanvas(Map.loadMap(data['map_data'], canvasElement))
             setMapId(data.id)
             setName(data.name)
-            setTimeout(()=>{
-                history.push(`/maps/create/${data.id}`)
-            }, 0)
+            if(data.user_id !== user.id){
+                setTimeout(()=>{
+                    history.push(`/maps/${data.id}`)
+                }, 0)
+            } else {
+                setTimeout(()=>{
+                    history.push(`/maps/create/${data.id}`)
+                }, 0)
+            }
         }
     }
 
@@ -529,42 +525,6 @@ const Map_ = () => {
                 <canvas ref={canvasElement}>
 
                 </canvas>
-
-            {
-                id && !currentMap['owner'] &&
-                <>
-                    <div className='map__name'>
-                            Map Name:
-                            <input
-                                className='input__map__name'
-                                type='text'
-                                name='name'
-                                value={name}
-                                disabled
-                                onChange={(e)=>setName(e.target.value)}
-                            >
-
-                            </input>
-
-                    </div>
-
-                    <div className='not__user'>
-
-                        <div className='not__user__pop__up' ref={pathPopUp}>
-                            <button onClick={startDfs}>
-                                DFS
-                            </button>
-                            <button onClick={startBfs}>
-                                BFS
-                            </button>
-                            <button onClick={traverseLL}>
-                                Shortest Path
-                            </button>
-                        </div>
-
-                    </div>
-                </>
-            }
 
             <div className='hide'ref={mapEditorBody}>
 

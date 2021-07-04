@@ -326,21 +326,3 @@ canvas{
     color: rgb(77, 6, 71);
 }
 
-.not__user{
-    position: absolute;
-    bottom: 15%;
-    left: 50%;
-    animation-duration: 10s;
-    animation-name: bordercolorchange;
-    animation-iteration-count: infinite;
-}
-
-.not__user__pop__up{
-    position: absolute;
-    left: -90px;
-    display: flex;
-    justify-content: center;
-    align-content: center;
-    align-items: center;
-    top: -35px;
-}
