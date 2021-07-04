@@ -31,6 +31,11 @@ def edit_user(id):
     user = User.query.get(id)
 
     url = ''
+    password = ''
+    try:
+        password = request.form['password']
+    except KeyError:
+        password = ''
     username = request.form['username']
     email = request.form['email']
     date = parser.parse(request.form['updated_at'], fuzzy=True)
@@ -45,6 +50,8 @@ def edit_user(id):
             user.username = username
             user.email = email
             user.updated_at = date
+            if password:
+                user.password = password
             db.session.commit()
             return user.to_dict()
 
@@ -73,6 +80,8 @@ def edit_user(id):
         user.email = email
         user.profileImage = url
         user.updated_at = date
+        if password:
+            user.password = password
         db.session.commit()
         return user.to_dict()
 

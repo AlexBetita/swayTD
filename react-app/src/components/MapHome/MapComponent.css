@@ -41,7 +41,8 @@
     -webkit-transform: scaleX(-1);
     -ms-transform: scaleX(-1);
     position: absolute;
-    left: 5%;
+    left: 6%;
+    top: 14%;
 }
 
 .map__component__buttons img{

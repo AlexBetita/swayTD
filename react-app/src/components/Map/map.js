@@ -187,6 +187,7 @@ export default class Map{
         let data = this.getTileNumber(x, y)
 
         //HAD TO PUT IN TRY CATCH CAUSE MY INITIAL SOLUTION WAS NOT WORKING ON BIG BOY ROWS AND GRID
+        //When Y is bigger than column and you go out of bounds an error happens
         try{
             if(!(this.matrix[y][x] instanceof Node)){
 

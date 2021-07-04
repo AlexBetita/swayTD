@@ -75,8 +75,8 @@ const EditForm = () => {
         }
 
         if(checkPassword){
-            if(password.length < 5){
-                newErrors.push('Password too short. Minimum is 5')
+            if(password.length < 3){
+                newErrors.push('Password too short. Minimum is 3')
             }
             if(password !== repeatPassword){
                 newErrors.push("Passwords don't match")
@@ -84,7 +84,13 @@ const EditForm = () => {
         }
 
         if(!newErrors.length){
-            const data = await dispatch(edit({id, username, email, profileImage}))
+            let data;
+            if(checkPassword){
+                data = await dispatch(edit({id, username, email, profileImage, password}))
+            } else {
+                data = await dispatch(edit({id, username, email, profileImage}))
+            }
+
             try{
                 if(data.errors){
                     setErrors(data.errors)

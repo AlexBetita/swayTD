@@ -103,7 +103,7 @@ export const signUp = (username, email, password, profileImage) => async (dispat
 }
 
 export const edit = payload => async (dispatch) => {
-    const {id, username, email, profileImage} = payload
+    const {id, username, email, profileImage, password} = payload
 
     const date = new Date()
 
@@ -112,6 +112,7 @@ export const edit = payload => async (dispatch) => {
     formData.append("email", email);
     formData.append("updated_at", date)
 
+    if (password) formData.append("password", password);
     if (profileImage) formData.append("image", profileImage);
 
     const response = await fetch(`/api/users/${id}`, {
@@ -127,7 +128,7 @@ export const edit = payload => async (dispatch) => {
     if (data.errors) {
         return data;
     }
-    
+
     dispatch(setUser(data))
 }
 

@@ -79,6 +79,11 @@ const Map_ = () => {
 
     if(id && !currentMap['owner']){
         //not a good fix
+        /*
+            im catching this because im rendering the element to be hidden if
+            a player is looking at a map the player doesn't own making it
+            impossible for them to edit
+        */
         try{
             mapEditorBody.current.classList.add('invi')
         } catch {
