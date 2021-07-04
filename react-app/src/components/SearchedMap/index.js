@@ -64,12 +64,12 @@ const SearchedMap = () => {
     const [width, setWidth] = useState(700)
     const [height, setHeight] = useState(700)
     const [searchValue, setSearchValue] = useState(id)
-    const [dfsColor, setDFSColor] = useState('');
-    const [dfsSpeed, setDFSSpeed] = useState('');
-    const [bfsColor, setBFSColor] = useState('');
-    const [bfsSpeed, setBFSSpeed] = useState('');
-    const [llSpeed, setLLSpeed] = useState('');
-    const [llColor, setLLColor] = useState('');
+    const [dfsColor, setDFSColor] = useState('#000000');
+    const [dfsSpeed, setDFSSpeed] = useState(0);
+    const [bfsColor, setBFSColor] = useState('#000000');
+    const [bfsSpeed, setBFSSpeed] = useState(0);
+    const [llSpeed, setLLSpeed] = useState(0);
+    const [llColor, setLLColor] = useState('#000000');
 
     useEffect(() =>{
         if(currentMap){
@@ -154,7 +154,7 @@ const SearchedMap = () => {
             canvas.drawPath('ll', llSpeed, llColor)
         }
     }
-    
+
     const togglePopUpPath = (e) =>{
         if(pathPopUpB.current.classList.contains('active')){
             pathPopUpB.current.classList.remove('active')

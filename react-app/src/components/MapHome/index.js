@@ -1,8 +1,9 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { useSelector, useDispatch } from "react-redux"
 import { NavLink, useHistory } from 'react-router-dom';
 
 import  { fetchMapData } from "../../store/map";
+import { setMapData } from "../../store/map";
 
 import MapComponent from './MapComponent.js';
 
@@ -36,6 +37,15 @@ const MapHome = () => {
     if(!user){
         history.push('/login')
     }
+
+     useEffect(()=>{
+        if(Object.keys(otherMaps).length === 0){
+            const setMap = async () =>{
+                await dispatch(setMapData())
+            }
+            setMap()
+        }
+    },[dispatch])
 
     const onSearch = async () =>{
         let newErrors = []

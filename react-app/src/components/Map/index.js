@@ -96,12 +96,12 @@ const Map_ = () => {
     const [height, setHeight] = useState(700)
     const [stateColor, setStateColor] = useState(color)
     const [searchValue, setSearchValue] = useState('')
-    const [dfsColor, setDFSColor] = useState('');
-    const [dfsSpeed, setDFSSpeed] = useState('');
-    const [bfsColor, setBFSColor] = useState('');
-    const [bfsSpeed, setBFSSpeed] = useState('');
-    const [llSpeed, setLLSpeed] = useState('');
-    const [llColor, setLLColor] = useState('');
+    const [dfsColor, setDFSColor] = useState('#000000');
+    const [dfsSpeed, setDFSSpeed] = useState(0);
+    const [bfsColor, setBFSColor] = useState('#000000');
+    const [bfsSpeed, setBFSSpeed] = useState(0);
+    const [llSpeed, setLLSpeed] = useState(0);
+    const [llColor, setLLColor] = useState('#000000');
 
     const m = (e) => {
         // setTimeout(()=>{

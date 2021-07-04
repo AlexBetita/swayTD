@@ -1,4 +1,4 @@
-import React, {useRef, useState, useEffect} from 'react';
+import React, {useRef, useState} from 'react';
 import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
 
@@ -19,8 +19,6 @@ const MapComponent = ({map, user}) => {
 
     const [errors, setErrors] = useState([]);
 
-    useEffect(()=>{
-    },[dispatch])
 
     const enlargeImage = (e) =>{
         e.preventDefault();
