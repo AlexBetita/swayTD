@@ -217,16 +217,18 @@ export default class Map{
             if(this.matrix[this.start[1]][this.start[0]] instanceof Node){
 
                 this.clearTile(this.start[0], this.start[1])
+                this.mapData = [this.getTileNumber(this.start[0], this.start[1]), this.getTileNumber(this.start[0], this.start[1]),
+                               false, false, this.start[0], this.start[1], this.tiles[8]]
             }
         }
 
-        this.mapData = [data, data, true, false, x, y, this.tiles[1]]
 
         this.context.fillStyle = this.tiles[1]
 
         this.plotNode(x, y, 'start')
         this.start = [x, y]
         this.fillRect(x, y)
+        this.mapData = [data, data, true, false, x, y, this.tiles[1]]
     }
 
     //draw end
@@ -237,48 +239,84 @@ export default class Map{
             if(this.matrix[this.end[1]][this.end[0]] instanceof Node){
 
                 this.clearTile(this.end[0], this.end[1])
+                this.mapData = [this.getTileNumber(this.end[0], this.end[1]), this.getTileNumber(this.end[0], this.end[1]),
+                               false, false, this.end[0], this.end[1], this.tiles[8]]
             }
         }
 
-        this.mapData = [data, data, false, true, x, y, this.tiles[4]]
 
         this.context.fillStyle = this.tiles[4]
 
         this.plotNode(x, y, 'end')
         this.end = [x, y]
         this.fillRect(x, y)
+        this.mapData = [data, data, false, true, x, y, this.tiles[4]]
     }
 
     //draw path
-    drawPath(type){
+    drawPath(type = null, speed = null, color = null){
+
         if(type === 'dfs'){
             let pathDFS = this.pathDFS.slice(1, this.pathDFS.length - 1)
+            if(!color){
+                color = this.tiles[3]
+            }
 
-            for (let i = 0; i < pathDFS.length; i++){
-                this.context.fillStyle = this.tiles[3]
-                this.fillRect(pathDFS[i][0], pathDFS[i][1])
+            if(speed){
+                for (let i = 0; i < pathDFS.length; i++){
+                    this.context.fillStyle = color
+                    setTimeout(()=>{
+                        this.fillRect(pathDFS[i][0], pathDFS[i][1])
+                    }, i * speed)
+                }
+            } else {
+                for (let i = 0; i < pathDFS.length; i++){
+                    this.context.fillStyle = color
+                    this.fillRect(pathDFS[i][0], pathDFS[i][1])
+                }
             }
         } else if(type === 'bfs'){
             let pathBFS = this.pathBFS.slice(1, this.pathBFS.length - 1)
-
-            for (let i = 0; i < pathBFS.length; i++){
-                this.context.fillStyle = this.tiles[2]
-                this.fillRect(pathBFS[i][0], pathBFS[i][1])
+            if(!color){
+                color = this.tiles[2]
             }
+
+            if(speed){
+                for (let i = 0; i < pathBFS.length; i++){
+                    this.context.fillStyle = color
+                    setTimeout(()=>{
+                        this.fillRect(pathBFS[i][0], pathBFS[i][1])
+                    }, i * speed)
+                }
+
+            } else {
+                for (let i = 0; i < pathBFS.length; i++){
+                    this.context.fillStyle = color
+                    this.fillRect(pathBFS[i][0], pathBFS[i][1])
+                }
+            }
+
         } else if(type === 'll'){
+
             let pathLL = this.pathLL.slice(0, this.pathLL.length - 2)
-
-            // for (let i = 0; i < pathLL.length; i++){
-            //     this.context.fillStyle = this.tiles[6]
-            //     setTimeout(()=>{
-            //         this.fillRect(pathLL[i][0], pathLL[i][1])
-            //     }, i * 200)
-            // }
-
-            for (let i = 0; i < pathLL.length; i++){
-                this.context.fillStyle = this.tiles[6]
-                this.fillRect(pathLL[i][0], pathLL[i][1])
+            if(!color){
+                color = this.tiles[6]
             }
+
+            if(speed){
+                for (let i = 0; i < pathLL.length; i++){
+                    this.context.fillStyle = color
+                    setTimeout(()=>{
+                        this.fillRect(pathLL[i][0], pathLL[i][1])
+                    }, i * speed)
+                }
+            } else {
+                for (let i = 0; i < pathLL.length; i++){
+                    this.context.fillStyle = color
+                    this.fillRect(pathLL[i][0], pathLL[i][1])
+                }
+            }
+
         }
     }
 

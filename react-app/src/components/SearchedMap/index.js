@@ -64,6 +64,12 @@ const SearchedMap = () => {
     const [width, setWidth] = useState(700)
     const [height, setHeight] = useState(700)
     const [searchValue, setSearchValue] = useState(id)
+    const [dfsColor, setDFSColor] = useState('');
+    const [dfsSpeed, setDFSSpeed] = useState('');
+    const [bfsColor, setBFSColor] = useState('');
+    const [bfsSpeed, setBFSSpeed] = useState('');
+    const [llSpeed, setLLSpeed] = useState('');
+    const [llColor, setLLColor] = useState('');
 
     useEffect(() =>{
         if(currentMap){
@@ -262,13 +268,52 @@ const SearchedMap = () => {
                                 <button onClick={startDfs}>
                                     DFS
                                 </button>
+                                DFS Speed: {dfsSpeed}
+                                <input
+                                    type="range" min="0" max="100" value={dfsSpeed}
+                                    onChange={(e)=> setDFSSpeed(e.target.value)}
+                                >
+                                </input>
+                                <input
+                                    className='color__picker'
+                                    type='color'
+                                    onChange={(e)=>setDFSColor(e.target.value)}
+                                    >
+                                </input>
+
                                 <button onClick={startBfs}>
                                     BFS
                                 </button>
+                                BFS Speed: {bfsSpeed}
+                                <input
+                                    type="range" min="0" max="100" value={bfsSpeed}
+                                    onChange={(e)=> setBFSSpeed(e.target.value)}
+                                >
+                                </input>
+                                <input
+                                    className='color__picker'
+                                    type='color'
+                                    onChange={(e)=>setBFSColor(e.target.value)}
+                                    >
+                                </input>
                                 <button onClick={traverseLL}>
-                                    Linked List
+                                    LinkedList
                                 </button>
+                                LL Speed: {llSpeed}
+                                <input
+                                    type="range" min="0" max="100" value={llSpeed}
+                                    onChange={(e)=> setLLSpeed(e.target.value)}
+                                >
+                                </input>
+                                <input
+                                    className='color__picker'
+                                    type='color'
+                                    onChange={(e)=>setLLColor(e.target.value)}
+                                    >
+                                </input>
                             </div>
+
+
 
                         </div>
 

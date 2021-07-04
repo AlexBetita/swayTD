@@ -96,6 +96,12 @@ const Map_ = () => {
     const [height, setHeight] = useState(700)
     const [stateColor, setStateColor] = useState(color)
     const [searchValue, setSearchValue] = useState('')
+    const [dfsColor, setDFSColor] = useState('');
+    const [dfsSpeed, setDFSSpeed] = useState('');
+    const [bfsColor, setBFSColor] = useState('');
+    const [bfsSpeed, setBFSSpeed] = useState('');
+    const [llSpeed, setLLSpeed] = useState('');
+    const [llColor, setLLColor] = useState('');
 
     const m = (e) => {
         // setTimeout(()=>{
@@ -323,7 +329,7 @@ const Map_ = () => {
     const startDfs = () =>{
         const dfs = canvas.startDFS()
         if(dfs === undefined){
-            canvas.drawPath('dfs')
+            canvas.drawPath('dfs', dfsSpeed, dfsColor)
         }
         else if('status' in dfs){
             setErrors([dfs['status']])
@@ -333,7 +339,7 @@ const Map_ = () => {
     const startBfs = () => {
         const bfs = canvas.startBFS()
         if(bfs === undefined){
-            canvas.drawPath('bfs')
+            canvas.drawPath('bfs', bfsSpeed, bfsColor)
         } else if('status' in bfs){
             setErrors([bfs['status']])
         }
@@ -346,7 +352,7 @@ const Map_ = () => {
         } else if('status' in ll){
             setErrors([ll['status']])
         } else {
-            canvas.drawPath('ll')
+            canvas.drawPath('ll', llSpeed, llColor)
         }
     }
 
@@ -492,7 +498,6 @@ const Map_ = () => {
         color = e.target.value
         setStateColor(color)
     }
-
 
     return (
     <>
@@ -705,12 +710,49 @@ const Map_ = () => {
                                 <button onClick={startDfs}>
                                     DFS
                                 </button>
+                                DFS Speed: {dfsSpeed}
+                                <input
+                                    type="range" min="0" max="100" value={dfsSpeed}
+                                    onChange={(e)=> setDFSSpeed(e.target.value)}
+                                >
+                                </input>
+                                <input
+                                    className='color__picker'
+                                    type='color'
+                                    onChange={(e)=>setDFSColor(e.target.value)}
+                                    >
+                                </input>
+
                                 <button onClick={startBfs}>
                                     BFS
                                 </button>
+                                BFS Speed: {bfsSpeed}
+                                <input
+                                    type="range" min="0" max="100" value={bfsSpeed}
+                                    onChange={(e)=> setBFSSpeed(e.target.value)}
+                                >
+                                </input>
+                                <input
+                                    className='color__picker'
+                                    type='color'
+                                    onChange={(e)=>setBFSColor(e.target.value)}
+                                    >
+                                </input>
                                 <button onClick={traverseLL}>
                                     LinkedList
                                 </button>
+                                LL Speed: {llSpeed}
+                                <input
+                                    type="range" min="0" max="100" value={llSpeed}
+                                    onChange={(e)=> setLLSpeed(e.target.value)}
+                                >
+                                </input>
+                                <input
+                                    className='color__picker'
+                                    type='color'
+                                    onChange={(e)=>setLLColor(e.target.value)}
+                                    >
+                                </input>
                             </div>
 
                         </div>
@@ -930,12 +972,49 @@ const Map_ = () => {
                                 <button onClick={startDfs}>
                                     DFS
                                 </button>
+                                DFS Speed: {dfsSpeed}
+                                <input
+                                    type="range" min="0" max="100" value={dfsSpeed}
+                                    onChange={(e)=> setDFSSpeed(e.target.value)}
+                                >
+                                </input>
+                                <input
+                                    className='color__picker'
+                                    type='color'
+                                    onChange={(e)=>setDFSColor(e.target.value)}
+                                    >
+                                </input>
+
                                 <button onClick={startBfs}>
                                     BFS
                                 </button>
+                                BFS Speed: {bfsSpeed}
+                                <input
+                                    type="range" min="0" max="100" value={bfsSpeed}
+                                    onChange={(e)=> setBFSSpeed(e.target.value)}
+                                >
+                                </input>
+                                <input
+                                    className='color__picker'
+                                    type='color'
+                                    onChange={(e)=>setBFSColor(e.target.value)}
+                                    >
+                                </input>
                                 <button onClick={traverseLL}>
                                     LinkedList
                                 </button>
+                                LL Speed: {llSpeed}
+                                <input
+                                    type="range" min="0" max="100" value={llSpeed}
+                                    onChange={(e)=> setLLSpeed(e.target.value)}
+                                >
+                                </input>
+                                <input
+                                    className='color__picker'
+                                    type='color'
+                                    onChange={(e)=>setLLColor(e.target.value)}
+                                    >
+                                </input>
                             </div>
 
                         </div>
