@@ -39,3 +39,20 @@
     position: absolute;
     left: 5%;
 }
+
+.map__component__buttons img{
+    width: 30px;
+    max-height: 30px;
+    cursor: pointer;
+    margin-left: 15px;
+    margin-top: 5px;
+}
+
+.map__component__buttons img:hover{
+    filter: opacity(0.5) drop-shadow(0 0 0 rgb(156, 7, 255));
+}
+
+.map__component__buttons{
+    display: flex;
+    flex-direction: column;
+}

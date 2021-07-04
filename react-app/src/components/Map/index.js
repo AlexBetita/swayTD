@@ -26,16 +26,10 @@ import edit from '../img/edit.png';
 import delete_icon from '../img/delete_red.png';
 import load from '../img/load.png';
 import search from '../img/search.png';
+import grid_red from '../img/grid_red.png'
 
 import './Map.css';
 
-function addClick(clicky){
-    window.addEventListener('click', clicky)
-}
-
-function removeClick(clicky){
-    window.removeEventListener('click', clicky)
-}
 
 //moved color here to become big boy color
 let color = ''
@@ -45,6 +39,7 @@ const Map_ = () => {
 
     let isPathing = false;
     let { id } = useParams()
+    let click;
 
     const history = useHistory()
     const dispatch = useDispatch()
@@ -53,37 +48,24 @@ const Map_ = () => {
     const currentMap = useSelector(state=> {
         if(id){
             if(state.session.maps[id]){
-                console.log('hmm')
                 return {'owner' : true,
                         ...state.session.maps[id]
                         }
             } else if(state.map[id]) {
-                console.log('hmm')
                 return {'owner' : false,
                         ...state.map[id]
                        }
             } else {
-                // let keys = Object.keys(state.session.maps)
-                // for (let i = 0; i < keys.length; i++){
-                //     if(state.session.maps[keys[i]].name === id){
-                //         console.log('woah')
-                //         return {'owner' : true,
-                //             ...state.session.maps[id]
-                //         }
-                //     } else {
-                //         history.push('/maps/create')
-                //     }
-                // }
                 history.push('/maps/create')
             }
         }
         return false
     })
 
+
     if(!user){
         history.push('/login')
     }
-
 
     const canvasElement = useRef();
     const startB = useRef();
@@ -94,6 +76,13 @@ const Map_ = () => {
     const pathPopUp = useRef();
     const pathPopUpB = useRef();
     const mapIdDiv = useRef();
+    const mapEditorBody = useRef();
+
+    if(id && !currentMap['owner']){
+
+            mapEditorBody.current.classList.add('invi')
+
+    }
 
     const searchPopUp = useRef();
     const searchPopUpB = useRef();
@@ -114,6 +103,7 @@ const Map_ = () => {
     const [width, setWidth] = useState(700)
     const [height, setHeight] = useState(700)
     const [stateColor, setStateColor] = useState(color)
+    const [searchValue, setSearchValue] = useState('')
 
     const m = (e) => {
         // setTimeout(()=>{
@@ -124,7 +114,7 @@ const Map_ = () => {
 
     useEffect(() =>{
         if(currentMap){
-            let c = Map.loadMap(JSON.parse(currentMap.map_data), canvasElement)
+            let c = Map.loadMap(currentMap.map_data, canvasElement)
             setCanvas(c)
             setName(currentMap['name'])
             setRow(currentMap['rows'])
@@ -137,19 +127,13 @@ const Map_ = () => {
             setCanvas(c)
             c.setCanvasDimensions()
         }
-
-        if(id){
-            mapIdDiv.current.setAttribute("disabled", true);
-        }
-
         document.addEventListener('mousedown', handlePathPopUpClick)
         document.addEventListener('mousedown', handleLoadPopUpClick)
         return ()=> {
             document.removeEventListener("mousedown", handlePathPopUpClick);
             document.removeEventListener("mousedown", handleLoadPopUpClick);
         };
-
-    },[])
+    },[dispatch])
 
     const onSubmit = async (e) =>{
         e.preventDefault();
@@ -183,92 +167,7 @@ const Map_ = () => {
         map_data = null
     }
 
-
-    const loadMap = async (e) =>{
-        e.preventDefault();
-        let newErrors = []
-        setErrors([])
-
-        const id = mapId
-        if(!mapId){
-            newErrors.push(['Please provide an id'])
-            setErrors(newErrors)
-            return
-        }
-        const data = await dispatch(fetchMapData({id}))
-        if(data.errors){
-            setErrors(data.errors)
-        }
-        if(!data){
-            newErrors.push('Map Does not exist')
-            setErrors(newErrors)
-        } else {
-            setLoadMap(data['map_data'])
-            setCanvas(Map.loadMap(data['map_data'], canvasElement))
-            setMapId(data.id)
-            setName(data.name)
-            history.push(`/maps/create/${data.id}`)
-        }
-    }
-
-    const editMap = async (e) =>{
-        e.preventDefault();
-        setErrors([])
-        const user_id = user.id;
-
-        let map_data = canvas.mapData
-        let map_image = canvas.getDataUrl()
-
-        const data = await dispatch(editMapData({name, map_data, user_id, id, map_image}))
-        map_data = null
-        if(data.errors){
-            setErrors(data.errors);
-        } else{
-            alert("Succesfully Edited");
-        }
-    }
-
-    const deleteMap = async (e) =>{
-        e.preventDefault();
-        setErrors([])
-        const data = await dispatch(deleteMapData({id}))
-        if(data.errors){
-            setErrors(data.errors);
-        } else{
-            alert('Succesfully deleted')
-            setTimeout(()=>{
-                history.push('/maps/create')
-            },0)
-        }
-    }
-
-    const clicky = (e) =>{
-        if(!color){
-            color = stateColor
-        }
-        if (e.target.tagName === 'CANVAS'){
-            const y = Math.ceil(e.offsetY / (canvas.height / canvas.row)) - 1
-            const x = Math.ceil(e.offsetX / (canvas.width/ canvas.column)) - 1
-            if(startB.current.classList.contains('active')){
-                canvas.drawStart(x, y)
-                startB.current.classList.remove('active')
-            }
-
-            if(endB.current.classList.contains('active')){
-                canvas.drawEnd(x, y)
-                endB.current.classList.remove('active')
-            }
-
-            if(squareB.current.classList.contains('active')){
-                canvas.drawTile(x, y, color)
-            }
-
-            if(clearB.current.classList.contains('active')){
-                canvas.clearTile(x, y)
-            }
-        }
-    }
-
+    //clickers
     const clickyGo = (trigger, e) =>{
         if(!color){
             color = stateColor
@@ -310,6 +209,97 @@ const Map_ = () => {
 
         }
     }
+
+    function addMouseDown(clickyGo){
+
+        canvasElement.current.addEventListener('mousedown', (e) =>{
+            clickyGo('down', e)
+        })
+
+        canvasElement.current.addEventListener('mouseup', (e)=>{
+            clickyGo('up', e)
+        })
+
+        canvasElement.current.addEventListener('mouseout', (e)=>{
+            clickyGo('out', e)
+        })
+    }
+
+    const toggleMouseDown = () => {
+
+        if(mousDownClick.current.classList.contains('active')){
+            canvasElement.current.removeEventListener('mousemove', (e)=> m(e))
+            isPathing = false
+            mousDownClick.current.classList.remove('active')
+        } else{
+            addMouseDown(clickyGo)
+            mousDownClick.current.classList.add('active')
+        }
+    }
+
+    const loadMap = async (e) =>{
+        e.preventDefault();
+        let newErrors = []
+        setErrors([])
+
+        const value = searchValue
+        if(!searchValue){
+            newErrors.push(['Please provide an value'])
+            setErrors(newErrors)
+            return
+        }
+        const data = await dispatch(fetchMapData({value}))
+
+        if(data.errors){
+            setErrors(data.errors)
+        } else if (!data){
+            newErrors.push('Map Does not exist')
+            setErrors(newErrors)
+        } else {
+            setLoadMap(data['map_data'])
+            setCanvas(Map.loadMap(data['map_data'], canvasElement))
+            setMapId(data.id)
+            setName(data.name)
+            setTimeout(()=>{
+                history.push(`/maps/create/${data.id}`)
+            }, 0)
+        }
+    }
+
+    const editMap = async (e) =>{
+        e.preventDefault();
+        setErrors([])
+        const user_id = user.id;
+
+        let map_data = canvas.mapData
+        let map_image = canvas.getDataUrl()
+
+        const data = await dispatch(editMapData({name, map_data, user_id, id, map_image}))
+        map_data = null
+        if(data.errors){
+            setErrors(data.errors);
+        } else{
+            alert("Succesfully Edited");
+        }
+    }
+
+    const deleteMap = async (e) =>{
+        e.preventDefault();
+        setErrors([])
+        const data = await dispatch(deleteMapData({id}))
+        if(data.errors){
+            setErrors(data.errors);
+        } else{
+            setName('')
+            setRow(50)
+            setColumn(50)
+            setWidth(700)
+            setHeight(700)
+            alert('Succesfully deleted')
+            history.push('/maps/create')
+        }
+    }
+
 
     const drawGrid = () => {
         canvas.cleanMap()
@@ -408,34 +398,6 @@ const Map_ = () => {
         canvas.drawPath('ll')
     }
 
-    function addMouseDown(clickyGo){
-
-        canvasElement.current.addEventListener('mousedown', (e) =>{
-            clickyGo('down', e)
-        })
-
-        canvasElement.current.addEventListener('mouseup', (e)=>{
-            clickyGo('up', e)
-        })
-
-        canvasElement.current.addEventListener('mouseout', (e)=>{
-            clickyGo('out', e)
-        })
-    }
-
-    const toggleMouseDown = () => {
-
-        if(mousDownClick.current.classList.contains('active')){
-            canvasElement.current.removeEventListener('mousemove', (e)=> m(e))
-            isPathing = false
-            removeClick(clicky)
-            mousDownClick.current.classList.remove('active')
-        } else{
-            addMouseDown(clickyGo)
-            addClick(clicky)
-            mousDownClick.current.classList.add('active')
-        }
-    }
 
     const cleanMap = () =>{
         canvas.cleanMap()
@@ -551,6 +513,26 @@ const Map_ = () => {
 
                 </canvas>
 
+            {
+                id && !currentMap['owner'] &&
+                <div className='map__name'>
+                        Map Name:
+                        <input
+                            maxLength = "9"
+                            className='input__map__name'
+                            type='text'
+                            name='name'
+                            value={name}
+                            disabled
+                            onChange={(e)=>setName(e.target.value)}
+                        >
+
+                        </input>
+                    </div>
+            }
+
+            <div className='hide'ref={mapEditorBody}>
+
             {!id  &&
                 <>
                     <div className='map__name'>
@@ -564,18 +546,6 @@ const Map_ = () => {
                             onChange={(e)=>setName(e.target.value)}
                         >
 
-                        </input>
-                    </div>
-
-                    <div className='map__id__div'>
-                        Map Id:
-                        <input
-                            className='map__id'
-                            value={mapId}
-                            name='mapId'
-                            ref={mapIdDiv}
-                            disabled
-                            >
                         </input>
                     </div>
 
@@ -674,14 +644,14 @@ const Map_ = () => {
 
                             <div className='map__icon__container'>
                                 <img className='map__icon'
-                                    src={grid} alt='grid' onClick={removeGrid}
-                                    style={{
-                                        /*  credits
-                                            https://www.domysee.com/blogposts/coloring-white-images-css-filter
-                                        */
-                                        // 'filter': `opacity(0.6) drop-shadow(0 0 0 rgb(255, 0, 0)`
-                                        'filter' : 'brightness(0.5) sepia(1) saturate(1000000%)'
-                                    }}
+                                    src={grid_red} alt='grid' onClick={removeGrid}
+                                    // style={{
+                                    //     /*  credits
+                                    //         https://www.domysee.com/blogposts/coloring-white-images-css-filter
+                                    //     */
+                                    //     // 'filter': `opacity(0.6) drop-shadow(0 0 0 rgb(255, 0, 0)`
+                                    //     'filter' : 'brightness(0.5) sepia(1) saturate(1000000%)'
+                                    // }}
                                     />
                             </div>
                         </div>
@@ -765,14 +735,13 @@ const Map_ = () => {
                             <div className='map__icon__container' ref={searchPopUpB}>
                                 <img className='map__icon' src={search} alt='search' onClick={togglePopUpSearch}/>
                             </div>
-                            <div className='popup__search' ref={searchPopUp}>
+                            <div className='popup__search hidden' ref={searchPopUp}>
                                 <input
-                                    className='map__id'
-                                    value={mapId}
-                                    name='mapId'
-                                    ref={mapIdDiv}
-                                    placeholder='map id'
-                                    onChange={(e)=>setMapId(e.target.value)}
+                                    className='search__bar'
+                                    value={searchValue}
+                                    name='searchBar'
+                                    placeholder='search'
+                                    onChange={(e)=>setSearchValue(e.target.value)}
                                 >
                                 </input>
                                 <div className='map__icon__container'>
@@ -784,21 +753,34 @@ const Map_ = () => {
                     </>
                 }
 
-                {id && currentMap['owner'] &&
+                {id &&
                     <>
                         <div className='map__name'>
                         Map Name:
-                        <input
-                            maxLength = "9"
-                            className='input__map__name'
-                            type='text'
-                            name='name'
-                            value={name}
-                            onChange={(e)=>setName(e.target.value)}
-                        >
+                            <input
+                                maxLength = "9"
+                                className='input__map__name'
+                                type='text'
+                                name='name'
+                                value={name}
+                                onChange={(e)=>setName(e.target.value)}
+                            >
 
-                        </input>
+                            </input>
                         </div>
+
+                        <div className='map__id__div'>
+                            Map Id:
+                            <input
+                                className='map__id'
+                                value={mapId}
+                                name='mapId'
+                                ref={mapIdDiv}
+                                disabled
+                                >
+                            </input>
+                        </div>
+
                         <div className='map__ui'>
                         <div className=''>
                             <img
@@ -896,14 +878,14 @@ const Map_ = () => {
 
                             <div className='map__icon__container'>
                                 <img className='map__icon'
-                                    src={grid} alt='grid' onClick={removeGrid}
-                                    style={{
-                                        /*  credits
-                                            https://www.domysee.com/blogposts/coloring-white-images-css-filter
-                                        */
-                                        // 'filter': `opacity(0.6) drop-shadow(0 0 0 rgb(255, 0, 0)`
-                                        'filter' : 'brightness(0.5) sepia(1) saturate(1000000%)'
-                                    }}
+                                    src={grid_red} alt='grid' onClick={removeGrid}
+                                    // style={{
+                                    //     /*  credits
+                                    //         https://www.domysee.com/blogposts/coloring-white-images-css-filter
+                                    //     */
+                                    //     // 'filter': `opacity(0.6) drop-shadow(0 0 0 rgb(255, 0, 0)`
+                                    //     'filter' : 'brightness(0.5) sepia(1) saturate(1000000%)'
+                                    // }}
                                     />
                             </div>
                         </div>
@@ -991,12 +973,11 @@ const Map_ = () => {
                                 </div>
                                 <div className='popup__search hidden' ref={searchPopUp}>
                                     <input
-                                        className='map__id'
-                                        value={mapId}
-                                        name='mapId'
-                                        ref={mapIdDiv}
-                                        placeholder='map id'
-                                        onChange={(e)=>setMapId(e.target.value)}
+                                        className='search__bar'
+                                        value={searchValue}
+                                        name='searchBar'
+                                        placeholder='search'
+                                        onChange={(e)=>setSearchValue(e.target.value)}
                                     >
                                     </input>
                                     <div className='map__icon__container'>
@@ -1004,9 +985,11 @@ const Map_ = () => {
                                     </div>
                                 </div>
                             </div>
+
                         </div>
                     </>
                 }
+                </div>
             </div>
     </>
     )

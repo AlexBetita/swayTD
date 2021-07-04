@@ -579,16 +579,14 @@ export default class Map{
 
     static loadMap(mapData, canvas, grid = false){
 
-        const {width, height, rows, columns, plotted_tiles} = mapData
+        const {width, height, rows, columns, plotted_tiles} = JSON.parse(mapData)
 
         const newMap = new Map(width, height, canvas, rows, columns)
 
         newMap.setCanvasDimensions()
-
         if(grid){
             newMap.drawGrid()
         }
-
         Object.keys(plotted_tiles).map((key, id)=>{
             let x = plotted_tiles[key].x
             let y = plotted_tiles[key].y
@@ -606,7 +604,6 @@ export default class Map{
                 newMap.drawTile(x, y, fill_color)
             }
         })
-
         return newMap
     }
 }

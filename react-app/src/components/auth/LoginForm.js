@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Redirect, useHistory} from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -27,6 +27,8 @@ const LoginForm = () => {
 
     if (data.errors) {
       setErrors(data.errors);
+    } else {
+      history.push('/profile')
     }
   };
 
@@ -37,6 +39,7 @@ const LoginForm = () => {
   const demo = async (e) => {
     e.preventDefault()
     await dispatch(demologin())
+    history.push('/profile')
   }
 
   const updateEmail = (e) => {
@@ -51,9 +54,11 @@ const LoginForm = () => {
     history.push('/signup')
   }
 
-  if (user) {
-    return <Redirect to="/profile" />;
-  }
+  useEffect(()=>{
+    if (user) {
+      return <Redirect to="/profile" />;
+    }
+  },[])
 
   return (
     <>

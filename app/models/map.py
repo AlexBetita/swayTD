@@ -28,10 +28,14 @@ class Map(db.Model):
     def to_dict(self):
         return {
             'name': self.name,
-            'map_data': json.loads(self.map_data),
+            'map_data': self.map_data,
             'user_id': self.user_id,
             'id': self.id,
-            'map_image': self.map_image
+            'map_image': self.map_image,
+            'rows': self.rows,
+            'columns': self.columns,
+            'height': self.height,
+            'width': self.width,
             }
 
 # Credits

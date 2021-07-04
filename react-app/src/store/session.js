@@ -145,8 +145,7 @@ export default function reducer(state = initialState, action) {
             newState.maps = {
                 ...state.maps,
                 [action.payload.id] : {
-                    ...action.payload.map_data,
-                    ['map_image']: action.payload.map_image
+                    ...action.payload,
                 }
             }
             return newState

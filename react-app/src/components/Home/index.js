@@ -37,6 +37,7 @@ const Home = () => {
         setTimeout(async ()=>{
             await dispatch(logout())
         }, 0)
+
         history.push('/login')
     }
 

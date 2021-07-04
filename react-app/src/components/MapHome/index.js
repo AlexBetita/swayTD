@@ -1,6 +1,7 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { useSelector } from "react-redux"
 import { NavLink, useHistory } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 
 import User from '../User';
 
@@ -11,13 +12,27 @@ import './MapHome.css';
 
 const MapHome = () => {
     const history = useHistory();
+    const dispatch = useDispatch();
 
-    const user = useSelector((state)=>state.session.user)
-    const maps = useSelector((state)=>state.session.maps)
+    const user = useSelector((state)=>{
+        return {
+            ...state.session.user
+        }})
+    const maps = useSelector((state)=>{
+        return {
+            ...state.session.maps
+        }
+    })
+
+    const [currentMaps, setCurrentMaps] = useState(maps)
 
     if(!user){
         history.push('/login')
     }
+
+    useEffect(()=>{
+        setCurrentMaps(maps)
+    },[dispatch])
 
     return (
         <>
@@ -31,7 +46,7 @@ const MapHome = () => {
                         <img src={arrow} alt='arrow'>
                         </img>
                     </NavLink>
-                    {Object.keys(maps).map((map, key)=>{
+                    {Object.keys(currentMaps).map((map, key)=>{
                         return <MapComponent key={key} map={maps[map]}/>
                     })}
 

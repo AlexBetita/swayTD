@@ -95,8 +95,8 @@ export const deleteMapData = (payload) => async (dispatch) => {
 }
 
 export const fetchMapData = (payload) => async (dispatch) => {
-    const {id} = payload;
-    const response = await fetch(`/api/maps/${id}`)
+    const {value} = payload;
+    const response = await fetch(`/api/maps/${value}`)
     const data = await response.json();
     if (data.errors){
         return data;

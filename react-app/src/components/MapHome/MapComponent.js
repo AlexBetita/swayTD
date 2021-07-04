@@ -1,10 +1,25 @@
-import React, {useRef} from 'react';
+import React, {useRef, useState, useEffect} from 'react';
+import { useHistory } from 'react-router';
+import { useDispatch } from 'react-redux';
+
+import { deleteMapData } from '../../store/map';
+
+import edit from '../img/edit.png';
+import delete_red from '../img/delete_red.png'
 
 import './MapComponent.css';
 
 const MapComponent = ({map}) => {
 
+    const history = useHistory()
+    const dispatch = useDispatch();
+
     const mapImageElement = useRef();
+
+    const [errors, setErrors] = useState([]);
+
+    useEffect(()=>{
+    },[dispatch])
 
     const enlargeImage = (e) =>{
         e.preventDefault();
@@ -19,9 +34,32 @@ const MapComponent = ({map}) => {
         }
     }
 
+    const editMap = () =>{
+        setTimeout(()=>{
+            history.push(`/maps/create/${map.id}`)
+        }, 0)
+    }
+
+    const deleteMap = async () =>{
+        setErrors([])
+        let id = map.id
+        const data = await dispatch(deleteMapData({id}))
+        if(data.errors){
+            setErrors(data.errors);
+        } else {
+            alert('Successfully Deleted')
+        }
+    }
+
     return (
         <>
+        {map &&
             <div className='map__component__container'>
+                <ul>
+                    {errors.map((error, idx) => (
+                        <li key={idx} className="error_map">{error}</li>
+                    ))}
+                </ul>
                 <div>
                     <img
                         ref={mapImageElement}
@@ -42,8 +80,12 @@ const MapComponent = ({map}) => {
                         {map.rows} x {map.columns}
                     </div>
                 </div>
-
+                <div className='map__component__buttons'>
+                    <img src={delete_red} alt='delete' onClick={deleteMap}/>
+                    <img src={edit} alt='edit' onClick={editMap}/>
+                </div>
             </div>
+        }
         </>
     )
 }

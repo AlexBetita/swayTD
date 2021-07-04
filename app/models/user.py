@@ -3,7 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 import datetime
 from sqlalchemy import event
-
+import json
 
 user_scores = db.Table(
   'user_scores',

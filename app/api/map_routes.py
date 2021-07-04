@@ -49,15 +49,28 @@ def create_map():
     return map_.to_dict()
 
 
-@map_routes.route('/<int:id>', methods=['GET', 'DELETE', 'PUT'])
+@map_routes.route('/<value>', methods=['GET', 'DELETE', 'PUT'])
 @login_required
-def get_map(id):
-    map_ = Map.query.get(id)
+def get_map(value):
+    def isInt(value):
+        try:
+            int(value)
+            value = int(value)
+            return True
+        except ValueError:
+            value = value
+            return False
+
+    if isInt(value):
+        map_ = Map.query.filter(Map.id == value).first()
+    else:
+        map_ = Map.query.filter(Map.name == value).first()
+
     if map_:
         if request.method == 'DELETE':
             db.session.delete(map_)
             db.session.commit()
-            id_ = id
+            id_ = map_.id
             if id_:
                 return {"id": id_}
             return {'errors': ['map does not exist']}, 400
