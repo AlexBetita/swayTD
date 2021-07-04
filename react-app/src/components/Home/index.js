@@ -42,7 +42,7 @@ const Home = () => {
     }
 
     useEffect(()=>{
-        const setMap  =async () =>{
+        const setMap = async () =>{
             await dispatch(setMapData())
         }
         setMap()

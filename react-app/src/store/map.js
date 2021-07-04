@@ -28,7 +28,11 @@ const setMap = (payload) => ({
 
 //thunks
 export const setMapData = () => async (dispatch) =>{
-    const response = await fetch("/api/maps")
+    const response = await fetch("/api/maps/", {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
     const data = await response.json();
     if(data.errors){
         return data

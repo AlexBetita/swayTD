@@ -9,10 +9,9 @@ from app.models import Map, db
 map_routes = Blueprint('maps', __name__)
 
 
-@map_routes.route('/', methods=['GET'])
-# @login_required
+@map_routes.route('/')
+@login_required
 def maps():
-    print('im here??')
     maps = db.session.query(Map).limit(10).all()
     return {'maps': {maps[i].id: maps[i].to_dict() for i in range(len(maps))}}
 
