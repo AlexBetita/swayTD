@@ -16,6 +16,7 @@ const removeUser = () => ({
 
 // thunks
 export const authenticate = () => async (dispatch) => {
+    console.log('I TRIGGER')
     const response = await fetch('/api/auth/', {
         headers: {
             'Content-Type': 'application/json'

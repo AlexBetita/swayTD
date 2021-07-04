@@ -10,10 +10,9 @@ map_routes = Blueprint('maps', __name__)
 
 
 @map_routes.route('/', methods=['GET'])
-@login_required
 def maps():
-    maps = Map.query.all()
-    return {'maps': [map_.to_dict() for map_ in maps]}
+    maps = db.session.query(Map).limit(10).all()
+    return {'maps': {maps[i].id: maps[i].to_dict() for i in range(len(maps))}}
 
 
 @map_routes.route('/player')

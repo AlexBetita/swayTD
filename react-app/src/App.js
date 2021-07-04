@@ -12,6 +12,7 @@ import SearchedMap from "./components/SearchedMap";
 
 // import NavBar from "./components/NavBar";
 import { authenticate } from "./store/session";
+import { setMapData } from "./store/map";
 
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
   useEffect(() => {
     (async() => {
       await dispatch(authenticate());
+      await dispatch(setMapData())
       setLoaded(true);
     })();
   }, [dispatch]);

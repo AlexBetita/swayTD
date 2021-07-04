@@ -3,6 +3,7 @@ import { REMOVE_USER } from "./session";
 export const ADD_MAP = "maps/ADD_MAP"
 const GET_MAP = "maps/GET_MAP"
 export const DELETE_MAP = "maps/DELETE_MAP"
+const SET_MAP = "maps/SET_MAP"
 
 //action creators
 const addMap = (payload) => ({
@@ -20,7 +21,22 @@ const deleteMap = (payload) => ({
     payload
 })
 
+const setMap = (payload) => ({
+    type: SET_MAP,
+    payload
+})
+
 //thunks
+export const setMapData = () => async (dispatch) =>{
+    const response = await fetch("/api/maps")
+    const data = await response.json();
+    if(data.errors){
+        return data
+    }
+    dispatch(setMap(data))
+    return data
+}
+
 export const addMapData = (payload) => async (dispatch) => {
     const {name, map_data, user_id, map_image} = payload
     const {width, height, rows, columns} = map_data
@@ -110,6 +126,12 @@ const initialState = {}
 export default function reducer(state = initialState, action){
     let newState;
     switch (action.type){
+        case SET_MAP:
+            newState = {
+                ...state,
+                ...action.payload.maps
+            }
+            return newState
         case ADD_MAP:
             newState = {...state}
             newState = {

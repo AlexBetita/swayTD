@@ -126,18 +126,35 @@ const SearchedMap = () => {
     }
 
     const startDfs = () =>{
-        canvas.startDFS()
-        // let type = 'dfs'
-        // canvas.drawPath(type)
-        canvas.drawPaths()
+        const dfs = canvas.startDFS()
+        if(dfs === undefined){
+            canvas.drawPath('dfs', dfsSpeed, dfsColor)
+        }
+        else if('status' in dfs){
+            setErrors(["Looks like this user didn't place an end or start node"])
+        }
     }
 
     const startBfs = () => {
-        canvas.startBFS()
-        let type = 'bfs'
-        canvas.drawPath(type)
+        const bfs = canvas.startBFS()
+        if(bfs === undefined){
+            canvas.drawPath('bfs', bfsSpeed, bfsColor)
+        } else if('status' in bfs){
+            setErrors(["Looks like this user didn't place an end or start node"])
+        }
     }
 
+    const traverseLL = () => {
+        const ll = canvas.startLL()
+        if(ll === undefined){
+            alert('Start and end nodes are not connected so no path found')
+        } else if('status' in ll){
+            setErrors(["Looks like this user didn't place an end or start node"])
+        } else {
+            canvas.drawPath('ll', llSpeed, llColor)
+        }
+    }
+    
     const togglePopUpPath = (e) =>{
         if(pathPopUpB.current.classList.contains('active')){
             pathPopUpB.current.classList.remove('active')
@@ -173,11 +190,6 @@ const SearchedMap = () => {
         }
         searchPopUp.current.classList.add('hidden')
         searchPopUpB.current.classList.remove('active')
-    }
-
-    const traverseLL = () => {
-        canvas.startLL()
-        canvas.drawPath('ll')
     }
 
     return (
@@ -269,15 +281,18 @@ const SearchedMap = () => {
                                     DFS
                                 </button>
                                 DFS Speed: {dfsSpeed}
+
                                 <input
                                     type="range" min="0" max="100" value={dfsSpeed}
                                     onChange={(e)=> setDFSSpeed(e.target.value)}
                                 >
                                 </input>
+
                                 <input
                                     className='color__picker'
                                     type='color'
                                     onChange={(e)=>setDFSColor(e.target.value)}
+                                    value={dfsColor}
                                     >
                                 </input>
 
@@ -294,6 +309,7 @@ const SearchedMap = () => {
                                     className='color__picker'
                                     type='color'
                                     onChange={(e)=>setBFSColor(e.target.value)}
+                                    value={bfsColor}
                                     >
                                 </input>
                                 <button onClick={traverseLL}>
@@ -309,6 +325,7 @@ const SearchedMap = () => {
                                     className='color__picker'
                                     type='color'
                                     onChange={(e)=>setLLColor(e.target.value)}
+                                    value={llColor}
                                     >
                                 </input>
                             </div>
