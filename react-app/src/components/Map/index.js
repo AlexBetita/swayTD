@@ -143,6 +143,8 @@ const Map_ = () => {
             pathPopUpB.current = false
             mapEditorBody.current = false
             mapIdDiv.current = false
+            setCanvas()
+            setErrors()
             document.removeEventListener("mousedown", handlePathPopUpClick);
             document.removeEventListener("mousedown", handleLoadPopUpClick);
         };
@@ -158,6 +160,7 @@ const Map_ = () => {
         }
 
         const user_id = user.id;
+
         let map_data = canvas.mapData
         let map_image = canvas.getDataUrl()
 
@@ -202,6 +205,7 @@ const Map_ = () => {
         if (e.target.tagName === 'CANVAS' && isPathing && (trigger === 'move' || trigger === 'down')){
             const y = Math.ceil(e.offsetY / (canvas.height / canvas.row)) - 1
             const x = Math.ceil(e.offsetX / (canvas.width/ canvas.column)) - 1
+
             if(startB.current.classList.contains('active')){
                 canvas.drawStart(x, y)
                 setErrors([])
@@ -326,6 +330,7 @@ const Map_ = () => {
     }
 
     const startDfs = () =>{
+        setErrors([])
         const dfs = canvas.startDFS()
         if(dfs === undefined){
             canvas.drawPath('dfs', dfsSpeed, dfsColor)
@@ -336,6 +341,7 @@ const Map_ = () => {
     }
 
     const startBfs = () => {
+        setErrors([])
         const bfs = canvas.startBFS()
         if(bfs === undefined){
             canvas.drawPath('bfs', bfsSpeed, bfsColor)
@@ -345,6 +351,7 @@ const Map_ = () => {
     }
 
     const traverseLL = () => {
+        setErrors([])
         const ll = canvas.startLL()
         if(ll === undefined){
             alert('Start and end nodes are not connected so no path found')
@@ -499,15 +506,27 @@ const Map_ = () => {
     }
 
     const undoDFS = () => {
-        canvas.undoPath(true, false, false, dfsSpeed)
+        setErrors([])
+        const res = canvas.undoPath(true, false, false, dfsSpeed)
+        if(!res['status']){
+            setErrors([res['message']])
+        }
     }
 
     const undoBFS = () => {
-
+        setErrors([])
+        const res = canvas.undoPath(false, true, false, bfsSpeed)
+        if(!res['status']){
+            setErrors([res['message']])
+        }
     }
 
     const undoLL = () => {
-
+        setErrors([])
+        const res = canvas.undoPath(false, false, true, llSpeed)
+        if(!res['status']){
+            setErrors([res['message']])
+        }
     }
 
     return (

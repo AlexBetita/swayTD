@@ -153,24 +153,28 @@ export default class Map{
     set _row(row){
         this.row = row
         this.tileHeight = this.height / row
+        this._mapData['row'] = row
     }
 
     //set column
     set _column(column){
         this.column = column
         this.tileWidth = this.width / column
+        this._mapData['column'] = column
     }
 
     //set height
     set _height(height){
         this.height = height
         this.tileHeight = height / this.row
+        this._mapData['height'] = height
     }
 
     //set width
     set _width(width){
         this.width = width
         this.tileWidth = width / this.column
+        this._mapData['width'] = width
     }
 
 
@@ -185,7 +189,8 @@ export default class Map{
     getRGBAOfPixel(x, y){
         const pixel = this.getImageData(x,y)
         const data = pixel.data
-        return `rgb(${data[0]},${data[1]},${data[2]},${data[3]/255})`;
+
+        return `rgb(${data[4]},${data[5]},${data[6]},${data[7]})`;
     }
 
     //resets map
@@ -251,8 +256,8 @@ export default class Map{
 
         this.context.fillStyle = this.tiles[1]
 
-        this.plotNode(x, y, 'start')
         this.start = [x, y]
+        this.plotNode(x, y, 'start')
         this.fillRect(x, y)
         this.mapData = [data, data, true, false, x, y, this.tiles[1]]
     }
@@ -297,23 +302,41 @@ export default class Map{
                 this.undo['bfs'] = true;
             }
             //check if path was previously traveled
+            if(this.undo['paths'][`${x},${y}`]['bfs']){
+                return
+            }
             this.undo['paths'][`${x},${y}`]['bfs'] = true;
+
             if(!this.undo['paths'][`${x},${y}`]['dfs'] && !this.undo['paths'][`${x},${y}`]['ll']){
                 this.undo['paths'][`${x},${y}`]['fill_color'] = this.getRGBAOfPixel(x, y)
             }
+
         } else if (dfs){
             if(!this.undo['dfs']){
                 this.undo['dfs'] = true;
             }
+
+            if(this.undo['paths'][`${x},${y}`]['dfs']){
+                return
+            }
+
             this.undo['paths'][`${x},${y}`]['dfs'] = true;
+
             if(!this.undo['paths'][`${x},${y}`]['bfs'] && !this.undo['paths'][`${x},${y}`]['ll']){
                 this.undo['paths'][`${x},${y}`]['fill_color'] = this.getRGBAOfPixel(x, y)
             }
+
         } else if (ll){
             if(!this.undo['ll']){
                 this.undo['ll'] = true;
             }
+
+            if(this.undo['paths'][`${x},${y}`]['ll']){
+                return
+            }
+
             this.undo['paths'][`${x},${y}`]['ll'] = true;
+
             if(!this.undo['paths'][`${x},${y}`]['dfs'] && !this.undo['paths'][`${x},${y}`]['bfs']){
                 this.undo['paths'][`${x},${y}`]['fill_color'] = this.getRGBAOfPixel(x, y)
             }
@@ -460,6 +483,60 @@ export default class Map{
                     'message' : 'no bfs path to undo'
                 }
             }
+            reverse = this.pathBFS.slice(1, this.pathBFS.length - 1);
+            reverse = reverse.reverse()
+
+            for(let i = 0; i < reverse.length; i++){
+
+                setTimeout(()=>{
+                    //set bfs undo back to false
+                    this.undo['paths'][`${reverse[i][0]},${reverse[i][1]}`]['bfs'] = false
+                    color = this.undo['paths'][`${reverse[i][0]},${reverse[i][1]}`]['fill_color']
+                    this.context.fillStyle = 'rgb(255,255,255,1)' //clear first
+                    this.fillRect(reverse[i][0], reverse[i][1])
+                    this.context.fillStyle = color //set back to initial color before traveling
+                    this.fillRect(reverse[i][0], reverse[i][1])
+                }, i * speed)
+
+            }
+
+            //set undo to false
+            this.undo['bfs'] = false
+
+            return {
+                'status'  : true,
+                'message' : 'successfully undid bfs'
+            }
+        } else if(ll){
+            if(!this.undo['ll']){
+                return {
+                    'status' : false,
+                    'message' : 'no ll path to undo'
+                }
+            }
+            reverse = this.pathLL.slice(0, this.pathLL.length - 2);
+            reverse = reverse.reverse()
+
+            for(let i = 0; i < reverse.length; i++){
+
+                setTimeout(()=>{
+                    //set ll undo back to false
+                    this.undo['paths'][`${reverse[i][0]},${reverse[i][1]}`]['ll'] = false
+                    color = this.undo['paths'][`${reverse[i][0]},${reverse[i][1]}`]['fill_color']
+                    this.context.fillStyle = 'rgb(255,255,255,1)' //clear first
+                    this.fillRect(reverse[i][0], reverse[i][1])
+                    this.context.fillStyle = color //set back to initial color before traveling
+                    this.fillRect(reverse[i][0], reverse[i][1])
+                }, i * speed)
+
+            }
+
+            this.undo['ll'] = false
+
+            return {
+                'status'  : true,
+                'message' : 'successfully undid ll'
+            }
         }
 
     }
@@ -555,16 +632,21 @@ export default class Map{
 
     //remove fill rect
     clearTile(x, y){
-        let data = this.getTileNumber(x, y)
-        this.context.fillStyle = this.tiles[8]
-        this.context.fillRect(x * this.tileWidth, y * this.tileHeight, this.tileWidth, this.tileHeight)
+        try{
+            let data = this.getTileNumber(x, y)
+            this.context.fillStyle = this.tiles[8]
+            this.context.fillRect(x * this.tileWidth, y * this.tileHeight, this.tileWidth, this.tileHeight)
 
-        this.context.strokeStyle = "rgba(255, 255, 255, 1)";
-        this.context.lineWidth  = 2;
-        this.context.strokeRect(x * this.tileWidth, y * this.tileHeight, this.tileWidth, this.tileHeight);
+            this.context.strokeStyle = "rgba(255, 255, 255, 1)";
+            this.context.lineWidth  = 2;
+            this.context.strokeRect(x * this.tileWidth, y * this.tileHeight, this.tileWidth, this.tileHeight);
 
-        this.matrix[y][x] = 0
-        this.mapData = [data, data, false, true, x, y, this.tiles[8]]
+            this.matrix[y][x] = 0
+            this.mapData = [data, data, false, true, x, y, this.tiles[8]]
+        } catch {
+            //out of bounds
+            return false
+        }
     }
 
     //get exact number of tile in grid

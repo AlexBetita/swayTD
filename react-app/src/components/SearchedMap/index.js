@@ -15,7 +15,7 @@ import arrow from '../img/arrow.png';
 import path from '../img/path.png';
 import load from '../img/load.png';
 import search from '../img/search.png';
-
+import undo from '../img/undo.png';
 
 import './SearchedMap.css';
 
@@ -90,6 +90,8 @@ const SearchedMap = () => {
             canvasElement.current = false
             pathPopUp.current = false
             pathPopUpB.current = false
+            setCanvas()
+            setErrors()
             document.removeEventListener("mousedown", handlePathPopUpClick);
             document.removeEventListener("mousedown", handleLoadPopUpClick);
         };
@@ -126,6 +128,7 @@ const SearchedMap = () => {
     }
 
     const startDfs = () =>{
+        setErrors([])
         const dfs = canvas.startDFS()
         if(dfs === undefined){
             canvas.drawPath('dfs', dfsSpeed, dfsColor)
@@ -136,6 +139,7 @@ const SearchedMap = () => {
     }
 
     const startBfs = () => {
+        setErrors([])
         const bfs = canvas.startBFS()
         if(bfs === undefined){
             canvas.drawPath('bfs', bfsSpeed, bfsColor)
@@ -145,6 +149,7 @@ const SearchedMap = () => {
     }
 
     const traverseLL = () => {
+        setErrors([])
         const ll = canvas.startLL()
         if(ll === undefined){
             alert('Start and end nodes are not connected so no path found')
@@ -190,6 +195,30 @@ const SearchedMap = () => {
         }
         searchPopUp.current.classList.add('hidden')
         searchPopUpB.current.classList.remove('active')
+    }
+
+    const undoDFS = () => {
+        setErrors([])
+        const res = canvas.undoPath(true, false, false, dfsSpeed)
+        if(!res['status']){
+            setErrors([res['message']])
+        }
+    }
+
+    const undoBFS = () => {
+        setErrors([])
+        const res = canvas.undoPath(false, true, false, bfsSpeed)
+        if(!res['status']){
+            setErrors([res['message']])
+        }
+    }
+
+    const undoLL = () => {
+        setErrors([])
+        const res = canvas.undoPath(false, false, true, llSpeed)
+        if(!res['status']){
+            setErrors([res['message']])
+        }
     }
 
     return (
@@ -277,28 +306,30 @@ const SearchedMap = () => {
                             </div>
 
                             <div className='popup__path hidden' ref={pathPopUp}>
-                                <button onClick={startDfs}>
-                                    DFS
-                                </button>
+                                <div>
+                                    <button onClick={startDfs}>
+                                        DFS
+                                    </button>
+                                    <img src={undo} alt='undo' onClick={undoDFS}/>
+                                </div>
                                 DFS Speed: {dfsSpeed}
-
                                 <input
                                     type="range" min="0" max="100" value={dfsSpeed}
                                     onChange={(e)=> setDFSSpeed(e.target.value)}
                                 >
                                 </input>
-
                                 <input
                                     className='color__picker'
                                     type='color'
                                     onChange={(e)=>setDFSColor(e.target.value)}
-                                    value={dfsColor}
                                     >
                                 </input>
-
-                                <button onClick={startBfs}>
-                                    BFS
-                                </button>
+                                <div>
+                                    <button onClick={startBfs}>
+                                        BFS
+                                    </button>
+                                    <img src={undo} alt='undo' onClick={undoBFS}/>
+                                </div>
                                 BFS Speed: {bfsSpeed}
                                 <input
                                     type="range" min="0" max="100" value={bfsSpeed}
@@ -309,12 +340,14 @@ const SearchedMap = () => {
                                     className='color__picker'
                                     type='color'
                                     onChange={(e)=>setBFSColor(e.target.value)}
-                                    value={bfsColor}
                                     >
                                 </input>
-                                <button onClick={traverseLL}>
-                                    LinkedList
-                                </button>
+                                <div>
+                                    <button onClick={traverseLL}>
+                                        LinkedList
+                                    </button>
+                                    <img src={undo} alt='undo' onClick={undoLL}/>
+                                </div>
                                 LL Speed: {llSpeed}
                                 <input
                                     type="range" min="0" max="100" value={llSpeed}
@@ -325,7 +358,6 @@ const SearchedMap = () => {
                                     className='color__picker'
                                     type='color'
                                     onChange={(e)=>setLLColor(e.target.value)}
-                                    value={llColor}
                                     >
                                 </input>
                             </div>

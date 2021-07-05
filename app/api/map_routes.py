@@ -52,7 +52,6 @@ def create_map():
 @map_routes.route('/<value>', methods=['GET', 'DELETE', 'PUT'])
 @login_required
 def get_map(value):
-    print('im here?? or herrr??/')
 
     def isInt(value):
         try:
