@@ -93,6 +93,22 @@ export default class Map{
                 */
             }
         }
+
+        this.undo = {
+            'bfs' : false,
+            'dfs' : false,
+            'll' : false,
+            'paths' : {
+                /*
+                'x,y': {
+                    'bfs': false,
+                    'dfs': false,
+                    'll': false,
+                    'fill_color': 'rgb(r, g, b, o / 255)'
+                }
+                */
+            }
+        }
     }
 
     //get shortest path
@@ -160,6 +176,16 @@ export default class Map{
 
     getDataUrl(){
         return this.canvas.current.toDataURL()
+    }
+
+    getImageData(x, y){
+        return this.context.getImageData(x * this.tileWidth, y * this.tileHeight, this.tileWidth , this.tileHeight)
+    }
+
+    getRGBAOfPixel(x, y){
+        const pixel = this.getImageData(x,y)
+        const data = pixel.data
+        return `rgb(${data[0]},${data[1]},${data[2]},${data[3]/255})`;
     }
 
     //resets map
@@ -253,30 +279,84 @@ export default class Map{
         this.mapData = [data, data, false, true, x, y, this.tiles[4]]
     }
 
+
+    saveUndoData(x, y, dfs = false, bfs = false, ll = false){
+        //initialize defaults
+        if(!this.undo['paths'][`${x},${y}`]){
+            this.undo['paths'][`${x},${y}`] = {
+                // reason for this is to keep track if color was overwritten
+                'bfs' : false,
+                'dfs' : false,
+                'll' : false,
+                'fille_color' : 'rgb(0,0,0,1)' //default to black
+            }
+        }
+
+        if (bfs){
+            if(!this.undo['bfs']){
+                this.undo['bfs'] = true;
+            }
+            //check if path was previously traveled
+            this.undo['paths'][`${x},${y}`]['bfs'] = true;
+            if(!this.undo['paths'][`${x},${y}`]['dfs'] && !this.undo['paths'][`${x},${y}`]['ll']){
+                this.undo['paths'][`${x},${y}`]['fill_color'] = this.getRGBAOfPixel(x, y)
+            }
+        } else if (dfs){
+            if(!this.undo['dfs']){
+                this.undo['dfs'] = true;
+            }
+            this.undo['paths'][`${x},${y}`]['dfs'] = true;
+            if(!this.undo['paths'][`${x},${y}`]['bfs'] && !this.undo['paths'][`${x},${y}`]['ll']){
+                this.undo['paths'][`${x},${y}`]['fill_color'] = this.getRGBAOfPixel(x, y)
+            }
+        } else if (ll){
+            if(!this.undo['ll']){
+                this.undo['ll'] = true;
+            }
+            this.undo['paths'][`${x},${y}`]['ll'] = true;
+            if(!this.undo['paths'][`${x},${y}`]['dfs'] && !this.undo['paths'][`${x},${y}`]['bfs']){
+                this.undo['paths'][`${x},${y}`]['fill_color'] = this.getRGBAOfPixel(x, y)
+            }
+        }
+    }
+
     //draw path
     drawPath(type = null, speed = null, color = null){
 
         if(type === 'dfs'){
+            //disregard start and end point
             let pathDFS = this.pathDFS.slice(1, this.pathDFS.length - 1)
+
             if(!color){
                 color = this.tiles[3]
             }
 
             if(speed){
                 for (let i = 0; i < pathDFS.length; i++){
+
                     this.context.fillStyle = color
                     setTimeout(()=>{
+                        //track undo
+                        this.saveUndoData(pathDFS[i][0], pathDFS[i][1], true)
+
                         this.fillRect(pathDFS[i][0], pathDFS[i][1])
                     }, i * speed)
                 }
             } else {
                 for (let i = 0; i < pathDFS.length; i++){
+
+                    //track undo
+                    this.saveUndoData(pathDFS[i][0], pathDFS[i][1], true)
+
                     this.context.fillStyle = color
                     this.fillRect(pathDFS[i][0], pathDFS[i][1])
                 }
             }
         } else if(type === 'bfs'){
+
+            //disregard start and end point
             let pathBFS = this.pathBFS.slice(1, this.pathBFS.length - 1)
+
             if(!color){
                 color = this.tiles[2]
             }
@@ -285,12 +365,20 @@ export default class Map{
                 for (let i = 0; i < pathBFS.length; i++){
                     this.context.fillStyle = color
                     setTimeout(()=>{
+
+                        //track undo
+                        this.saveUndoData(pathBFS[i][0], pathBFS[i][1], false, true)
+
                         this.fillRect(pathBFS[i][0], pathBFS[i][1])
                     }, i * speed)
                 }
 
             } else {
                 for (let i = 0; i < pathBFS.length; i++){
+
+                    //track undo
+                    this.saveUndoData(pathBFS[i][0], pathBFS[i][1], false, true)
+
                     this.context.fillStyle = color
                     this.fillRect(pathBFS[i][0], pathBFS[i][1])
                 }
@@ -298,7 +386,9 @@ export default class Map{
 
         } else if(type === 'll'){
 
+            //disregard start and end point
             let pathLL = this.pathLL.slice(0, this.pathLL.length - 2)
+
             if(!color){
                 color = this.tiles[6]
             }
@@ -307,17 +397,71 @@ export default class Map{
                 for (let i = 0; i < pathLL.length; i++){
                     this.context.fillStyle = color
                     setTimeout(()=>{
+
+                        //track undo
+                        this.saveUndoData(pathLL[i][0], pathLL[i][1], false, false, true)
+
                         this.fillRect(pathLL[i][0], pathLL[i][1])
                     }, i * speed)
                 }
             } else {
                 for (let i = 0; i < pathLL.length; i++){
+
+                    //track undo
+                    this.saveUndoData(pathLL[i][0], pathLL[i][1], false, false, true)
+
                     this.context.fillStyle = color
                     this.fillRect(pathLL[i][0], pathLL[i][1])
                 }
             }
 
         }
+    }
+
+    undoPath(dfs = false, bfs = false, ll = false, speed = 0){
+        let reverse;
+        let color;
+
+        if(dfs){
+            if(!this.undo['dfs']){
+                return {
+                    'status' : false,
+                    'message' : 'no dfs path to undo'
+                }
+            }
+            reverse = this.pathDFS.slice(1, this.pathDFS.length - 1);
+            reverse = reverse.reverse()
+
+            for(let i = 0; i < reverse.length; i++){
+
+                setTimeout(()=>{
+                    //set dfs undo back to false
+                    this.undo['paths'][`${reverse[i][0]},${reverse[i][1]}`]['dfs'] = false
+                    color = this.undo['paths'][`${reverse[i][0]},${reverse[i][1]}`]['fill_color']
+                    this.context.fillStyle = 'rgb(255,255,255,1)' //clear first
+                    this.fillRect(reverse[i][0], reverse[i][1])
+                    this.context.fillStyle = color //set back to initial color before traveling
+                    this.fillRect(reverse[i][0], reverse[i][1])
+                }, i * speed)
+
+            }
+
+            //set undo to false
+            this.undo['dfs'] = false
+
+            return {
+                'status'  : true,
+                'message' : 'successfully undid dfs'
+            }
+        } else if(bfs){
+            if(!this.undo['bfs']){
+                return {
+                    'status' : false,
+                    'message' : 'no bfs path to undo'
+                }
+            }
+        }
+
     }
 
     //draw all paths
@@ -349,7 +493,7 @@ export default class Map{
     drawGrid(){
 
         this.context.beginPath();
-
+        this.context.strokeStyle = "rgba(0, 0, 0, 1)";
         //starting position of x
         let posX = this.tileWidth
 
@@ -406,7 +550,7 @@ export default class Map{
 
     //fill rect
     fillRect(x, y){
-        this.context.fillRect(x * this.tileWidth, y * this.tileHeight, this.tileWidth - 1, this.tileHeight - 1)
+        this.context.fillRect(x * this.tileWidth, y * this.tileHeight, this.tileWidth , this.tileHeight)
     }
 
     //remove fill rect

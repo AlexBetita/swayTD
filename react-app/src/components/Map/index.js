@@ -26,7 +26,8 @@ import edit from '../img/edit.png';
 import delete_icon from '../img/delete_red.png';
 import load from '../img/load.png';
 import search from '../img/search.png';
-import grid_red from '../img/grid_red.png'
+import grid_red from '../img/grid_red.png';
+import undo from '../img/undo.png';
 
 import './Map.css';
 
@@ -201,7 +202,6 @@ const Map_ = () => {
         if (e.target.tagName === 'CANVAS' && isPathing && (trigger === 'move' || trigger === 'down')){
             const y = Math.ceil(e.offsetY / (canvas.height / canvas.row)) - 1
             const x = Math.ceil(e.offsetX / (canvas.width/ canvas.column)) - 1
-
             if(startB.current.classList.contains('active')){
                 canvas.drawStart(x, y)
                 setErrors([])
@@ -322,7 +322,6 @@ const Map_ = () => {
 
 
     const drawGrid = () => {
-        canvas.cleanMap()
         canvas.drawGrid()
     }
 
@@ -497,6 +496,18 @@ const Map_ = () => {
     const showColor = (e) => {
         color = e.target.value
         setStateColor(color)
+    }
+
+    const undoDFS = () => {
+        canvas.undoPath(true, false, false, dfsSpeed)
+    }
+
+    const undoBFS = () => {
+
+    }
+
+    const undoLL = () => {
+
     }
 
     return (
@@ -707,9 +718,12 @@ const Map_ = () => {
                             </div>
 
                             <div className='popup__path hidden' ref={pathPopUp}>
-                                <button onClick={startDfs}>
-                                    DFS
-                                </button>
+                                <div>
+                                    <button onClick={startDfs}>
+                                        DFS
+                                    </button>
+                                    <img src={undo} alt='undo' onClick={undoDFS}/>
+                                </div>
                                 DFS Speed: {dfsSpeed}
                                 <input
                                     type="range" min="0" max="100" value={dfsSpeed}
@@ -722,10 +736,12 @@ const Map_ = () => {
                                     onChange={(e)=>setDFSColor(e.target.value)}
                                     >
                                 </input>
-
-                                <button onClick={startBfs}>
-                                    BFS
-                                </button>
+                                <div>
+                                    <button onClick={startBfs}>
+                                        BFS
+                                    </button>
+                                    <img src={undo} alt='undo' onClick={undoBFS}/>
+                                </div>
                                 BFS Speed: {bfsSpeed}
                                 <input
                                     type="range" min="0" max="100" value={bfsSpeed}
@@ -738,9 +754,12 @@ const Map_ = () => {
                                     onChange={(e)=>setBFSColor(e.target.value)}
                                     >
                                 </input>
-                                <button onClick={traverseLL}>
-                                    LinkedList
-                                </button>
+                                <div>
+                                    <button onClick={traverseLL}>
+                                        LinkedList
+                                    </button>
+                                    <img src={undo} alt='undo' onClick={undoLL}/>
+                                </div>
                                 LL Speed: {llSpeed}
                                 <input
                                     type="range" min="0" max="100" value={llSpeed}
@@ -969,9 +988,12 @@ const Map_ = () => {
                             </div>
 
                             <div className='popup__path hidden' ref={pathPopUp}>
-                                <button onClick={startDfs}>
-                                    DFS
-                                </button>
+                                <div>
+                                    <button onClick={startDfs}>
+                                        DFS
+                                    </button>
+                                    <img src={undo} alt='undo' onClick={undoDFS}/>
+                                </div>
                                 DFS Speed: {dfsSpeed}
                                 <input
                                     type="range" min="0" max="100" value={dfsSpeed}
@@ -984,10 +1006,12 @@ const Map_ = () => {
                                     onChange={(e)=>setDFSColor(e.target.value)}
                                     >
                                 </input>
-
-                                <button onClick={startBfs}>
-                                    BFS
-                                </button>
+                                <div>
+                                    <button onClick={startBfs}>
+                                        BFS
+                                    </button>
+                                    <img src={undo} alt='undo' onClick={undoBFS}/>
+                                </div>
                                 BFS Speed: {bfsSpeed}
                                 <input
                                     type="range" min="0" max="100" value={bfsSpeed}
@@ -1000,9 +1024,12 @@ const Map_ = () => {
                                     onChange={(e)=>setBFSColor(e.target.value)}
                                     >
                                 </input>
-                                <button onClick={traverseLL}>
-                                    LinkedList
-                                </button>
+                                <div>
+                                    <button onClick={traverseLL}>
+                                        LinkedList
+                                    </button>
+                                    <img src={undo} alt='undo' onClick={undoLL}/>
+                                </div>
                                 LL Speed: {llSpeed}
                                 <input
                                     type="range" min="0" max="100" value={llSpeed}

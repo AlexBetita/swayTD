@@ -186,6 +186,31 @@ canvas{
     display: none;
 }
 
+.popup__path div{
+    all: revert;
+}
+
+.popup__path div img{
+    width: 15px;
+    height: 15px;
+    position: relative;
+    top: 8px;
+    right: -11px;
+    cursor: pointer;
+}
+
+.popup__path div button{
+    width: 15px;
+    height: 15px;
+    position: relative;
+    top: 4px;
+    right: -8px;
+    cursor: pointer;
+}
+
+.popup__path div img:hover{
+    filter: opacity(0.5) drop-shadow(0 0 0 rgb(156, 7, 255));
+}
 
 /* .map__ui button{
     display: inline-block;
@@ -325,4 +350,3 @@ canvas{
     flex-direction: column;
     color: rgb(77, 6, 71);
 }
-
