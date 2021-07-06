@@ -47,6 +47,9 @@ const SearchedMap = () => {
         })
 
 
+    const balls = useRef();
+    const searchInput = useRef();
+    const searchImage = useRef();
     const canvasElement = useRef();
     const pathPopUp = useRef();
     const pathPopUpB = useRef();
@@ -70,6 +73,10 @@ const SearchedMap = () => {
     const [bfsSpeed, setBFSSpeed] = useState(0);
     const [llSpeed, setLLSpeed] = useState(0);
     const [llColor, setLLColor] = useState('#000000');
+
+    if(!currentMap && user){
+        history.push('/maps')
+    }
 
     useEffect(() =>{
         if(currentMap){
@@ -97,18 +104,35 @@ const SearchedMap = () => {
         };
     },[dispatch])
 
+    const isLoading = () =>{
+        balls.current.classList.remove('hidden')
+        searchImage.current.classList.remove('hidden')
+        searchInput.current.setAttribute("disabled", true)
+    }
+
+    const finishedLoading = () =>{
+        if(balls.current){
+            balls.current.classList.add('hidden')
+            searchImage.current.classList.add('hidden')
+            searchInput.current.removeAttribute("disabled")
+        }
+    }
 
     const loadMap = async (effectLoad = false) =>{
+        if(searchImage.current.classList.contains('disabled')){
+            return
+        }
         let newErrors = []
         setErrors([])
-
         const value = searchValue
         if(!searchValue){
             setErrors(newErrors)
             return
         }
 
+        isLoading()
         const data = await dispatch(fetchMapData({value}))
+        finishedLoading()
 
         if(data.errors && effectLoad){
             setErrors(data.errors)
@@ -123,9 +147,7 @@ const SearchedMap = () => {
         }
     }
 
-    if(!currentMap && user){
-        history.push('/maps')
-    }
+
 
     const startDfs = () =>{
         setErrors([])
@@ -262,7 +284,13 @@ const SearchedMap = () => {
                         <li key={idx} className="error_map">{error}</li>
                     ))}
                 </ul>
-
+                <div className='canvas__loading'>
+                    <div className='balls hidden' ref={balls}>
+                        <div className='ball1'></div>
+                        <div className='ball2'></div>
+                        <div className='ball1'></div>
+                    </div>
+                </div>
                 <canvas ref={canvasElement}>
 
                 </canvas>
@@ -377,10 +405,13 @@ const SearchedMap = () => {
                                     name='searchBar'
                                     placeholder='search'
                                     onChange={(e)=>setSearchValue(e.target.value)}
+                                    ref={searchInput}
                                 >
                                 </input>
                                 <div className='map__icon__container'>
-                                    <img className='map__icon' src={load} alt='load' onClick={loadMap}/>
+                                    <img className='map__icon' src={load} alt='load' onClick={loadMap}
+                                         ref={searchImage}
+                                    />
                                 </div>
                             </div>
                         </div>

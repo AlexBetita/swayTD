@@ -40,6 +40,13 @@ def edit_user(id):
     email = request.form['email']
     date = parser.parse(request.form['updated_at'], fuzzy=True)
 
+    if User.query.filter(User.username == username).first() \
+            and user.username != username:
+        return {'errors': ['Username is already taken']}
+    elif User.query.filter(User.email == email).first() \
+            and user.email != email:
+        return {'errors': ['Email is already registered']}
+
     if request.method == 'PUT':
         if "image" not in request.files:
             profileImage = request.form['image']

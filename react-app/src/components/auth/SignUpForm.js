@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Redirect, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
 
@@ -15,6 +15,14 @@ const SignUpForm = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const user = useSelector(state => state.session.user)
+  const signupB = useRef();
+  const loginB = useRef();
+  const balls = useRef();
+  const usernameInput = useRef();
+  const emailInput = useRef();
+  const passwordInput = useRef();
+  const repeatpasswordInput = useRef();
+  const profileImageInput = useRef();
 
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -22,6 +30,28 @@ const SignUpForm = () => {
   const [repeatPassword, setRepeatPassword] = useState("");
   const [profileImage, setProfileImage] = useState("");
   const [errors, setErrors] = useState([]);
+
+  const isLoading = () =>{
+    balls.current.classList.remove('hidden')
+    signupB.current.setAttribute("disabled", true)
+    loginB.current.setAttribute("disabled", true)
+    usernameInput.current.setAttribute("disabled", true)
+    emailInput.current.setAttribute("disabled", true)
+    passwordInput.current.setAttribute("disabled", true)
+    repeatpasswordInput.current.setAttribute("disabled", true)
+    profileImageInput.current.setAttribute("disabled", true)
+  }
+
+  const finishedLoading = () =>{
+    balls.current.classList.add('hidden')
+    signupB.current.removeAttribute("disabled")
+    loginB.current.removeAttribute("disabled")
+    usernameInput.current.removeAttribute("disabled")
+    emailInput.current.removeAttribute("disabled")
+    passwordInput.current.removeAttribute("disabled")
+    repeatpasswordInput.current.removeAttribute("disabled")
+    profileImageInput.current.removeAttribute("disabled")
+  }
 
   const onSignUp = async (e) => {
     e.preventDefault();
@@ -48,7 +78,11 @@ const SignUpForm = () => {
     }
 
     if (!newErrors.length) {
+      await isLoading();
+
       const data = await dispatch(signUp(username, email, password, profileImage));
+
+      await finishedLoading();
 
       if (data.errors) {
         setErrors(data.errors);
@@ -89,11 +123,15 @@ const SignUpForm = () => {
   }
 
   const login = () => {
-    history.push('/login')
+    setTimeout(()=>{
+      history.push('/login')
+    },0)
   }
 
   if (user) {
-    return <Redirect to="/" />;
+    setTimeout(()=>{
+      return <Redirect to="/" />;
+    },0)
   }
 
   return (
@@ -115,6 +153,7 @@ const SignUpForm = () => {
                 name="username"
                 onChange={updateUsername}
                 value={username}
+                ref={usernameInput}
               ></input>
             </div>
             <div>
@@ -124,6 +163,7 @@ const SignUpForm = () => {
                 name="email"
                 onChange={updateEmail}
                 value={email}
+                ref={emailInput}
               ></input>
             </div>
             <div>
@@ -132,6 +172,7 @@ const SignUpForm = () => {
                 className="input__signup__form"
                 type="file"
                 onChange={updateProfileImage}
+                ref={profileImageInput}
               ></input>
             </div>
             <div>
@@ -141,6 +182,7 @@ const SignUpForm = () => {
                 name="password"
                 onChange={updatePassword}
                 value={password}
+                ref={passwordInput}
               ></input>
             </div>
             <div>
@@ -151,12 +193,20 @@ const SignUpForm = () => {
                 onChange={updateRepeatPassword}
                 value={repeatPassword}
                 required={true}
+                ref={repeatpasswordInput}
               ></input>
             </div>
-            <button type="submit">Sign Up</button>
-            <button onClick={login}>
-              Login
-            </button>
+            <div className='signup__buttons'>
+              <button type="submit" ref={signupB}>Sign Up</button>
+              <button onClick={login} ref={loginB}>
+                Login
+              </button>
+              <div className='balls hidden' ref={balls}>
+                  <div className='ball1'></div>
+                  <div className='ball2'></div>
+                  <div className='ball1'></div>
+              </div>
+            </div>
           </form>
 
               <div className='footer'>

@@ -21,6 +21,11 @@ input:focus{
     outline: none;
 }
 
+input:disabled,
+input[disabled]{
+    cursor: not-allowed;
+}
+
 button{
     display: inline-block;
     text-align: center;
@@ -37,9 +42,21 @@ button{
     text-transform: uppercase;
 }
 
+button:disabled,
+button[disabled]{
+    border: 1px solid #999999;
+    background-color: #cccccc;
+    color: #666666;
+    cursor: wait;
+}
+
 button:hover{
     border-color: #aed6dc;
     box-shadow: 1px 1px 5px #aed6dc;
+}
+
+img.disabled{
+    cursor: not-allowed;
 }
 
 .footer{
@@ -64,6 +81,96 @@ button:hover{
 a{
     text-decoration: none;
     color: rgb(94, 8, 86);
+}
+
+
+/*
+    LOADING ANIMATION
+*/
+
+.canvas__loading > div{
+    position: absolute;
+    left: 48.5vw;
+    bottom: 58.5vh;
+    z-index: 100;
+}
+
+.balls{
+    all: revert;
+    display:flex;
+    flex-direction: row;
+}
+
+.balls.hidden{
+    visibility: hidden;
+}
+
+.balls > div{
+    margin: 2px;
+    background-color: rgb(94, 8, 86);
+}
+
+.ball1{
+    border: 1px solid rgb(94, 8, 86);
+    border-radius: 50%;
+    height: 15px;
+    width: 15px;
+    animation-duration: 0.6s;
+    animation-name: load;
+    animation-iteration-count: infinite;
+}
+
+.ball2{
+    border: 1px solid rgb(94, 8, 86);
+    transform: scale(0.5);
+    border-color: rgb(94, 8, 86, 0.3);
+    background-color: rgb(94, 8, 86, 0.3);
+    border-radius: 50%;
+    height: 15px;
+    width: 15px;
+    animation-duration: .6s;
+    animation-name: load2;
+    animation-iteration-count: infinite;
+}
+
+@keyframes load {
+
+    from{
+        border-color: rgb(94, 8, 86, 0.7);
+        background-color: rgb(94, 8, 86, 0.7);
+    }
+
+    50% {
+        transform: scale(0.5);
+        border-color: rgb(94, 8, 86, 0.3);
+        background-color: rgb(94, 8, 86, 0.3);
+    }
+
+    to {
+        transform: scale(1);
+        border-color: rgb(94, 8, 86, 0.9);
+        background-color: rgb(94, 8, 86, 0.9);
+    }
+}
+
+@keyframes load2 {
+
+    from{
+        border-color: rgb(94, 8, 86, 0.7);
+        background-color: rgb(94, 8, 86, 0.7);
+    }
+
+    50% {
+        transform: scale(1);
+        border-color: rgb(94, 8, 86, 0.9);
+        background-color: rgb(94, 8, 86, 0.9);
+    }
+
+    to {
+        transform: scale(0.5);
+        border-color: rgb(94, 8, 86, 0.3);
+        background-color: rgb(94, 8, 86, 0.3);
+    }
 }
 
 

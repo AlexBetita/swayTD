@@ -56,7 +56,9 @@ const Map_ = () => {
                         ...state.map[id]
                        }
             } else {
-                history.push('/maps/create')
+                setTimeout(()=>{
+                    history.push('/maps/create')
+                },0)
             }
         }
         return false
@@ -66,6 +68,15 @@ const Map_ = () => {
     if(!user){
         history.push('/login')
     }
+
+    const balls = useRef();
+    const searchInput = useRef();
+    const searchImage = useRef();
+    const mapNameInput = useRef();
+
+    const saveB = useRef();
+    const editB = useRef();
+    const deleteB = useRef();
 
     const canvasElement = useRef();
     const startB = useRef();
@@ -111,6 +122,30 @@ const Map_ = () => {
         clickyGo('move', e)
     }
 
+    const isLoading = () =>{
+        balls.current.classList.remove('hidden')
+        searchImage.current.classList.remove('hidden')
+        searchInput.current.setAttribute("disabled", true)
+        if(!id){
+            saveB.current.classList.add('disabled')
+        } else{
+            editB.current.classList.add('disabled')
+            deleteB.current.classList.add('disabled')
+        }
+    }
+
+    const finishedLoading = () =>{
+        balls.current.classList.add('hidden')
+        searchImage.current.classList.add('hidden')
+        searchInput.current.removeAttribute("disabled")
+        if(!id){
+            saveB.current.classList.remove('disabled')
+        } else {
+            editB.current.classList.remove('disabled')
+            deleteB.current.classList.remove('disabled')
+        }
+    }
+
     useEffect(() =>{
         if(currentMap){
             if(!currentMap['owner']){
@@ -150,8 +185,13 @@ const Map_ = () => {
         };
     },[dispatch])
 
-    const onSubmit = async (e) =>{
+    const onSave = async (e) =>{
         e.preventDefault();
+
+        if(saveB.current.classList.contains('disabled')){
+            return
+        }
+
         let newErrors = []
         setErrors([])
 
@@ -167,8 +207,9 @@ const Map_ = () => {
         setErrors(newErrors)
 
         if(!newErrors.length){
+            isLoading();
             const data = await dispatch(addMapData({name, map_data, user_id, map_image}))
-
+            finishedLoading();
             if(data.errors){
                 setErrors(data.errors);
             } else if (newErrors.length) {
@@ -256,6 +297,9 @@ const Map_ = () => {
 
     const loadMap = async (e) =>{
         e.preventDefault();
+        if(searchImage.current.classList.contains('disabled')){
+            return
+        }
         let newErrors = []
         setErrors([])
 
@@ -265,7 +309,10 @@ const Map_ = () => {
             setErrors(newErrors)
             return
         }
+
+        isLoading()
         const data = await dispatch(fetchMapData({value}))
+        finishedLoading()
 
         if(data.errors){
             setErrors(data.errors)
@@ -291,12 +338,18 @@ const Map_ = () => {
     const editMap = async (e) =>{
         e.preventDefault();
         setErrors([])
+        if(!balls.current.classList.contains("hidden")){
+            return
+        }
         const user_id = user.id;
 
         let map_data = canvas.mapData
         let map_image = canvas.getDataUrl()
 
+        isLoading();
         const data = await dispatch(editMapData({name, map_data, user_id, id, map_image}))
+        finishedLoading();
+
         map_data = null
         if(data.errors){
             setErrors(data.errors);
@@ -308,7 +361,13 @@ const Map_ = () => {
     const deleteMap = async (e) =>{
         e.preventDefault();
         setErrors([])
+        if(!balls.current.classList.contains("hidden")){
+            return
+        }
+        await isLoading();
         const data = await dispatch(deleteMapData({id}))
+        await finishedLoading();
+
         if(data.errors){
             setErrors(data.errors);
         } else{
@@ -318,7 +377,9 @@ const Map_ = () => {
             setWidth(700)
             setHeight(700)
             alert('Succesfully deleted')
-            history.push('/maps/create')
+            setTimeout(()=>{
+                history.push('/maps/create')
+            }, 0)
         }
     }
 
@@ -569,6 +630,14 @@ const Map_ = () => {
                     ))}
                 </ul>
 
+                <div className='canvas__loading'>
+                    <div className='balls hidden' ref={balls}>
+                        <div className='ball1'></div>
+                        <div className='ball2'></div>
+                        <div className='ball1'></div>
+                    </div>
+                </div>
+
                 <canvas ref={canvasElement}>
 
                 </canvas>
@@ -585,6 +654,7 @@ const Map_ = () => {
                             type='text'
                             name='name'
                             value={name}
+                            ref={mapNameInput}
                             onChange={(e)=>setName(e.target.value)}
                         >
 
@@ -805,12 +875,12 @@ const Map_ = () => {
 
 
                         <div>
-                            {/* <button onClick={onSubmit}>
+                            {/* <button onClick={onSave}>
                                 Save Map Data
                             </button> */}
 
                             <div className='map__icon__container'>
-                                <img className='map__icon' src={save} alt='save' onClick={onSubmit}/>
+                                <img className='map__icon' src={save} alt='save' onClick={onSave} ref={saveB}/>
                             </div>
 
                             {/* <button onClick={loadMap}>
@@ -829,10 +899,13 @@ const Map_ = () => {
                                     name='searchBar'
                                     placeholder='search'
                                     onChange={(e)=>setSearchValue(e.target.value)}
+                                    ref={searchInput}
                                 >
                                 </input>
                                 <div className='map__icon__container'>
-                                    <img className='map__icon' src={load} alt='load' onClick={loadMap}/>
+                                    <img className='map__icon' src={load} alt='load' onClick={loadMap}
+                                        ref={searchImage}
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -850,6 +923,7 @@ const Map_ = () => {
                                 type='text'
                                 name='name'
                                 value={name}
+                                ref={mapNameInput}
                                 onChange={(e)=>setName(e.target.value)}
                             >
 
@@ -1083,7 +1157,7 @@ const Map_ = () => {
                             </button> */}
 
                             <div className='map__icon__container'>
-                                <img className='map__icon' src={edit} alt='edit' onClick={editMap}/>
+                                <img className='map__icon' src={edit} alt='edit' onClick={editMap} ref={editB}/>
                             </div>
 
                         </div>
@@ -1095,7 +1169,7 @@ const Map_ = () => {
                                 Delete Map
                             </button> */}
                             <div className='map__icon__container'>
-                                <img className='map__icon' src={delete_icon} alt='delete_icon' onClick={deleteMap}/>
+                                <img className='map__icon' src={delete_icon} alt='delete_icon' onClick={deleteMap} ref={deleteB}/>
                             </div>
                         </div>
 
@@ -1110,10 +1184,13 @@ const Map_ = () => {
                                         name='searchBar'
                                         placeholder='search'
                                         onChange={(e)=>setSearchValue(e.target.value)}
+                                        ref={searchInput}
                                     >
                                     </input>
                                     <div className='map__icon__container'>
-                                        <img className='map__icon' src={load} alt='load' onClick={loadMap}/>
+                                        <img className='map__icon' src={load} alt='load' onClick={loadMap}
+                                            ref={searchImage}
+                                        />
                                     </div>
                                 </div>
                             </div>

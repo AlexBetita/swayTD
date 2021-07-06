@@ -131,6 +131,7 @@ export const edit = payload => async (dispatch) => {
     }
 
     dispatch(setUser(data))
+    return data
 }
 
 const initialState = {

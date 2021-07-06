@@ -7,3 +7,9 @@
 .main__home .signup__form{
     margin: 85px;
 } */
+
+.signup__buttons{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}

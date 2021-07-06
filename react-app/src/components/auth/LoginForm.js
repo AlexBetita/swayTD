@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Redirect, useHistory} from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 import { login, demologin } from "../../store/session";
+import { isEmail } from "../utils";
 
 import linkedin from '../img/linkedin.png';
 import email_icon from '../img/email.png';
@@ -16,18 +17,56 @@ const LoginForm = () => {
   const dispatch = useDispatch();
   const history = useHistory()
   const user = useSelector(state => state.session.user)
+  const demoB = useRef();
+  const signupB = useRef();
+  const loginB = useRef();
+  const balls = useRef();
+  const emailInput = useRef();
+  const passwordInput = useRef();
 
+  // const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState([]);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const isLoading = () =>{
+    balls.current.classList.remove('hidden')
+    demoB.current.setAttribute("disabled", true)
+    signupB.current.setAttribute("disabled", true)
+    loginB.current.setAttribute("disabled", true)
+    emailInput.current.setAttribute("disabled", true)
+    passwordInput.current.setAttribute("disabled", true)
+  }
+
+  const finishedLoading = () =>{
+    balls.current.classList.add('hidden')
+    demoB.current.removeAttribute("disabled")
+    signupB.current.removeAttribute("disabled")
+    loginB.current.removeAttribute("disabled")
+    emailInput.current.removeAttribute("disabled")
+    passwordInput.current.removeAttribute("disabled")
+  }
+
   const onLogin = async (e) => {
     e.preventDefault();
-    const data = await dispatch(login(email, password));
-    if (data.errors) {
-      setErrors(data.errors);
+    setErrors([])
+    let newErrors = []
+
+    if(!isEmail(email)){
+      newErrors.push('Please provide a valid email')
+    }
+
+    if(!newErrors.length){
+      await isLoading()
+      const data = await dispatch(login(email, password));
+      await finishedLoading()
+      if (data.errors) {
+        setErrors(data.errors);
+      } else {
+        history.push('/')
+      }
     } else {
-      history.push('/profile')
+      setErrors(newErrors)
     }
   };
 
@@ -37,8 +76,10 @@ const LoginForm = () => {
 
   const demo = async (e) => {
     e.preventDefault()
+    isLoading()
     await dispatch(demologin())
-    history.push('/profile')
+    finishedLoading()
+    history.push('/')
   }
 
   const updateEmail = (e) => {
@@ -55,7 +96,7 @@ const LoginForm = () => {
 
   useEffect(()=>{
     if (user) {
-      return <Redirect to="/profile" />;
+      return <Redirect to="/" />;
     }
   },[user])
 
@@ -84,6 +125,7 @@ const LoginForm = () => {
                   placeholder="Email"
                   value={email}
                   onChange={updateEmail}
+                  ref={emailInput}
                 />
               </div>
               <div>
@@ -94,17 +136,23 @@ const LoginForm = () => {
                   placeholder="Password"
                   value={password}
                   onChange={updatePassword}
+                  ref={passwordInput}
                 />
               </div>
               <div>
-                <button type="submit">Login</button>
-                <button onClick={signup}>
+                <button type="submit" ref={loginB}>Login</button>
+                <button onClick={signup} ref={signupB}>
                   Signup
                 </button>
               </div>
-              <button onClick={demo}>
+              <button onClick={demo} ref={demoB}>
                     DEMO
-                  </button>
+                </button>
+                  <div className='balls hidden' ref={balls}>
+                    <div className='ball1'></div>
+                    <div className='ball2'></div>
+                    <div className='ball1'></div>
+                  </div>
             </form>
                     <div className='footer'>
                       <div>

@@ -12,7 +12,7 @@ map_routes = Blueprint('maps', __name__)
 @map_routes.route('/')
 @login_required
 def maps():
-    maps = db.session.query(Map).limit(10).all()
+    maps = db.session.query(Map).order_by(Map.id.desc()).limit(10).all()
     return {'maps': {maps[i].id: maps[i].to_dict() for i in range(len(maps))}}
 
 

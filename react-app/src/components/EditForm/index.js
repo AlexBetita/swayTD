@@ -26,6 +26,15 @@ const EditForm = () => {
 
     const changePassB = useRef();
     const changePass = useRef();
+    const submitB = useRef();
+    const usernameInput = useRef();
+    const emailInput = useRef();
+    const passwordInput = useRef();
+    const repeatpasswordInput = useRef();
+    const profileImageInput = useRef();
+    const balls = useRef();
+
+    const logoutImage = useRef();
 
     const [username, setUsername] = useState(user.username);
     const [profileImage, setProfileImage] = useState(user.profileImage);
@@ -34,7 +43,37 @@ const EditForm = () => {
     const [password, setPassword] = useState("");
     const [repeatPassword, setRepeatPassword] = useState("");
     const [checkPassword, setCheckPassword] = useState(false);
+    const [nav, setNav] = useState(true);
 
+    const isLoading = () =>{
+        balls.current.classList.remove('hidden')
+        changePassB.current.setAttribute("disabled", true)
+        changePass.current.setAttribute("disabled", true)
+        submitB.current.setAttribute("disabled", true)
+        emailInput.current.setAttribute("disabled", true)
+        passwordInput.current.setAttribute("disabled", true)
+        usernameInput.current.setAttribute("disabled", true)
+        repeatpasswordInput.current.setAttribute("disabled", true)
+        profileImageInput.current.setAttribute("disabled", true)
+
+        logoutImage.current.classList.add('disabled')
+        setNav(false)
+    }
+
+    const finishedLoading = () =>{
+        balls.current.classList.add('hidden')
+        changePassB.current.removeAttribute("disabled")
+        changePass.current.removeAttribute("disabled")
+        submitB.current.removeAttribute("disabled")
+        emailInput.current.removeAttribute("disabled")
+        passwordInput.current.removeAttribute("disabled")
+        usernameInput.current.removeAttribute("disabled")
+        repeatpasswordInput.current.removeAttribute("disabled")
+        profileImageInput.current.removeAttribute("disabled")
+
+        logoutImage.current.classList.remove('disabled')
+        setNav(true)
+    }
 
     useEffect(()=>{
         return () => {
@@ -48,15 +87,18 @@ const EditForm = () => {
     }
 
     const onLogout = () =>{
-        setTimeout(async ()=>{
-            await dispatch(logout())
-        }, 0)
+        if(!logoutImage.current.classList.contains('disabled')){
+            setTimeout(async ()=>{
+                await dispatch(logout())
+            }, 0)
 
-        history.push('/login')
+            history.push('/login')
+        }
     }
 
     const onEdit = async (e) =>{
         e.preventDefault()
+        setErrors([])
         let newErrors = []
         let id = user.id;
 
@@ -85,18 +127,15 @@ const EditForm = () => {
 
         if(!newErrors.length){
             let data;
+            isLoading()
             if(checkPassword){
                 data = await dispatch(edit({id, username, email, profileImage, password}))
             } else {
                 data = await dispatch(edit({id, username, email, profileImage}))
             }
-
-            try{
-                if(data.errors){
-                    setErrors(data.errors)
-                }
-            } catch {
-                setErrors([])
+            finishedLoading()
+            if(data.errors){
+                setErrors(data.errors)
             }
         } else{
             setErrors(newErrors)
@@ -124,12 +163,20 @@ const EditForm = () => {
         window.open('mailto:alexbheb25@gmail.com')
     }
 
+    const navToHome = (e) => {
+        if(!nav){
+            e.preventDefault()
+        }
+    }
+
     return (
         <>
         <div className='home__container'>
             <NavLink
+                    onClick={navToHome}
                     className='back__arrow__logout'
-                    to='/profile'>
+                    to='/'
+                    >
                 <img src={arrow} alt='arrow'>
                 </img>
             </NavLink>
@@ -145,6 +192,7 @@ const EditForm = () => {
                             className='logout__edit'
                             src={logoutIcon} alt='logout'
                             onClick={onLogout}
+                            ref={logoutImage}
                             >
                         </img>
                     </div>
@@ -158,6 +206,7 @@ const EditForm = () => {
                                 className="input__signup__form"
                                 type="file"
                                 onChange={updateProfileImage}
+                                ref={profileImageInput}
                             >
                         </input>
                     </div>
@@ -170,6 +219,7 @@ const EditForm = () => {
                             name='username'
                             className='edit__username'
                             onChange={(e)=> setUsername(e.target.value)}
+                            ref={usernameInput}
                         >
 
                         </input>
@@ -181,14 +231,17 @@ const EditForm = () => {
                             name='email'
                             className='edit__email'
                             onChange={(e)=> setEmail(e.target.value)}
+                            ref={emailInput}
                         >
 
                         </input>
                     </div>
 
-                    <button type="button" ref={changePassB} onClick={toggleChangePass}>
+                    <button
+                        type="button" ref={changePassB} onClick={toggleChangePass}>
                         Change Password
                     </button>
+
                     <div className='edit__password__div hidden' ref={changePass}>
                         <label> Change New Password</label>
                         <div>
@@ -198,6 +251,7 @@ const EditForm = () => {
                                 name="password"
                                 onChange={(e)=> setPassword(e.target.value)}
                                 value={password}
+                                ref={passwordInput}
                             ></input>
                         </div>
                         <label>Repeat New Password</label>
@@ -208,12 +262,19 @@ const EditForm = () => {
                                 name="repeat_password"
                                 onChange={(e)=> setRepeatPassword(e.target.value)}
                                 value={repeatPassword}
+                                ref={repeatpasswordInput}
                             ></input>
                         </div>
                     </div>
-                    <button type='submit'>
+
+                    <button type='submit' ref={submitB}>
                         SUBMIT
                     </button>
+                    <div className='balls hidden' ref={balls}>
+                        <div className='ball1'></div>
+                        <div className='ball2'></div>
+                        <div className='ball1'></div>
+                    </div>
                 </form>
 
                 <div className='footer'>

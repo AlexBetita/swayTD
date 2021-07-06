@@ -37,7 +37,29 @@
     width: 30px;
     height: 30px;
     position: relative;
-    top: 10px;
-    left: 10px;
+    top: 2px;
+    left: 25px;
     cursor: pointer;
+    margin-right: 35px;
+}
+
+.search__container{
+    display: flex;
+    align-items: center;
+}
+
+.search__container > *{
+    position: relative;
+    left: 40px;
+    margin-left: 20px;
+}
+
+.search__input{
+    left: 55px;
+}
+
+.create__map{
+    position: relative;
+    left: 30px;
+    margin: 15px;
 }

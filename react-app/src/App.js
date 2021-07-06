@@ -32,7 +32,7 @@ function App() {
     <BrowserRouter>
       {/* <NavBar /> */}
       <Switch>
-        <Route path="/maps/create" exact={true}>
+        <Route path="/maps/create/" exact={true}>
           <Map />
         </Route>
         <Route path="/maps/create/:id">
@@ -42,16 +42,16 @@ function App() {
           <LoginForm
           />
         </Route>
-        <Route path="/sign-up" exact={true}>
+        <Route path="/sign-up/" exact={true}>
           <SignUpForm  />
         </Route>
         <Route path='/' exact={true}>
             <Home />
         </Route>
-        <Route path='/edit_profile' exact={true}>
+        <Route path='/edit_profile/' exact={true}>
             <EditForm />
         </Route>
-        <Route path="/maps" exact={true}>
+        <Route path="/maps/" exact={true}>
           <MapHome />
         </Route>
         <Route path="/maps/:id">

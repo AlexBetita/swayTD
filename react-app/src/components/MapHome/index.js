@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { useSelector, useDispatch } from "react-redux"
 import { NavLink, useHistory } from 'react-router-dom';
 
@@ -14,6 +14,10 @@ import './MapHome.css';
 const MapHome = () => {
     const history = useHistory();
     const dispatch = useDispatch();
+
+    const balls = useRef();
+    const searchInput = useRef();
+    const searchImage = useRef();
 
     const user = useSelector((state)=>{
         return state.session.user
@@ -31,8 +35,22 @@ const MapHome = () => {
         }
     })
 
+    const reverse = Object.keys(otherMaps).reverse()
+
     const [searchValue, setSearchValue] = useState('')
     const [errors, setErrors] = useState([]);
+
+    const isLoading = () =>{
+        balls.current.classList.remove('hidden')
+        searchImage.current.classList.remove('hidden')
+        searchInput.current.setAttribute("disabled", true)
+    }
+
+    const finishedLoading = () =>{
+        balls.current.classList.add('hidden')
+        searchImage.current.classList.add('hidden')
+        searchInput.current.removeAttribute("disabled")
+    }
 
     if(!user){
         history.push('/login')
@@ -48,6 +66,9 @@ const MapHome = () => {
     },[dispatch])
 
     const onSearch = async () =>{
+        if(searchImage.current.classList.contains('disabled')){
+            return
+        }
         let newErrors = []
         let value = searchValue
         setErrors([])
@@ -55,7 +76,9 @@ const MapHome = () => {
             newErrors.push('Please provide a value')
         }
         if(!newErrors.length){
+            isLoading();
             const data = await dispatch(fetchMapData({value}))
+            finishedLoading();
             if(data.errors){
                 setErrors(data.errors)
             }
@@ -78,42 +101,56 @@ const MapHome = () => {
                 <div className='main__map__home__container'>
                     <NavLink
                             className='back__arrow'
-                            to='/profile'>
+                            to='/'>
                         <img src={arrow} alt='arrow'>
                         </img>
+                    </NavLink>
+                    <NavLink to='/maps/create'>
+                        <button className='create__map'>
+                            Create Map
+                        </button>
                     </NavLink>
                     {Object.keys(maps).map((map, key)=>{
                         return <MapComponent key={key} map={maps[map]} user={user.id}/>
                     })}
 
-                    <NavLink to='/maps/create'>
-                        <button>
-                            Create Map
-                        </button>
-                    </NavLink>
                 </div>
 
                 <div className='map__home__search__container'>
                     <label>
                         Search Map
                     </label>
-                    <div>
+                    <div className='search__container'>
                         <input
                             placeholder='name or id'
                             value={searchValue}
                             name='searchValue'
+                            className='search__input'
                             onChange={(e)=>{setSearchValue(e.target.value)}}
+                            ref={searchInput}
                         >
                         </input>
                         <img
                             className='map__home__load' src={search} alt='load'
                             onClick={onSearch}
+                            ref={searchImage}
                         ></img>
+                        <div className='balls hidden' ref={balls}>
+                            <div className='ball1'></div>
+                            <div className='ball2'></div>
+                            <div className='ball1'></div>
+                        </div>
                     </div>
 
-                    {Object.keys(otherMaps).map((map, key)=>{
+                    {reverse.map((map, key)=>{
                         return <MapComponent key={key} map={otherMaps[map]} user={user.id}/>
                     })}
+
+                    <div className='balls hidden' ref={balls}>
+                        <div className='ball1'></div>
+                        <div className='ball2'></div>
+                        <div className='ball1'></div>
+                    </div>
                 </div>
             </div>
         }

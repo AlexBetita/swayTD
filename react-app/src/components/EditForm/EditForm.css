@@ -23,6 +23,17 @@
     top: 15%;
 }
 
+.back__arrow__logout.active{
+    all: revert;
+    transform: scaleX(-1);
+    -moz-transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    -ms-transform: scaleX(-1);
+    position: absolute;
+    left: 10%;
+    top: 15%;
+}
+
 .logout__form{
     display: flex;
     flex-direction: column;
