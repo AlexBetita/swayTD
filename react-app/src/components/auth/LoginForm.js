@@ -134,7 +134,7 @@ const LoginForm = () => {
                   name="password"
                   type="password"
                   placeholder="Password"
-                  autocomplete="on"
+                  autoComplete="on"
                   value={password}
                   onChange={updatePassword}
                   ref={passwordInput}

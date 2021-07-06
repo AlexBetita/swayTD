@@ -183,14 +183,21 @@ export default class Map{
     }
 
     getImageData(x, y){
-        return this.context.getImageData(x * this.tileWidth, y * this.tileHeight, this.tileWidth , this.tileHeight)
+        // get center of image
+        // this.context.fillStyle = `rgba(0, 0, 0, 1)`
+        // this.context.fillRect(x * this.tileWidth + (this.tileWidth / 2), y * this.tileHeight + (this.tileHeight/2), 1 , 1)
+        return this.context.getImageData(x * this.tileWidth + (this.tileWidth / 2), y * this.tileHeight + (this.tileHeight/2), 1 , 1)
     }
 
     getRGBAOfPixel(x, y){
         const pixel = this.getImageData(x,y)
         const data = pixel.data
 
-        return `rgb(${data[4]},${data[5]},${data[6]},${data[7]})`;
+        //12 13 14 15
+        //28 29 30 31
+        // this.context.fillStyle = `rgba(0, 0, 0, 1)`
+        // this.context.fillRect(x * this.tileWidth, y * this.tileHeight, this.tileWidth , this.tileHeight)
+        return `rgb(${data[0]},${data[1]},${data[2]}, ${data[3] / 255})`;
     }
 
     //resets map

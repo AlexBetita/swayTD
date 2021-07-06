@@ -180,7 +180,7 @@ const SignUpForm = () => {
               <input
                 type="password"
                 name="password"
-                autocomplete="off"
+                autoComplete="off"
                 onChange={updatePassword}
                 value={password}
                 ref={passwordInput}
@@ -191,7 +191,7 @@ const SignUpForm = () => {
               <input
                 type="password"
                 name="repeat_password"
-                autocomplete="off"
+                autoComplete="off"
                 onChange={updateRepeatPassword}
                 value={repeatPassword}
                 required={true}

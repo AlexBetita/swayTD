@@ -274,7 +274,7 @@ const Map_ = () => {
         if (e.target.tagName === 'CANVAS' && isPathing && (trigger === 'move' || trigger === 'down')){
             const y = Math.ceil(e.offsetY / (canvas.height / canvas.row)) - 1
             const x = Math.ceil(e.offsetX / (canvas.width/ canvas.column)) - 1
-
+            console.log(canvas.getImageData(x, y))
             if(startB.current.classList.contains('active')){
                 canvas.drawStart(x, y)
                 setErrors([])
