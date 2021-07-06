@@ -24,7 +24,7 @@
 }
 
 .back__arrow__logout.active{
-    all: revert;
+    /* all: revert; */
     transform: scaleX(-1);
     -moz-transform: scaleX(-1);
     -webkit-transform: scaleX(-1);
@@ -32,6 +32,12 @@
     position: absolute;
     left: 10%;
     top: 15%;
+    color: none;
+    background-color: transparent;
+    box-shadow: none;
+    animation-duration: 4s;
+    animation-name: none;
+    animation-iteration-count: infinite;
 }
 
 .logout__form{
