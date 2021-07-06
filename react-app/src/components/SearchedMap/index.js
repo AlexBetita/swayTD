@@ -55,6 +55,14 @@ const SearchedMap = () => {
     const pathPopUpB = useRef();
     const mapEditorBody = useRef();
 
+    const dfsB = useRef();
+    const llB = useRef();
+    const bfsB = useRef();
+
+    const undoDFSB = useRef();
+    const undoBFSB = useRef();
+    const undoLLB = useRef();
+
     const searchPopUp = useRef();
     const searchPopUpB = useRef();
 
@@ -118,6 +126,28 @@ const SearchedMap = () => {
         }
     }
 
+    const isTraversing = () => {
+        if(dfsB.current && bfsB.current && llB.current){
+            dfsB.current.setAttribute("disabled", true)
+            bfsB.current.setAttribute("disabled", true)
+            llB.current.setAttribute("disabled", true)
+            undoBFSB.current.classList.add('disabled')
+            undoDFSB.current.classList.add('disabled')
+            undoLLB.current.classList.add('disabled')
+        }
+    }
+
+    const finishedTraversing = () => {
+        if(dfsB.current && bfsB.current && llB.current){
+            dfsB.current.removeAttribute("disabled")
+            bfsB.current.removeAttribute("disabled")
+            llB.current.removeAttribute("disabled")
+            undoBFSB.current.classList.remove('disabled')
+            undoDFSB.current.classList.remove('disabled')
+            undoLLB.current.classList.remove('disabled')
+        }
+    }
+
     const loadMap = async (effectLoad = false) =>{
         if(searchImage.current.classList.contains('disabled')){
             return
@@ -151,34 +181,56 @@ const SearchedMap = () => {
 
     const startDfs = () =>{
         setErrors([])
+        isTraversing();
         const dfs = canvas.startDFS()
         if(dfs === undefined){
-            canvas.drawPath('dfs', dfsSpeed, dfsColor)
+            const res = canvas.drawPath('dfs', dfsSpeed, dfsColor)
+            if(res){
+                Promise.all(res).then(()=>{
+                    finishedTraversing();
+                })
+            }
         }
         else if('status' in dfs){
             setErrors(["Looks like this user didn't place an end or start node"])
+            finishedTraversing();
         }
     }
 
     const startBfs = () => {
         setErrors([])
+        isTraversing();
         const bfs = canvas.startBFS()
         if(bfs === undefined){
-            canvas.drawPath('bfs', bfsSpeed, bfsColor)
+            const res = canvas.drawPath('bfs', bfsSpeed, bfsColor)
+            if(res){
+                Promise.all(res).then(()=>{
+                    finishedTraversing();
+                })
+            }
         } else if('status' in bfs){
             setErrors(["Looks like this user didn't place an end or start node"])
+            finishedTraversing();
         }
     }
 
     const traverseLL = () => {
         setErrors([])
+        isTraversing();
         const ll = canvas.startLL()
         if(ll === undefined){
             alert('Start and end nodes are not connected so no path found')
+            finishedTraversing();
         } else if('status' in ll){
             setErrors(["Looks like this user didn't place an end or start node"])
+            finishedTraversing();
         } else {
-            canvas.drawPath('ll', llSpeed, llColor)
+            const res = canvas.drawPath('ll', llSpeed, llColor)
+            if(res){
+                Promise.all(res).then(()=>{
+                    finishedTraversing();
+                })
+            }
         }
     }
 
@@ -219,27 +271,54 @@ const SearchedMap = () => {
         searchPopUpB.current.classList.remove('active')
     }
 
-    const undoDFS = () => {
+    const undoDFS = async () => {
         setErrors([])
+        isTraversing();
+        if(undoDFSB.current.classList.contains('disabled')){
+            return
+        }
         const res = canvas.undoPath(true, false, false, dfsSpeed)
-        if(!res['status']){
-            setErrors([res['message']])
+        if(res){
+            Promise.all(res).then(()=>{
+                finishedTraversing();
+            })
+        } else {
+            setErrors(['No DFS path to undo'])
+            finishedTraversing();
         }
     }
 
     const undoBFS = () => {
         setErrors([])
+        isTraversing();
+        if(undoBFSB.current.classList.contains('disabled')){
+            return
+        }
         const res = canvas.undoPath(false, true, false, bfsSpeed)
-        if(!res['status']){
-            setErrors([res['message']])
+        if(res){
+            Promise.all(res).then(()=>{
+                finishedTraversing();
+            })
+        } else {
+            setErrors(['No BFS path to undo'])
+            finishedTraversing();
         }
     }
 
     const undoLL = () => {
         setErrors([])
+        isTraversing();
+        if(undoLLB.current.classList.contains('disabled')){
+            return
+        }
         const res = canvas.undoPath(false, false, true, llSpeed)
-        if(!res['status']){
-            setErrors([res['message']])
+        if(res){
+            Promise.all(res).then(()=>{
+                finishedTraversing();
+            })
+        } else {
+            setErrors(['No LL path to undo'])
+            finishedTraversing();
         }
     }
 
@@ -335,10 +414,10 @@ const SearchedMap = () => {
 
                             <div className='popup__path hidden' ref={pathPopUp}>
                                 <div>
-                                    <button onClick={startDfs}>
+                                    <button onClick={startDfs} ref={dfsB}>
                                         DFS
                                     </button>
-                                    <img src={undo} alt='undo' onClick={undoDFS}/>
+                                    <img src={undo} alt='undo' onClick={undoDFS} ref={undoDFS}/>
                                 </div>
                                 DFS Speed: {dfsSpeed}
                                 <input
@@ -353,10 +432,10 @@ const SearchedMap = () => {
                                     >
                                 </input>
                                 <div>
-                                    <button onClick={startBfs}>
+                                    <button onClick={startBfs}  ref={bfsB}>
                                         BFS
                                     </button>
-                                    <img src={undo} alt='undo' onClick={undoBFS}/>
+                                    <img src={undo} alt='undo' onClick={undoBFS} ref={undoBFS}/>
                                 </div>
                                 BFS Speed: {bfsSpeed}
                                 <input
@@ -371,10 +450,11 @@ const SearchedMap = () => {
                                     >
                                 </input>
                                 <div>
-                                    <button onClick={traverseLL}>
+                                    <button onClick={traverseLL} ref={llB}>
                                         LinkedList
+
                                     </button>
-                                    <img src={undo} alt='undo' onClick={undoLL}/>
+                                    <img src={undo} alt='undo' onClick={undoLL} ref={undoLL}/>
                                 </div>
                                 LL Speed: {llSpeed}
                                 <input

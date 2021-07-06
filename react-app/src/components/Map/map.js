@@ -345,6 +345,7 @@ export default class Map{
 
     //draw path
     drawPath(type = null, speed = null, color = null){
+        let promises = []
 
         if(type === 'dfs'){
             //disregard start and end point
@@ -358,12 +359,14 @@ export default class Map{
                 for (let i = 0; i < pathDFS.length; i++){
 
                     this.context.fillStyle = color
-                    setTimeout(()=>{
-                        //track undo
-                        this.saveUndoData(pathDFS[i][0], pathDFS[i][1], true)
+                    promises.push(new Promise((res, rej) =>{
+                        setTimeout(()=>{
+                            //track undo
+                            this.saveUndoData(pathDFS[i][0], pathDFS[i][1], true)
 
-                        this.fillRect(pathDFS[i][0], pathDFS[i][1])
-                    }, i * speed)
+                            this.fillRect(pathDFS[i][0], pathDFS[i][1])
+                        }, i * speed)
+                    }))
                 }
             } else {
                 for (let i = 0; i < pathDFS.length; i++){
@@ -387,13 +390,15 @@ export default class Map{
             if(speed){
                 for (let i = 0; i < pathBFS.length; i++){
                     this.context.fillStyle = color
-                    setTimeout(()=>{
+                    promises.push(new Promise((res, rej) =>{
+                        setTimeout(()=>{
 
-                        //track undo
-                        this.saveUndoData(pathBFS[i][0], pathBFS[i][1], false, true)
+                            //track undo
+                            this.saveUndoData(pathBFS[i][0], pathBFS[i][1], false, true)
 
-                        this.fillRect(pathBFS[i][0], pathBFS[i][1])
-                    }, i * speed)
+                            this.fillRect(pathBFS[i][0], pathBFS[i][1])
+                        }, i * speed)
+                    }))
                 }
 
             } else {
@@ -419,13 +424,15 @@ export default class Map{
             if(speed){
                 for (let i = 0; i < pathLL.length; i++){
                     this.context.fillStyle = color
-                    setTimeout(()=>{
+                    promises.push(new Promise((res, rej) =>{
+                        setTimeout(()=>{
 
-                        //track undo
-                        this.saveUndoData(pathLL[i][0], pathLL[i][1], false, false, true)
+                            //track undo
+                            this.saveUndoData(pathLL[i][0], pathLL[i][1], false, false, true)
 
-                        this.fillRect(pathLL[i][0], pathLL[i][1])
-                    }, i * speed)
+                            this.fillRect(pathLL[i][0], pathLL[i][1])
+                        }, i * speed)
+                    }))
                 }
             } else {
                 for (let i = 0; i < pathLL.length; i++){
@@ -437,106 +444,96 @@ export default class Map{
                     this.fillRect(pathLL[i][0], pathLL[i][1])
                 }
             }
-
         }
+
+        return promises
     }
 
     undoPath(dfs = false, bfs = false, ll = false, speed = 0){
         let reverse;
         let color;
+        let promises = []
 
         if(dfs){
             if(!this.undo['dfs']){
-                return {
-                    'status' : false,
-                    'message' : 'no dfs path to undo'
-                }
+                return false
             }
             reverse = this.pathDFS.slice(1, this.pathDFS.length - 1);
             reverse = reverse.reverse()
 
+
             for(let i = 0; i < reverse.length; i++){
-
-                setTimeout(()=>{
-                    //set dfs undo back to false
-                    this.undo['paths'][`${reverse[i][0]},${reverse[i][1]}`]['dfs'] = false
-                    color = this.undo['paths'][`${reverse[i][0]},${reverse[i][1]}`]['fill_color']
-                    this.context.fillStyle = 'rgb(255,255,255,1)' //clear first
-                    this.fillRect(reverse[i][0], reverse[i][1])
-                    this.context.fillStyle = color //set back to initial color before traveling
-                    this.fillRect(reverse[i][0], reverse[i][1])
-                }, i * speed)
-
+                promises.push(new Promise((res, rej) =>{
+                    setTimeout(()=>{
+                        //set dfs undo back to false
+                        this.undo['paths'][`${reverse[i][0]},${reverse[i][1]}`]['dfs'] = false
+                        color = this.undo['paths'][`${reverse[i][0]},${reverse[i][1]}`]['fill_color']
+                        this.context.fillStyle = 'rgb(255,255,255,1)' //clear first
+                        this.fillRect(reverse[i][0], reverse[i][1])
+                        this.context.fillStyle = color //set back to initial color before traveling
+                        this.fillRect(reverse[i][0], reverse[i][1])
+                    }, i * speed)
+                }))
             }
 
             //set undo to false
             this.undo['dfs'] = false
 
-            return {
-                'status'  : true,
-                'message' : 'successfully undid dfs'
-            }
+            return promises
+            // return {
+            //     'status'  : true,
+            //     'message' : 'successfully undid dfs'
+            // }
         } else if(bfs){
             if(!this.undo['bfs']){
-                return {
-                    'status' : false,
-                    'message' : 'no bfs path to undo'
-                }
+                return false
             }
             reverse = this.pathBFS.slice(1, this.pathBFS.length - 1);
             reverse = reverse.reverse()
 
             for(let i = 0; i < reverse.length; i++){
-
-                setTimeout(()=>{
-                    //set bfs undo back to false
-                    this.undo['paths'][`${reverse[i][0]},${reverse[i][1]}`]['bfs'] = false
-                    color = this.undo['paths'][`${reverse[i][0]},${reverse[i][1]}`]['fill_color']
-                    this.context.fillStyle = 'rgb(255,255,255,1)' //clear first
-                    this.fillRect(reverse[i][0], reverse[i][1])
-                    this.context.fillStyle = color //set back to initial color before traveling
-                    this.fillRect(reverse[i][0], reverse[i][1])
-                }, i * speed)
-
+                promises.push(new Promise((res, rej) =>{
+                    setTimeout(()=>{
+                        //set bfs undo back to false
+                        this.undo['paths'][`${reverse[i][0]},${reverse[i][1]}`]['bfs'] = false
+                        color = this.undo['paths'][`${reverse[i][0]},${reverse[i][1]}`]['fill_color']
+                        this.context.fillStyle = 'rgb(255,255,255,1)' //clear first
+                        this.fillRect(reverse[i][0], reverse[i][1])
+                        this.context.fillStyle = color //set back to initial color before traveling
+                        this.fillRect(reverse[i][0], reverse[i][1])
+                    }, i * speed)
+                }))
             }
 
             //set undo to false
             this.undo['bfs'] = false
 
-            return {
-                'status'  : true,
-                'message' : 'successfully undid bfs'
-            }
+            return promises
+
         } else if(ll){
             if(!this.undo['ll']){
-                return {
-                    'status' : false,
-                    'message' : 'no ll path to undo'
-                }
+                return false
             }
             reverse = this.pathLL.slice(0, this.pathLL.length - 2);
             reverse = reverse.reverse()
 
             for(let i = 0; i < reverse.length; i++){
-
-                setTimeout(()=>{
-                    //set ll undo back to false
-                    this.undo['paths'][`${reverse[i][0]},${reverse[i][1]}`]['ll'] = false
-                    color = this.undo['paths'][`${reverse[i][0]},${reverse[i][1]}`]['fill_color']
-                    this.context.fillStyle = 'rgb(255,255,255,1)' //clear first
-                    this.fillRect(reverse[i][0], reverse[i][1])
-                    this.context.fillStyle = color //set back to initial color before traveling
-                    this.fillRect(reverse[i][0], reverse[i][1])
-                }, i * speed)
-
+                promises.push(new Promise((res, rej) =>{
+                    setTimeout(()=>{
+                        //set ll undo back to false
+                        this.undo['paths'][`${reverse[i][0]},${reverse[i][1]}`]['ll'] = false
+                        color = this.undo['paths'][`${reverse[i][0]},${reverse[i][1]}`]['fill_color']
+                        this.context.fillStyle = 'rgb(255,255,255,1)' //clear first
+                        this.fillRect(reverse[i][0], reverse[i][1])
+                        this.context.fillStyle = color //set back to initial color before traveling
+                        this.fillRect(reverse[i][0], reverse[i][1])
+                    }, i * speed)
+                }))
             }
 
             this.undo['ll'] = false
 
-            return {
-                'status'  : true,
-                'message' : 'successfully undid ll'
-            }
+            return promises
         }
 
     }

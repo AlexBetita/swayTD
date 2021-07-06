@@ -4,6 +4,7 @@
     animation-duration: 6s;
     animation-name: title;
     animation-iteration-count: infinite;
+    cursor: default;
 }
 
 .login__form{
@@ -27,4 +28,3 @@
     top: 26.8%;
     left: 21%;
 */
-
