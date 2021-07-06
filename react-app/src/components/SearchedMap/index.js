@@ -58,7 +58,6 @@ const SearchedMap = () => {
     const dfsB = useRef();
     const llB = useRef();
     const bfsB = useRef();
-
     const undoDFSB = useRef();
     const undoBFSB = useRef();
     const undoLLB = useRef();
@@ -126,6 +125,7 @@ const SearchedMap = () => {
         }
     }
 
+    //CHANGES
     const isTraversing = () => {
         if(dfsB.current && bfsB.current && llB.current){
             dfsB.current.setAttribute("disabled", true)
@@ -179,60 +179,6 @@ const SearchedMap = () => {
 
 
 
-    const startDfs = () =>{
-        setErrors([])
-        isTraversing();
-        const dfs = canvas.startDFS()
-        if(dfs === undefined){
-            const res = canvas.drawPath('dfs', dfsSpeed, dfsColor)
-            if(res){
-                Promise.all(res).then(()=>{
-                    finishedTraversing();
-                })
-            }
-        }
-        else if('status' in dfs){
-            setErrors(["Looks like this user didn't place an end or start node"])
-            finishedTraversing();
-        }
-    }
-
-    const startBfs = () => {
-        setErrors([])
-        isTraversing();
-        const bfs = canvas.startBFS()
-        if(bfs === undefined){
-            const res = canvas.drawPath('bfs', bfsSpeed, bfsColor)
-            if(res){
-                Promise.all(res).then(()=>{
-                    finishedTraversing();
-                })
-            }
-        } else if('status' in bfs){
-            setErrors(["Looks like this user didn't place an end or start node"])
-            finishedTraversing();
-        }
-    }
-
-    const traverseLL = () => {
-        setErrors([])
-        isTraversing();
-        const ll = canvas.startLL()
-        if(ll === undefined){
-            alert('Start and end nodes are not connected so no path found')
-            finishedTraversing();
-        } else if('status' in ll){
-            setErrors(["Looks like this user didn't place an end or start node"])
-            finishedTraversing();
-        } else {
-            const res = canvas.drawPath('ll', llSpeed, llColor)
-            if(res){
-                Promise.all(res).then(()=>{
-                    finishedTraversing();
-                })
-            }
-        }
-    }
 
     const togglePopUpPath = (e) =>{
         if(pathPopUpB.current.classList.contains('active')){
@@ -271,15 +217,71 @@ const SearchedMap = () => {
         searchPopUpB.current.classList.remove('active')
     }
 
-    const undoDFS = async () => {
+    const startDfs = () =>{
         setErrors([])
         isTraversing();
+        const dfs = canvas.startDFS()
+        if(dfs === undefined){
+            const res = canvas.drawPath('dfs', dfsSpeed, dfsColor)
+            if(res){
+                Promise.all(res).then(()=>{
+                   finishedTraversing();
+                })
+            }
+        }
+        else if('status' in dfs){
+            setErrors(["Looks like this user didn't place an end or start node"])
+            finishedTraversing();
+        }
+    }
+
+    const startBfs = async () => {
+        setErrors([])
+        isTraversing();
+        const bfs = canvas.startBFS()
+        if(bfs === undefined){
+            const res = canvas.drawPath('bfs', bfsSpeed, bfsColor)
+            if(res){
+                Promise.all(res).then(()=>{
+                    finishedTraversing();
+                })
+            }
+        } else if('status' in bfs){
+            setErrors(["Looks like this user didn't place an end or start node"])
+            finishedTraversing();
+        }
+    }
+
+    const traverseLL = () => {
+        setErrors([])
+        isTraversing();
+        const ll = canvas.startLL()
+        if(ll === undefined){
+            alert('Start and end nodes are not connected so no path found')
+            finishedTraversing();
+        } else if('status' in ll){
+            setErrors(["Looks like this user didn't place an end or start node"])
+            finishedTraversing();
+        } else {
+            const res = canvas.drawPath('ll', llSpeed, llColor)
+            if(res){
+                Promise.all(res).then(()=>{
+                    finishedTraversing();
+                })
+            }
+        }
+    }
+
+    const undoDFS = async () => {
+        setErrors([])
         if(undoDFSB.current.classList.contains('disabled')){
             return
         }
+        isTraversing();
         const res = canvas.undoPath(true, false, false, dfsSpeed)
         if(res){
             Promise.all(res).then(()=>{
+                console.log('finsihed undoing')
                 finishedTraversing();
             })
         } else {
@@ -290,10 +292,10 @@ const SearchedMap = () => {
 
     const undoBFS = () => {
         setErrors([])
-        isTraversing();
         if(undoBFSB.current.classList.contains('disabled')){
             return
         }
+        isTraversing();
         const res = canvas.undoPath(false, true, false, bfsSpeed)
         if(res){
             Promise.all(res).then(()=>{
@@ -307,10 +309,10 @@ const SearchedMap = () => {
 
     const undoLL = () => {
         setErrors([])
-        isTraversing();
         if(undoLLB.current.classList.contains('disabled')){
             return
         }
+        isTraversing();
         const res = canvas.undoPath(false, false, true, llSpeed)
         if(res){
             Promise.all(res).then(()=>{
@@ -412,66 +414,63 @@ const SearchedMap = () => {
                                 <img className='map__icon' src={path} alt='path' onClick={togglePopUpPath}/>
                             </div>
 
-                            <div className='popup__path hidden' ref={pathPopUp}>
-                                <div>
-                                    <button onClick={startDfs} ref={dfsB}>
-                                        DFS
-                                    </button>
-                                    <img src={undo} alt='undo' onClick={undoDFS} ref={undoDFS}/>
-                                </div>
-                                DFS Speed: {dfsSpeed}
-                                <input
-                                    type="range" min="0" max="100" value={dfsSpeed}
-                                    onChange={(e)=> setDFSSpeed(e.target.value)}
-                                >
-                                </input>
-                                <input
-                                    className='color__picker'
-                                    type='color'
-                                    onChange={(e)=>setDFSColor(e.target.value)}
+                                <div className='popup__path hidden' ref={pathPopUp}>
+                                    <div>
+                                        <button onClick={startDfs} ref={dfsB}>
+                                            DFS
+                                        </button>
+                                        <img src={undo} alt='undo' onClick={undoDFS} ref={undoDFSB}/>
+                                    </div>
+                                    DFS Speed: {dfsSpeed}
+                                    <input
+                                        type="range" min="0" max="100" value={dfsSpeed}
+                                        onChange={(e)=> setDFSSpeed(e.target.value)}
                                     >
-                                </input>
-                                <div>
-                                    <button onClick={startBfs}  ref={bfsB}>
-                                        BFS
-                                    </button>
-                                    <img src={undo} alt='undo' onClick={undoBFS} ref={undoBFS}/>
-                                </div>
-                                BFS Speed: {bfsSpeed}
-                                <input
-                                    type="range" min="0" max="100" value={bfsSpeed}
-                                    onChange={(e)=> setBFSSpeed(e.target.value)}
-                                >
-                                </input>
-                                <input
-                                    className='color__picker'
-                                    type='color'
-                                    onChange={(e)=>setBFSColor(e.target.value)}
+                                    </input>
+                                    <input
+                                        className='color__picker'
+                                        type='color'
+                                        onChange={(e)=>setDFSColor(e.target.value)}
+                                        >
+                                    </input>
+                                    <div>
+                                        <button onClick={startBfs}  ref={bfsB}>
+                                            BFS
+                                        </button>
+                                        <img src={undo} alt='undo' onClick={undoBFS} ref={undoBFSB}/>
+                                    </div>
+                                    BFS Speed: {bfsSpeed}
+                                    <input
+                                        type="range" min="0" max="100" value={bfsSpeed}
+                                        onChange={(e)=> setBFSSpeed(e.target.value)}
                                     >
-                                </input>
-                                <div>
-                                    <button onClick={traverseLL} ref={llB}>
-                                        LinkedList
+                                    </input>
+                                    <input
+                                        className='color__picker'
+                                        type='color'
+                                        onChange={(e)=>setBFSColor(e.target.value)}
+                                        >
+                                    </input>
+                                    <div>
+                                        <button onClick={traverseLL} ref={llB}>
+                                            LinkedList
 
-                                    </button>
-                                    <img src={undo} alt='undo' onClick={undoLL} ref={undoLL}/>
-                                </div>
-                                LL Speed: {llSpeed}
-                                <input
-                                    type="range" min="0" max="100" value={llSpeed}
-                                    onChange={(e)=> setLLSpeed(e.target.value)}
-                                >
-                                </input>
-                                <input
-                                    className='color__picker'
-                                    type='color'
-                                    onChange={(e)=>setLLColor(e.target.value)}
+                                        </button>
+                                        <img src={undo} alt='undo' onClick={undoLL} ref={undoLLB}/>
+                                    </div>
+                                    LL Speed: {llSpeed}
+                                    <input
+                                        type="range" min="0" max="100" value={llSpeed}
+                                        onChange={(e)=> setLLSpeed(e.target.value)}
                                     >
-                                </input>
-                            </div>
-
-
-
+                                    </input>
+                                    <input
+                                        className='color__picker'
+                                        type='color'
+                                        onChange={(e)=>setLLColor(e.target.value)}
+                                        >
+                                    </input>
+                                </div>
                         </div>
 
                         <div>

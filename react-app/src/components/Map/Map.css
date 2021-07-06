@@ -199,6 +199,15 @@ canvas{
     cursor: pointer;
 }
 
+.popup__path div img.disabled{
+    width: 15px;
+    height: 15px;
+    position: relative;
+    top: 8px;
+    right: -11px;
+    cursor: not-allowed;
+}
+
 .popup__path div button{
     width: 15px;
     height: 15px;
@@ -352,4 +361,3 @@ canvas{
     flex-direction: column;
     color: rgb(77, 6, 71);
 }
-

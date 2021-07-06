@@ -365,9 +365,11 @@ export default class Map{
                             this.saveUndoData(pathDFS[i][0], pathDFS[i][1], true)
 
                             this.fillRect(pathDFS[i][0], pathDFS[i][1])
+                            res('true')
                         }, i * speed)
                     }))
                 }
+                return promises
             } else {
                 for (let i = 0; i < pathDFS.length; i++){
 
@@ -397,10 +399,11 @@ export default class Map{
                             this.saveUndoData(pathBFS[i][0], pathBFS[i][1], false, true)
 
                             this.fillRect(pathBFS[i][0], pathBFS[i][1])
+                            res('true')
                         }, i * speed)
                     }))
                 }
-
+                return promises
             } else {
                 for (let i = 0; i < pathBFS.length; i++){
 
@@ -431,9 +434,11 @@ export default class Map{
                             this.saveUndoData(pathLL[i][0], pathLL[i][1], false, false, true)
 
                             this.fillRect(pathLL[i][0], pathLL[i][1])
+                            res('true')
                         }, i * speed)
                     }))
                 }
+                return promises
             } else {
                 for (let i = 0; i < pathLL.length; i++){
 
@@ -453,7 +458,6 @@ export default class Map{
         let reverse;
         let color;
         let promises = []
-
         if(dfs){
             if(!this.undo['dfs']){
                 return false
@@ -472,6 +476,7 @@ export default class Map{
                         this.fillRect(reverse[i][0], reverse[i][1])
                         this.context.fillStyle = color //set back to initial color before traveling
                         this.fillRect(reverse[i][0], reverse[i][1])
+                        res('true')
                     }, i * speed)
                 }))
             }
@@ -501,6 +506,7 @@ export default class Map{
                         this.fillRect(reverse[i][0], reverse[i][1])
                         this.context.fillStyle = color //set back to initial color before traveling
                         this.fillRect(reverse[i][0], reverse[i][1])
+                        res('true')
                     }, i * speed)
                 }))
             }
@@ -527,6 +533,7 @@ export default class Map{
                         this.fillRect(reverse[i][0], reverse[i][1])
                         this.context.fillStyle = color //set back to initial color before traveling
                         this.fillRect(reverse[i][0], reverse[i][1])
+                        res('true')
                     }, i * speed)
                 }))
             }
