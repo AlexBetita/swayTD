@@ -10,7 +10,7 @@ import uuid
 
 ALLOWED_EXTENSIONS = {"pdf", "png", "jpg", "jpeg", "gif", "jfif"}
 BUCKET_NAME = os.environ.get("S3_BUCKET")
-S3_LOCATION = f"http://swaytd.s3.amazonaws.com/"
+S3_LOCATION = f"https://swaytd.s3.amazonaws.com/"
 
 # aws_access_key_id=Config.S3_KEY,
 # aws_secret_access_key=Config.S3_SECRET_ACCESS_KEY

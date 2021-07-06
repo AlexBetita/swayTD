@@ -249,6 +249,7 @@ const EditForm = () => {
                                 className='edit__password'
                                 type="password"
                                 name="password"
+                                autocomplete="off"
                                 onChange={(e)=> setPassword(e.target.value)}
                                 value={password}
                                 ref={passwordInput}
@@ -260,6 +261,7 @@ const EditForm = () => {
                                 className='edit__password'
                                 type="password"
                                 name="repeat_password"
+                                autocomplete="off"
                                 onChange={(e)=> setRepeatPassword(e.target.value)}
                                 value={repeatPassword}
                                 ref={repeatpasswordInput}
