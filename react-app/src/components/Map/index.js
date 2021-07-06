@@ -104,7 +104,7 @@ const Map_ = () => {
     const [llSpeed, setLLSpeed] = useState(0);
     const [llColor, setLLColor] = useState('#000000');
 
-    const m = (e) => {
+    const eventHandler = (e) => {
         // setTimeout(()=>{
         //     clickyGo('move', e)
         // }, 0)
@@ -185,21 +185,20 @@ const Map_ = () => {
 
     //clickers
     const clickyGo = (trigger, e) =>{
+        if(!mousDownClick.current.classList.contains('active')){
+            return
+        }
         if(!color){
             color = stateColor
         }
-        if(!mousDownClick.current.classList.contains('active')){
-
-            return
-        }
         if(trigger === 'down'){
             isPathing = true
-            canvasElement.current.addEventListener('mousemove', (e)=> m(e))
+            canvasElement.current.addEventListener('mousemove', (e)=> eventHandler(e), true)
         }
 
         if(trigger === 'up' || trigger === 'out'){
             isPathing = false
-            canvasElement.current.removeEventListener('mousemove', (e)=> m(e))
+            canvasElement.current.removeEventListener('mousemove', (e)=> eventHandler(e), true)
         }
 
         if (e.target.tagName === 'CANVAS' && isPathing && (trigger === 'move' || trigger === 'down')){
@@ -225,7 +224,6 @@ const Map_ = () => {
             if(clearB.current.classList.contains('active')){
                 canvas.clearTile(x, y)
             }
-
         }
     }
 
@@ -247,7 +245,7 @@ const Map_ = () => {
     const toggleMouseDown = () => {
 
         if(mousDownClick.current.classList.contains('active')){
-            canvasElement.current.removeEventListener('mousemove', (e)=> m(e))
+            canvasElement.current.removeEventListener('mousemove', (e)=> eventHandler(e))
             isPathing = false
             mousDownClick.current.classList.remove('active')
         } else{
