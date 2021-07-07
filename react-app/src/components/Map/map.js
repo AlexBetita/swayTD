@@ -908,6 +908,7 @@ export default class Map{
         const {width, height, rows, columns, plotted_tiles} = JSON.parse(mapData)
 
         const newMap = new Map(width, height, canvas, rows, columns)
+        let fill_color;
 
         newMap.setCanvasDimensions()
         if(grid){
@@ -920,7 +921,7 @@ export default class Map{
             let start = plotted_tiles[key].start
             let end = plotted_tiles[key].end
 
-            let fill_color = plotted_tiles[key].fill_color
+            fill_color = plotted_tiles[key].fill_color
 
             if(start){
                 newMap.drawStart(x, y)
@@ -931,6 +932,14 @@ export default class Map{
             }
             return id
         })
-        return newMap
+        return {'new_map' : newMap, 'fill_color':  fill_color}
+    }
+
+    static RGBToHex(str){
+        const rgb = str.split(',')
+        const r = parseInt(rgb[0].substring(5,8))
+        const g = parseInt(rgb[1])
+        const b = parseInt(rgb[2])
+        return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
     }
 }

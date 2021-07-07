@@ -20,7 +20,7 @@ import eraser from '../img/eraser.png';
 import grid from '../img/grid.png';
 import path from '../img/path.png';
 import save from '../img/save.png';
-import fill from '../img/fill.png';
+import paint from '../img/paint.png';
 import square from '../img/square.png';
 import edit from '../img/edit.png';
 import delete_icon from '../img/delete_red.png';
@@ -177,23 +177,30 @@ const Map_ = () => {
     }
 
     useEffect(() =>{
+
         if(currentMap){
             if(!currentMap['owner']){
                 history.push(`/maps/${id}`)
             } else {
-                let c = Map.loadMap(currentMap.map_data, canvasElement)
-                setCanvas(c)
+                let {new_map, fill_color} = Map.loadMap(currentMap.map_data, canvasElement)
+                if(fill_color.includes('rgba')){
+                    setStateColor(Map.RGBToHex(fill_color))
+                } else {
+                    setStateColor(fill_color)
+                }
+                setCanvas(new_map)
                 setName(currentMap['name'])
                 setRow(currentMap['rows'])
                 setColumn(currentMap['columns'])
                 setWidth(currentMap['width'])
                 setHeight(currentMap['height'])
                 setMapId(currentMap['id'])
+
             }
         } else {
-            let c = new Map(width, height, canvasElement, row, column)
-            setCanvas(c)
-            c.setCanvasDimensions()
+            let new_map = new Map(width, height, canvasElement, row, column)
+            setCanvas(new_map)
+            new_map.setCanvasDimensions()
         }
         document.addEventListener('mousedown', handlePathPopUpClick)
         document.addEventListener('mousedown', handleLoadPopUpClick)
@@ -539,7 +546,7 @@ const Map_ = () => {
             colorPickerB.current.classList.remove('active')
         } else{
             colorPickerB.current.classList.add('active')
-            
+
             startB.current.classList.remove('active')
             endB.current.classList.remove('active')
             squareB.current.classList.remove('active')
@@ -915,7 +922,7 @@ const Map_ = () => {
                             </input>
                             <div className='map__icon__container' ref={squareB} >
                                 <img
-                                    className='map__icon' src={fill} alt='fill'
+                                    className='map__icon' src={paint} alt='paint'
                                     onClick={toggleFillSquare}
                                     // style={{
                                     //     'filter': `opacity(0.5) drop-shadow(0 0 0 ${color}})`
@@ -1201,7 +1208,7 @@ const Map_ = () => {
                                 >
                             </input>
                             <div className='map__icon__container' ref={squareB} >
-                                <img className='map__icon' src={fill} alt='fill' onClick={toggleFillSquare}/>
+                                <img className='map__icon' src={paint} alt='paint' onClick={toggleFillSquare}/>
                             </div>
                         </div>
 

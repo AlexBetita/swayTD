@@ -87,8 +87,8 @@ const SearchedMap = () => {
 
     useEffect(() =>{
         if(currentMap){
-            let c = Map.loadMap(currentMap.map_data, canvasElement)
-            setCanvas(c)
+            let {new_map} = Map.loadMap(currentMap.map_data, canvasElement)
+            setCanvas(new_map)
             setName(currentMap['name'])
             setRow(currentMap['rows'])
             setColumn(currentMap['columns'])
