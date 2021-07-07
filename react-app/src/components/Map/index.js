@@ -185,8 +185,10 @@ const Map_ = () => {
             } else {
                 let {new_map, fill_color} = Map.loadMap(currentMap.map_data, canvasElement)
                 if(fill_color.includes('rgba')){
+                    color = Map.RGBToHex(fill_color)
                     setStateColor(Map.RGBToHex(fill_color))
                 } else {
+                    color = fill_color
                     setStateColor(fill_color)
                 }
                 setCanvas(new_map)
@@ -717,7 +719,19 @@ const Map_ = () => {
     }
 
     const reloadMap = () =>{
-
+        let {new_map, fill_color} = Map.loadMap(currentMap.map_data, canvasElement)
+        if(fill_color.includes('rgba')){
+            setStateColor(Map.RGBToHex(fill_color))
+        } else {
+            setStateColor(fill_color)
+        }
+        setCanvas(new_map)
+        setName(currentMap['name'])
+        setRow(currentMap['rows'])
+        setColumn(currentMap['columns'])
+        setWidth(currentMap['width'])
+        setHeight(currentMap['height'])
+        setMapId(currentMap['id'])
     }
 
     return (
