@@ -596,6 +596,8 @@ export default class Map{
 
         this.context.beginPath();
         this.context.strokeStyle = "rgba(0, 0, 0, 1)";
+        this.context.lineWidth = 1
+
         //starting position of x
         let posX = this.tileWidth
 
@@ -620,11 +622,11 @@ export default class Map{
     //remove grid
     removeGrid(){
         this.context.beginPath();
+        this.context.strokeStyle = "rgba(255, 255, 255, 1)";
 
         //starting position of x
         let posX = this.tileWidth
-        this.context.lineWidth = 1.5
-        this.context.strokeStyle = "rgba(255, 255, 255, 1)";
+        this.context.lineWidth = 2
 
         for (let i = 0; i < this.column; i ++){
             this.context.moveTo(posX, 0)
@@ -663,7 +665,7 @@ export default class Map{
             this.context.fillRect(x * this.tileWidth, y * this.tileHeight, this.tileWidth, this.tileHeight)
 
             this.context.strokeStyle = "rgba(255, 255, 255, 1)";
-            this.context.lineWidth  = 2;
+            this.context.lineWidth  = 1;
             this.context.strokeRect(x * this.tileWidth, y * this.tileHeight, this.tileWidth, this.tileHeight);
 
             this.matrix[y][x] = 0

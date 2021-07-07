@@ -556,6 +556,14 @@ a{
         bottom: 100px;
         justify-content: space-between;
     } */
+    .map__id__div {
+        position: fixed;
+        top: 82%;
+        left: 50%;
+        font-weight: bold;
+        font-size: 25px;
+    }
+
 }
 
 

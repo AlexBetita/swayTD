@@ -13,10 +13,10 @@ import Map from './map';
 
 import coin from '../img/coin.png';
 import arrow from '../img/arrow.png';
-import start from '../img/start.png';
-import stop from '../img/stop.png';
-import pencil from '../img/pencil.png';
-import eraser from '../img/eraser.png';
+import start from '../img/flag_green.png';
+import stop from '../img/target_red.png';
+import pencil from '../img/pencil_orange.png';
+import eraser from '../img/eraser_pink.png';
 import grid from '../img/grid.png';
 import path from '../img/path.png';
 import save from '../img/save.png';
@@ -28,7 +28,8 @@ import load from '../img/load.png';
 import search from '../img/search.png';
 import grid_red from '../img/grid_red.png';
 import undo from '../img/undo.png';
-import copy_color from '../img/copy_color.png';
+import copy_color from '../img/copy_color_blue.png';
+import reload from '../img/reload_blue.png';
 
 import './Map.css';
 
@@ -715,6 +716,10 @@ const Map_ = () => {
         }
     }
 
+    const reloadMap = () =>{
+
+    }
+
     return (
     <>
 
@@ -1295,11 +1300,13 @@ const Map_ = () => {
                             <button onClick={loadMap}>
                                 Load Map Data
                             </button> */}
-
                             <div className='map__icon__container'>
                                 <img className='map__icon' src={edit} alt='edit' onClick={editMap} ref={editB}/>
-                            </div>
 
+                            </div>
+                            <div className='map__icon__container'>
+                                <img className='map__icon' src={reload} alt='reload' onClick={reloadMap}/>
+                            </div>
                         </div>
 
                         <div>
