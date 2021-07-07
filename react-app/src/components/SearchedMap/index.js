@@ -329,13 +329,13 @@ const SearchedMap = () => {
             <div className='map__editor__body'>
                 {height <= 800  &&
                     <div className='map__dimensions__text__900'>
-                        <label>
+                        <label id='dimensions'>
                             Map Dimensions
                         </label>
-                        <label>
+                        <label id='dimensions'>
                             {width} x {height}
                         </label>
-                        <label>
+                        <label id='dimensions'>
                             {row} x {column}
                         </label>
                     </div>

@@ -107,10 +107,10 @@ const Map_ = () => {
             return ''
         }
     })
-    const [row, setRow] = useState(50)
-    const [column, setColumn] = useState(50)
-    const [width, setWidth] = useState(700)
-    const [height, setHeight] = useState(700)
+    const [row, setRow] = useState(30)
+    const [column, setColumn] = useState(30)
+    const [width, setWidth] = useState(500)
+    const [height, setHeight] = useState(500)
     const [stateColor, setStateColor] = useState(color)
     const [searchValue, setSearchValue] = useState('')
     const [dfsColor, setDFSColor] = useState('#000000');
@@ -670,13 +670,13 @@ const Map_ = () => {
             <div className='map__editor__body'>
                 {height <= 800  &&
                     <div className='map__dimensions__text__900'>
-                        <label>
+                        <label id='dimensions'>
                             Map Dimensions
-                        </label>
-                        <label>
+                        </label >
+                        <label id='dimensions'>
                             {width} x {height}
                         </label>
-                        <label>
+                        <label id='dimensions'>
                             {row} x {column}
                         </label>
                     </div>
@@ -697,7 +697,7 @@ const Map_ = () => {
                     <NavLink
                         className='arrowMap'
                         to='/maps'>
-                    <img src={arrow} alt='arrow'>
+                    <img src={arrow} alt='arrow' className='back__arrow__image'>
                     </img>
                     </NavLink>
                 <ul>

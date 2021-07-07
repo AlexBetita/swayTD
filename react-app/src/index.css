@@ -331,3 +331,226 @@ a{
         color:rgb(62, 6, 70);
     }
 }
+
+
+@media only screen and (max-width: 800px) {
+
+    .map__dimensions__text__900, .map__dimensions__text__1000 {
+        top: 73% !important;
+        left: 40%;
+    }
+
+    #dimensions{
+        font-size: 15px !important;
+    }
+
+    .dimension__names > label{
+        font-size: 10px !important;
+    }
+
+    label {
+      font-size: 30px !important;
+    }
+
+    .home__profile__image{
+        margin-top: 40px;
+        min-width: 70px;
+        min-height: 70px;
+        max-width: 70px;
+        max-height: 70px;
+        border-radius: 50%;
+        border: 3px dashed purple;
+    }
+
+    .home__edit {
+        position: absolute;
+        left: 45%;
+    }
+
+    .side__home div label{
+        font-size: 10px !important;
+    }
+
+    .edit__username {
+        position: relative;
+        left: 12px;;
+        font-size: clamp(0.5rem, 5vw, 1rem);
+        font-weight: 300;
+        margin-right: 5px;
+        text-align: center;
+        color: rgb(77, 6, 71);
+        animation-duration: 10s;
+        animation-name: bordercolorchange;
+        animation-iteration-count: infinite;
+    }
+
+    .edit__email {
+        position: relative;
+        font-size: clamp(0.5rem, 5vw, 1rem);
+        font-weight: 300;
+        margin-right: 5px;
+        text-align: center;
+        margin-bottom: 5px;
+        color: rgb(77, 6, 71);
+        animation-duration: 10s;
+        animation-name: bordercolorchange;
+        animation-iteration-count: infinite;
+    }
+
+    .star__logout {
+        right: 3px;
+    }
+
+    .back__arrow__image{
+        height: 30px;
+        width: 30px;
+    }
+  }
+
+  @media only screen and (max-height: 1000px) {
+    .map__dimensions__text__900, .map__dimensions__text__1000 {
+        text-transform: uppercase;
+        font-weight: 600;
+        font-size: 15px !important;
+        position: absolute;
+        top: 30%;
+    }
+}
+
+@media only screen and (min-height: 450px) and (max-height: 950px) {
+
+    #dimensions{
+        font-size: 15px !important;
+    }
+
+    .dimension__names > label{
+        font-size: 10px !important;
+    }
+
+    label {
+        font-size: 30px !important;
+    }
+
+    .back__arrow__image{
+        height: 30px;
+        width: 30px;
+    }
+
+    .home__profile__image{
+        margin-top: 40px;
+        min-width: 70px;
+        min-height: 70px;
+        max-width: 70px;
+        max-height: 70px;
+        border-radius: 50%;
+        border: 3px dashed purple;
+    }
+
+    .home__edit {
+        position: absolute;
+        left: 45%;
+    }
+
+    .dimension__names{
+        font-size: 10px !important;
+    }
+
+    .side__home div label{
+        font-size: 10px !important;
+    }
+
+    .edit__username {
+        position: relative;
+        left: 12px;;
+        font-size: clamp(0.5rem, 5vw, 1rem);
+        font-weight: 300;
+        margin-right: 5px;
+        text-align: center;
+        color: rgb(77, 6, 71);
+        animation-duration: 10s;
+        animation-name: bordercolorchange;
+        animation-iteration-count: infinite;
+    }
+
+    .edit__email {
+        position: relative;
+        font-size: clamp(0.5rem, 5vw, 1rem);
+        font-weight: 300;
+        margin-right: 5px;
+        text-align: center;
+        margin-bottom: 5px;
+        color: rgb(77, 6, 71);
+        animation-duration: 10s;
+        animation-name: bordercolorchange;
+        animation-iteration-count: infinite;
+    }
+
+    .star__logout {
+        right: 3px;
+    }
+
+
+    .map__ui{
+        height: 75px;
+    }
+
+    .input__map__name {
+        height: 15px;
+    }
+
+    .dimensions input {
+        max-height: 5px;
+    }
+
+    .map__name {
+        top: 80%;
+    }
+}
+
+
+@media only screen and (max-height: 650px) {
+    .footer {
+        position: absolute;
+        flex-direction: column;
+        align-items: center;
+        height: 150px;
+        left: 8vw;
+        bottom: 100px;
+        justify-content: space-between;
+    }
+}
+
+
+@media only screen and (max-width: 1000px) {
+    /* .footer {
+        position: absolute;
+        flex-direction: column;
+        align-items: center;
+        height: 150px;
+        left: 95px;
+        bottom: 100px;
+        justify-content: space-between;
+    } */
+}
+
+
+
+@media only screen and (max-height: 550px) and (min-width: 850px){
+    label {
+        font-size: 15px !important;
+    }
+
+    .home__profile__image{
+        margin-top: 40px;
+        min-width: 40px;
+        min-height: 40px;
+        max-width: 40px;
+        max-height: 40px;
+        border-radius: 50%;
+        border: 3px dashed purple;
+    }
+    .home__coin{
+        height: 25px;
+        width: 25px;
+    }
+}
