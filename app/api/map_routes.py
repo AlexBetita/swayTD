@@ -29,7 +29,6 @@ def players_maps():
 def create_map():
     data = request.get_json()
     user = current_user
-    
     exists = Map.query.filter(Map.name == data['name']).first()
     if exists:
         return {'errors': ['Name is already taken']}, 400

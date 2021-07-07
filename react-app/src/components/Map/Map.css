@@ -163,6 +163,36 @@ canvas{
     filter: opacity(0.5) drop-shadow(0 0 0 rgb(156, 7, 255));
 } */
 
+.tips{
+    position: absolute;
+    right: 5%;
+    top: 15%;
+    cursor: pointer;
+}
+
+@keyframes light {
+    from {
+      transform: scale(0.8);
+    }
+
+    to {
+      box-shadow: 0 0 20px #fff,
+      0 0 10px #fbff04,
+      0 0 20px #fbff04,
+      0 0 30px #fbff04,
+      0 0 40px #fbff04,
+      0 0 50px #fbff04,
+      0 0 60px #fbff04;
+      transform: scale(1);
+    }
+}
+
+.bulb__icon{
+    height: 30px;
+    width: 30px;
+    animation: light 1.2s infinite alternate;
+}
+
 .map__icon{
     max-width: 25px;
     max-width: 25px;
@@ -187,7 +217,7 @@ canvas{
     animation-duration: 10s;
     animation-name: bordercolorchange;
     animation-iteration-count: infinite;
-    bottom: 62px;
+    bottom: 75px;
     background-color: rgba(236, 229, 229, 1);
     height: 100px;
 }
@@ -376,4 +406,11 @@ canvas{
     align-items: center;
     flex-direction: column;
     color: rgb(77, 6, 71);
+}
+
+.reload:hover{
+    animation-duration: 2s;
+    animation-name: rotatereload;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
 }

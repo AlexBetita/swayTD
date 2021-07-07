@@ -1,0 +1,35 @@
+.tips__modal__container{
+    display: block;
+    /* position: absolute; */
+    /* top: 50%; */
+    /* left: 0%; */
+    height: 55vh;
+    width: 75vw;
+    background-color: rgba(236, 229, 229, 0.575);
+    z-index: 200;
+}
+
+#modal {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#modal-background {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+#modal-content {
+    position: relative;
+    background-color:white;
+}

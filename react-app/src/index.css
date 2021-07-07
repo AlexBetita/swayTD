@@ -332,6 +332,18 @@ a{
     }
 }
 
+@keyframes rotatereload {
+    from {
+        transform: rotate(359deg);
+    }
+    to {
+        transform: rotate(0deg);
+    }
+}
+
+/*
+    Media Queries
+*/
 
 @media only screen and (max-width: 800px) {
 
@@ -417,7 +429,17 @@ a{
         bottom: 5px;
         left: 8px;
     }
-  }
+
+    .tips{
+        right: 10%;
+        top: 10%;
+    }
+    .arrowMap{
+        left: 3%;
+        bottom: 7vh;
+    }
+
+}
 
   @media only screen and (max-height: 1000px) {
     .map__dimensions__text__900, .map__dimensions__text__1000 {
@@ -515,7 +537,7 @@ a{
     }
 
     .map__name {
-        top: 80%;
+        /* top: 80%; */
     }
 
     .map__id__div {
@@ -530,6 +552,12 @@ a{
         bottom: 5px;
         left: 8px;
     }
+
+    .tips{
+        right: 3%;
+        top: 78%;
+    }
+
 }
 
 

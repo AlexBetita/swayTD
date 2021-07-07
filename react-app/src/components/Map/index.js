@@ -9,7 +9,9 @@ import { useSelector, useDispatch } from "react-redux"
 import { useParams, useHistory, NavLink } from 'react-router-dom';
 
 import {addMapData, fetchMapData, editMapData, deleteMapData} from "../../store/map";
+
 import Map from './map';
+import TipsModal from '../Tips';
 
 import coin from '../img/coin.png';
 import arrow from '../img/arrow.png';
@@ -30,6 +32,7 @@ import grid_red from '../img/grid_red.png';
 import undo from '../img/undo.png';
 import copy_color from '../img/copy_color_blue.png';
 import reload from '../img/reload_blue.png';
+import undo_draw from '../img/undo_purple.png';
 
 import './Map.css';
 
@@ -100,6 +103,8 @@ const Map_ = () => {
     const searchPopUpB = useRef();
 
     const colorPickerB = useRef();
+
+    const tipModal = useRef();
 
     const [canvas, setCanvas] = useState()
     const [name, setName] = useState('')
@@ -232,6 +237,7 @@ const Map_ = () => {
             pathPopUpB.current = false
             mapEditorBody.current = false
             mapIdDiv.current = false
+
             setCanvas()
             setErrors()
             document.removeEventListener("mousedown", handlePathPopUpClick);
@@ -293,6 +299,7 @@ const Map_ = () => {
 
         if(trigger === 'up' || trigger === 'out'){
             isPathing = false
+            canvas._drawing = false
             canvasElement.current.removeEventListener('mousemove', (e)=> eventHandler(e), true)
         }
 
@@ -308,6 +315,7 @@ const Map_ = () => {
             }
             else if(squareB.current.classList.contains('active')){
                 canvas.drawTile(x, y, color)
+                canvas._drawing = true
             }
             else if(clearB.current.classList.contains('active')){
                 canvas.clearTile(x, y)
@@ -323,6 +331,7 @@ const Map_ = () => {
                 startB.current.classList.remove('active')
             } else if(mousDownClick.current.classList.contains('active')) {
                 canvas.drawTile(x, y, `#000000`)
+                canvas._drawing = true
             }
 
         }
@@ -438,9 +447,7 @@ const Map_ = () => {
             setWidth(700)
             setHeight(700)
             alert('Succesfully deleted')
-            setTimeout(()=>{
-                history.push('/maps/create')
-            }, 0)
+            history.push('/maps/create')
         }
     }
 
@@ -732,8 +739,15 @@ const Map_ = () => {
         }
     }
 
+    const undoDraw = () =>{
+        canvas.undoDraw()
+    }
+
     return (
     <>
+            <div>
+                <TipsModal />
+            </div>
 
             <div className='map__editor__body'>
                 {height <= 800  &&
@@ -785,10 +799,6 @@ const Map_ = () => {
                 <canvas ref={canvasElement}>
 
                 </canvas>
-
-                <div>
-
-                </div>
 
             <div className='hide'ref={mapEditorBody}>
             {!id  &&
@@ -1035,6 +1045,10 @@ const Map_ = () => {
                                 <img className='map__icon' src={save} alt='save' onClick={onSave} ref={saveB}/>
                             </div>
 
+                            <div className='map__icon__container'>
+                                <img className='map__icon' src={undo_draw} alt='undo_draw' onClick={undoDraw}/>
+                            </div>
+
                             {/* <button onClick={loadMap}>
                                 Load Map Data
                             </button> */}
@@ -1188,21 +1202,13 @@ const Map_ = () => {
                         </div>
 
                         <div>
+
                             <div className='map__icon__container'>
-                                <img className='map__icon' src={grid} alt='grid' onClick={drawGrid}/>
+                                <img className='map__icon reload' src={reload} alt='reload' onClick={reloadMap}/>
                             </div>
 
                             <div className='map__icon__container'>
-                                <img className='map__icon'
-                                    src={grid_red} alt='grid' onClick={removeGrid}
-                                    // style={{
-                                    //     /*  credits
-                                    //         https://www.domysee.com/blogposts/coloring-white-images-css-filter
-                                    //     */
-                                    //     // 'filter': `opacity(0.6) drop-shadow(0 0 0 rgb(255, 0, 0)`
-                                    //     'filter' : 'brightness(0.5) sepia(1) saturate(1000000%)'
-                                    // }}
-                                    />
+                                <img className='map__icon' src={undo_draw} alt='undo_draw' onClick={undoDraw}/>
                             </div>
                         </div>
 
@@ -1313,24 +1319,25 @@ const Map_ = () => {
                                 Load Map Data
                             </button> */}
                             <div className='map__icon__container'>
-                                <img className='map__icon' src={edit} alt='edit' onClick={editMap} ref={editB}/>
+                                <img className='map__icon' src={grid} alt='grid' onClick={drawGrid}/>
+                            </div>
 
-                            </div>
                             <div className='map__icon__container'>
-                                <img className='map__icon' src={reload} alt='reload' onClick={reloadMap}/>
+                                <img className='map__icon'
+                                    src={grid_red} alt='grid' onClick={removeGrid}
+                                    // style={{
+                                    //     /*  credits
+                                    //         https://www.domysee.com/blogposts/coloring-white-images-css-filter
+                                    //     */
+                                    //     // 'filter': `opacity(0.6) drop-shadow(0 0 0 rgb(255, 0, 0)`
+                                    //     'filter' : 'brightness(0.5) sepia(1) saturate(1000000%)'
+                                    // }}
+                                    />
                             </div>
+
                         </div>
 
                         <div>
-                            {/* <button
-                            className='delete__button'
-                            ref={deleteB} onClick={deleteMap} >
-                                Delete Map
-                            </button> */}
-                            <div className='map__icon__container'>
-                                <img className='map__icon' src={delete_icon} alt='delete_icon' onClick={deleteMap} ref={deleteB}/>
-                            </div>
-                        </div>
 
                             <div>
                                 <div className='map__icon__container' ref={searchPopUpB}>
@@ -1352,6 +1359,20 @@ const Map_ = () => {
                                         />
                                     </div>
                                 </div>
+                            </div>
+
+                            <div className='map__icon__container'>
+                                <img className='map__icon' src={edit} alt='edit' onClick={editMap} ref={editB}/>
+
+                            </div>
+                        </div>
+                            {/* <button
+                            className='delete__button'
+                            ref={deleteB} onClick={deleteMap} >
+                                Delete Map
+                            </button> */}
+                            <div className='map__icon__container'>
+                                <img className='map__icon' src={delete_icon} alt='delete_icon' onClick={deleteMap} ref={deleteB}/>
                             </div>
 
                         </div>
