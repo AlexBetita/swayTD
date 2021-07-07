@@ -5,6 +5,7 @@
     animation-name: title;
     animation-iteration-count: infinite;
     cursor: default;
+    display: flex;
 }
 
 .login__form{
@@ -28,3 +29,8 @@
     top: 26.8%;
     left: 21%;
 */
+
+.title__image{
+    height: 15vh;
+    width: 30vw;
+}

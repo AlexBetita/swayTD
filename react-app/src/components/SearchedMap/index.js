@@ -18,7 +18,6 @@ import path from '../img/path.png';
 import load from '../img/load.png';
 import search from '../img/search.png';
 import undo from '../img/undo.png';
-import bulb from '../img/bulb.png';
 
 import './SearchedMap.css';
 
@@ -331,7 +330,7 @@ const SearchedMap = () => {
         <div>
             <TipsModal />
         </div>
-        
+
             <div className='map__editor__body'>
                 {height <= 800  &&
                     <div className='map__dimensions__text__900'>

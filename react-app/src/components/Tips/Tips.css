@@ -1,0 +1,111 @@
+
+.tips__modal__container > * > *::-webkit-scrollbar {
+    width: 0;
+}
+
+.tips__modal__container > * > *::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.tips__modal__container > * > *::-webkit-scrollbar-thumb {
+    background: transparent;
+    border: none;
+}
+
+.tips__modal__container{
+    display: block;
+    /* position: absolute; */
+    /* top: 50%; */
+    /* left: 0%; */
+    width: 75vw;
+    background-color: rgba(236, 229, 229, 0.575);
+    z-index: 200;
+}
+
+.tips__modal__container > * > * {
+    -ms-overflow-style: none;
+}
+
+ol, li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.tips__content{
+    height: 100%;
+    width: 100%;
+    text-align: center;
+    background-color: white;
+    flex-direction: column;
+    align-items: center;
+}
+
+.tips__intro{
+    font-size: 20px;
+    font-weight: 600;
+    text-align: center;
+    padding: 20px;
+}
+
+.slider {
+    position: relative;
+    padding-top: 75%;
+    filter: drop-shadow(0 0 10px #0003);
+    perspective: 100px;
+}
+
+.tips__list {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    overflow-x: hidden;
+}
+
+.tips__slide {
+    flex: 0 0 100%;
+    width: 100%;
+    background-color: rgba(236, 229, 229, 0.575);
+}
+
+.tips__navigation {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    text-align: center;
+}
+
+.tips__navigation-list,
+.tips__navigation-item {
+    display: inline-block;
+}
+
+.tips__navigation-button {
+    display: inline-block;
+    width: 1.5rem;
+    height: 1.5rem;
+    background-color: rgb(94, 8, 86);
+    background-clip: content-box;
+    border: 0.25rem solid transparent;
+    border-radius: 50%;
+    font-size: 0;
+    transition: transform 0.1s;
+}
+
+.tips__navigation-button:hover{
+    border-color: #f7a99f;
+    box-shadow: 1px 1px 5px #f7a99f;
+    background-color: rgb(143, 14, 130);
+    width: 1.7rem;
+    height: 1.7rem;
+}
+
+.tips__navigation-button.active{
+    border-color: #f7a99f;
+    width: 1.7rem;
+    height: 1.7rem;
+}

@@ -441,13 +441,20 @@ a{
 
 }
 
-  @media only screen and (max-height: 1000px) {
+@media only screen and (max-height: 1000px) {
     .map__dimensions__text__900, .map__dimensions__text__1000 {
         text-transform: uppercase;
         font-weight: 600;
         font-size: 15px !important;
         position: absolute;
         top: 30%;
+    }
+}
+
+
+@media only screen and (max-width: 650px) {
+    .tips__intro{
+        font-size: 5px;
     }
 }
 

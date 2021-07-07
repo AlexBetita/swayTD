@@ -1004,7 +1004,7 @@ export default class Map{
         return canvas;
     }
 
-    static RGBToHex(str){
+    static rgbtohex(str){
         const rgb = str.split(',')
         const r = parseInt(rgb[0].substring(5,8))
         const g = parseInt(rgb[1])

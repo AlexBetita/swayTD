@@ -7,6 +7,7 @@ import { signUp } from '../../store/session';
 import linkedin from '../img/linkedin.png';
 import email_icon from '../img/email.png';
 import github from '../img/github.png';
+import swaytd from '../img/swaytd.png';
 
 import "./SignUpForm.css"
 
@@ -138,7 +139,7 @@ const SignUpForm = () => {
     <div className='home__container'>
         <div className='main__home'>
           <div className='title'>
-                SWAY TD
+            <img className='title__image' src={swaytd} alt='title'/>
           </div>
           <form className='signup__form' onSubmit={onSignUp}>
               <div>
