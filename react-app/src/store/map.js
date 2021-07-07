@@ -73,6 +73,7 @@ export const addMapData = (payload) => async (dispatch) => {
 export const editMapData = (payload) => async (dispatch) => {
     const {name, map_data, user_id, id, map_image} = payload
     const {width, height, rows, columns} = map_data
+    console.log(columns)
     const response = await fetch(`/api/maps/${id}`, {
         method: "PUT",
         headers: {

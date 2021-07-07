@@ -34,7 +34,7 @@ import reload from '../img/reload_blue.png';
 import './Map.css';
 
 //moved color here to become big boy color
-let color = ''
+let color = '#000000'
 
 const Map_ = () => {
 
@@ -115,7 +115,7 @@ const Map_ = () => {
     const [column, setColumn] = useState(30)
     const [width, setWidth] = useState(500)
     const [height, setHeight] = useState(500)
-    const [stateColor, setStateColor] = useState('#00000')
+    const [stateColor, setStateColor] = useState('#000000')
     const [searchValue, setSearchValue] = useState('')
     const [dfsColor, setDFSColor] = useState('#000000');
     const [dfsSpeed, setDFSSpeed] = useState(0);
@@ -177,19 +177,28 @@ const Map_ = () => {
         }
     }
 
-    useEffect(() =>{
 
+    const reloadMap = () =>{
+        Map.reloadMap(currentMap.map_data, canvas)
+    }
+
+    useEffect(() =>{
         if(currentMap){
             if(!currentMap['owner']){
                 history.push(`/maps/${id}`)
             } else {
                 let {new_map, fill_color} = Map.loadMap(currentMap.map_data, canvasElement)
-                if(fill_color.includes('rgba')){
-                    color = Map.RGBToHex(fill_color)
-                    setStateColor(Map.RGBToHex(fill_color))
+                if(fill_color){
+                    if(fill_color.includes('rgba')){
+                        color = Map.RGBToHex(fill_color)
+                        setStateColor(Map.RGBToHex(fill_color))
+                    } else {
+                        color = fill_color
+                        setStateColor(fill_color)
+                    }
                 } else {
-                    color = fill_color
-                    setStateColor(fill_color)
+                    color = '#ffffff'
+                    setStateColor('#ffffff')
                 }
                 setCanvas(new_map)
                 setName(currentMap['name'])
@@ -198,7 +207,6 @@ const Map_ = () => {
                 setWidth(currentMap['width'])
                 setHeight(currentMap['height'])
                 setMapId(currentMap['id'])
-
             }
         } else {
             let new_map = new Map(width, height, canvasElement, row, column)
@@ -283,8 +291,8 @@ const Map_ = () => {
         }
 
         if (e.target.tagName === 'CANVAS' && isPathing && (trigger === 'move' || trigger === 'down')){
-            const y = Math.ceil(e.offsetY / (canvas.height / canvas.row)) - 1
-            const x = Math.ceil(e.offsetX / (canvas.width/ canvas.column)) - 1
+            const y = Math.ceil(e.offsetY / (canvas.height / canvas.rows)) - 1
+            const x = Math.ceil(e.offsetX / (canvas.width/ canvas.columns)) - 1
 
             if(colorPickerB.current.classList.contains('active')){
                 color = canvas.getRGBAToHex(x,y)
@@ -391,6 +399,7 @@ const Map_ = () => {
         const user_id = user.id;
 
         let map_data = canvas.mapData
+        console.log(map_data)
         let map_image = canvas.getDataUrl()
 
         isLoading();
@@ -716,22 +725,6 @@ const Map_ = () => {
             setErrors(['No DFS-NODE-TRAVERSAL path to undo'])
             finishedTraversing();
         }
-    }
-
-    const reloadMap = () =>{
-        let {new_map, fill_color} = Map.loadMap(currentMap.map_data, canvasElement)
-        if(fill_color.includes('rgba')){
-            setStateColor(Map.RGBToHex(fill_color))
-        } else {
-            setStateColor(fill_color)
-        }
-        setCanvas(new_map)
-        setName(currentMap['name'])
-        setRow(currentMap['rows'])
-        setColumn(currentMap['columns'])
-        setWidth(currentMap['width'])
-        setHeight(currentMap['height'])
-        setMapId(currentMap['id'])
     }
 
     return (

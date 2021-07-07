@@ -34,8 +34,8 @@ export default class Map{
         this.tileHeight = height / row
 
         //grid dimensions
-        this.row = Math.floor(row)
-        this.column = Math.floor(column)
+        this.rows = Math.floor(row)
+        this.columns = Math.floor(column)
 
         //2d matrix
         this.matrix = Array.from(Array(row), () => new Array(column).fill(0))
@@ -78,8 +78,8 @@ export default class Map{
         this._mapData = {
             'width': this.width,
             'height' : this.height,
-            'rows' : this.row,
-            'columns' : this.column,
+            'rows' : this.rows,
+            'columns' : this.columns,
             'plotted_tiles' : {
                 /*
                 '1' : {
@@ -137,7 +137,6 @@ export default class Map{
 
     //set map data
     set mapData(arr){
-
         this._mapData.plotted_tiles[arr[0]] = {
             'data' : arr[1],
             'start' : arr[2],
@@ -151,29 +150,29 @@ export default class Map{
 
     //set row
     set _row(row){
-        this.row = row
+        this.rows = row
         this.tileHeight = this.height / row
-        this._mapData['row'] = row
+        this._mapData['rows'] = row
     }
 
     //set column
     set _column(column){
-        this.column = column
+        this.columns = column
         this.tileWidth = this.width / column
-        this._mapData['column'] = column
+        this._mapData['columns'] = column
     }
 
     //set height
     set _height(height){
         this.height = height
-        this.tileHeight = height / this.row
+        this.tileHeight = height / this.rows
         this._mapData['height'] = height
     }
 
     //set width
     set _width(width){
         this.width = width
-        this.tileWidth = width / this.column
+        this.tileWidth = width / this.columns
         this._mapData['width'] = width
     }
 
@@ -217,7 +216,7 @@ export default class Map{
     //resets map
     cleanMap(){
         this.setCanvasDimensions()
-        this.matrix = Array.from(Array(this.row), () => new Array(this.column).fill(0))
+        this.matrix = Array.from(Array(this.rows), () => new Array(this.columns).fill(0))
         this.linkedlist = new LinkedList()
         this.start = null
         this.end = null
@@ -227,8 +226,8 @@ export default class Map{
         this._mapData = {
             'width': this.width,
             'height' : this.height,
-            'rows' : this.row,
-            'columns' : this.column,
+            'rows' : this.rows,
+            'columns' : this.columns,
             'plotted_tiles' : {
             }
         }
@@ -237,10 +236,9 @@ export default class Map{
     //draw tile
     drawTile(x, y, color = false){
         let data = this.getTileNumber(x, y)
-
         //HAD TO PUT IN TRY CATCH CAUSE MY INITIAL SOLUTION WAS NOT WORKING ON BIG BOY ROWS AND GRID
         //When Y is bigger than column and you go out of bounds an error happens
-        try{
+
             if(!(this.matrix[y][x] instanceof Node)){
 
                 if(!color){
@@ -256,9 +254,7 @@ export default class Map{
 
                 return true
             }
-        } catch {
-            return false
-        }
+
     }
 
     //draw start
@@ -601,7 +597,7 @@ export default class Map{
         //starting position of x
         let posX = this.tileWidth
 
-        for (let i = 0; i < this.column; i ++){
+        for (let i = 0; i < this.columns; i ++){
             this.context.moveTo(posX, 0)
             this.context.lineTo(posX, this.height)
             this.context.stroke()
@@ -611,7 +607,7 @@ export default class Map{
         //starting position of y
         let posY = this.tileHeight
 
-        for (let i = 0; i < this.row; i ++){
+        for (let i = 0; i < this.rows; i ++){
             this.context.moveTo(0, posY)
             this.context.lineTo(this.width, posY)
             this.context.stroke()
@@ -628,7 +624,7 @@ export default class Map{
         let posX = this.tileWidth
         this.context.lineWidth = 2
 
-        for (let i = 0; i < this.column; i ++){
+        for (let i = 0; i < this.columns; i ++){
             this.context.moveTo(posX, 0)
             this.context.lineTo(posX, this.height)
             this.context.stroke()
@@ -638,7 +634,7 @@ export default class Map{
         //starting position of y
         let posY = this.tileHeight
 
-        for (let i = 0; i < this.row; i ++){
+        for (let i = 0; i < this.rows; i ++){
             this.context.moveTo(0, posY)
             this.context.lineTo(this.width, posY)
             this.context.stroke()
@@ -678,7 +674,7 @@ export default class Map{
 
     //get exact number of tile in grid
     getTileNumber(x, y){
-        return (y * this.column) + (x + 1)
+        return (y * this.columns) + (x + 1)
     }
 
     //plot node in the nodematrix
@@ -731,7 +727,7 @@ export default class Map{
     //adjust matrix
     adjustMatrix(){
         //2d matrix
-        this.matrix = Array.from(Array(this.row), () => new Array(this.column).fill(0))
+        this.matrix = Array.from(Array(this.rows), () => new Array(this.columns).fill(0))
     }
 
     //checks if possible to traverse
@@ -872,8 +868,8 @@ export default class Map{
             //         : (result[i] % this.column) - 1
             // let y = result[i] <= this.column ? 0
             //         : Math.floor((result[i] - 1) / this.column) % this.column
-            let x = (result[i] - 1)% this.column
-            let y = Math.floor((result[i] - 1)/ this.column)
+            let x = (result[i] - 1)% this.columns
+            let y = Math.floor((result[i] - 1)/ this.columns)
             convertResultToCoords.push([x, y])
         }
         return this.pathLL=convertResultToCoords
@@ -935,6 +931,26 @@ export default class Map{
             return id
         })
         return {'new_map' : newMap, 'fill_color':  fill_color}
+    }
+
+    static reloadMap(mapData, canvas){
+        const {width, height, rows, columns, plotted_tiles} = JSON.parse(mapData)
+        //reset map data
+        canvas._mapData = {
+            'width': canvas.width,
+            'height' : canvas.height,
+            'rows' : canvas.rows,
+            'columns' : canvas.columns,
+            'plotted_tiles' : {
+
+            }
+        }
+        console.log(canvas._mapData, '1st')
+        canvas._width = width;
+        canvas._height = height;
+        canvas._row = rows;
+        canvas._column = columns;
+        console.log(canvas._mapData, 'second')
     }
 
     static RGBToHex(str){
