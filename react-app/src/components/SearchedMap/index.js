@@ -281,7 +281,6 @@ const SearchedMap = () => {
         const res = canvas.undoPath(true, false, false, dfsSpeed)
         if(res){
             Promise.all(res).then(()=>{
-                console.log('finsihed undoing')
                 finishedTraversing();
             })
         } else {

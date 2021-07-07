@@ -31,10 +31,8 @@ import undo from '../img/undo.png';
 
 import './Map.css';
 
-
 //moved color here to become big boy color
 let color = ''
-
 
 const Map_ = () => {
 
@@ -624,7 +622,6 @@ const Map_ = () => {
         const res = canvas.undoPath(true, false, false, dfsSpeed)
         if(res){
             Promise.all(res).then(()=>{
-                console.log('finsihed undoing')
                 finishedTraversing();
             })
         } else {
@@ -662,7 +659,7 @@ const Map_ = () => {
                 finishedTraversing();
             })
         } else {
-            setErrors(['No LL path to undo'])
+            setErrors(['No DFS-NODE-TRAVERSAL path to undo'])
             finishedTraversing();
         }
     }
@@ -721,8 +718,11 @@ const Map_ = () => {
 
                 </canvas>
 
-            <div className='hide'ref={mapEditorBody}>
+                <div>
 
+                </div>
+
+            <div className='hide'ref={mapEditorBody}>
             {!id  &&
                 <>
                     <div className='map__name'>
@@ -1202,7 +1202,7 @@ const Map_ = () => {
                                         </button>
                                         <img src={undo} alt='undo' onClick={undoLL} ref={undoLLB}/>
                                     </div>
-                                    LL Speed: {llSpeed}
+                                        LL Speed: {llSpeed}
                                     <input
                                         type="range" min="0" max="100" value={llSpeed}
                                         onChange={(e)=> setLLSpeed(e.target.value)}
