@@ -98,7 +98,7 @@ const Map_ = () => {
     const searchPopUp = useRef();
     const searchPopUpB = useRef();
 
-    const colorPickerEl = useRef();
+    const colorPickerB = useRef();
 
     const [canvas, setCanvas] = useState()
     const [name, setName] = useState('')
@@ -276,33 +276,31 @@ const Map_ = () => {
             const y = Math.ceil(e.offsetY / (canvas.height / canvas.row)) - 1
             const x = Math.ceil(e.offsetX / (canvas.width/ canvas.column)) - 1
 
-            if(startB.current.classList.contains('active')){
-                canvas.drawStart(x, y)
-                setErrors([])
-                startB.current.classList.remove('active')
+            if(colorPickerB.current.classList.contains('active')){
+                color = canvas.getRGBAToHex(x,y)
+                setStateColor(canvas.getRGBAToHex(x,y))
+                colorPickerB.current.classList.remove('active')
+                squareB.current.classList.add('active')
             }
-
-            if(endB.current.classList.contains('active')){
+            else if(squareB.current.classList.contains('active')){
+                canvas.drawTile(x, y, color)
+            }
+            else if(clearB.current.classList.contains('active')){
+                canvas.clearTile(x, y)
+            }
+            else if(endB.current.classList.contains('active')){
                 canvas.drawEnd(x, y)
                 setErrors([])
                 endB.current.classList.remove('active')
             }
-
-            if(colorPickerEl.current.classList.contains('active')){
-                color = canvas.getRGBAToHex(x,y)
-                setStateColor(canvas.getRGBAToHex(x,y))
-                colorPickerEl.current.classList.remove('active')
-                squareB.current.classList.add('active')
-            } else if(squareB.current.classList.contains('active')){
-                canvas.drawTile(x, y, color)
+            else if(startB.current.classList.contains('active')){
+                canvas.drawStart(x, y)
+                setErrors([])
+                startB.current.classList.remove('active')
+            } else if(mousDownClick.current.classList.contains('active')) {
+                canvas.drawTile(x, y, `#000000`)
             }
-            // else if(mousDownClick.current.classList.contains('active')) {
-            //     canvas.drawTile(x, y, `#000000`)
-            // }
 
-            if(clearB.current.classList.contains('active')){
-                canvas.clearTile(x, y)
-            }
         }
     }
 
@@ -489,8 +487,11 @@ const Map_ = () => {
             startB.current.classList.remove('active')
         } else{
             startB.current.classList.add('active')
+
             endB.current.classList.remove('active')
-            colorPickerEl.current.classList.remove('active')
+            colorPickerB.current.classList.remove('active')
+            clearB.current.classList.remove('active')
+            squareB.current.classList.remove('active')
         }
     }
 
@@ -499,8 +500,11 @@ const Map_ = () => {
             endB.current.classList.remove('active')
         } else{
             endB.current.classList.add('active')
+
             startB.current.classList.remove('active')
-            colorPickerEl.current.classList.remove('active')
+            colorPickerB.current.classList.remove('active')
+            clearB.current.classList.remove('active')
+            squareB.current.classList.remove('active')
         }
     }
 
@@ -509,8 +513,37 @@ const Map_ = () => {
             squareB.current.classList.remove('active')
         } else{
             squareB.current.classList.add('active')
+
+            startB.current.classList.remove('active')
+            colorPickerB.current.classList.remove('active')
             clearB.current.classList.remove('active')
-            colorPickerEl.current.classList.remove('active')
+            endB.current.classList.remove('active')
+        }
+    }
+
+    const toggleClearTile = () => {
+        if(clearB.current.classList.contains('active')){
+            colorPickerB.current.classList.remove('active')
+            clearB.current.classList.remove('active')
+        } else{
+            clearB.current.classList.add('active')
+
+            startB.current.classList.remove('active')
+            colorPickerB.current.classList.remove('active')
+            squareB.current.classList.remove('active')
+            endB.current.classList.remove('active')
+        }
+    }
+    const toggleCopyColor = () => {
+        if(colorPickerB.current.classList.contains('active')){
+            colorPickerB.current.classList.remove('active')
+        } else{
+            colorPickerB.current.classList.add('active')
+            
+            startB.current.classList.remove('active')
+            endB.current.classList.remove('active')
+            squareB.current.classList.remove('active')
+            clearB.current.classList.remove('active')
         }
     }
 
@@ -535,27 +568,7 @@ const Map_ = () => {
         }
     }
 
-    const toggleCopyColor = () => {
-        if(colorPickerEl.current.classList.contains('active')){
-            colorPickerEl.current.classList.remove('active')
-        } else{
-            startB.current.classList.remove('active')
-            endB.current.classList.remove('active')
-            squareB.current.classList.remove('active')
-            clearB.current.classList.remove('active')
-            colorPickerEl.current.classList.add('active')
-        }
-    }
 
-    const toggleClearTile = () => {
-        if(clearB.current.classList.contains('active')){
-            colorPickerEl.current.classList.remove('active')
-            clearB.current.classList.remove('active')
-        } else{
-            clearB.current.classList.add('active')
-            squareB.current.classList.remove('active')
-        }
-    }
 
 
     //POPUP HANDLERS
@@ -857,7 +870,7 @@ const Map_ = () => {
                             <div className='map__icon__container' ref={mousDownClick}>
                                 <img className='map__icon' src={pencil} alt='pencil' onClick={toggleMouseDown}/>
                             </div>
-                            <div className='map__icon__container' ref={colorPickerEl}>
+                            <div className='map__icon__container' ref={colorPickerB}>
                                 <img className='map__icon' src={copy_color} onClick={toggleCopyColor}/>
                             </div>
                         </div>
@@ -1145,7 +1158,7 @@ const Map_ = () => {
                             <div className='map__icon__container' ref={mousDownClick}>
                                 <img className='map__icon' src={pencil} alt='pencil' onClick={toggleMouseDown}/>
                             </div>
-                            <div className='map__icon__container' ref={colorPickerEl}>
+                            <div className='map__icon__container' ref={colorPickerB}>
                                 <img className='map__icon' src={copy_color} onClick={toggleCopyColor}/>
                             </div>
                         </div>
