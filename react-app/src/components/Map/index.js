@@ -179,7 +179,13 @@ const Map_ = () => {
 
 
     const reloadMap = () =>{
-        Map.reloadMap(currentMap.map_data, canvas)
+        const rm = Map.reloadMap(currentMap.map_data, canvas)
+        setCanvas(rm)
+        setName(currentMap['name'])
+        setRow(rm['rows'])
+        setColumn(rm['columns'])
+        setWidth(rm['width'])
+        setHeight(rm['height'])
     }
 
     useEffect(() =>{
@@ -399,7 +405,6 @@ const Map_ = () => {
         const user_id = user.id;
 
         let map_data = canvas.mapData
-        console.log(map_data)
         let map_image = canvas.getDataUrl()
 
         isLoading();

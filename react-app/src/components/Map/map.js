@@ -238,7 +238,7 @@ export default class Map{
         let data = this.getTileNumber(x, y)
         //HAD TO PUT IN TRY CATCH CAUSE MY INITIAL SOLUTION WAS NOT WORKING ON BIG BOY ROWS AND GRID
         //When Y is bigger than column and you go out of bounds an error happens
-
+        try{
             if(!(this.matrix[y][x] instanceof Node)){
 
                 if(!color){
@@ -254,6 +254,9 @@ export default class Map{
 
                 return true
             }
+        } catch {
+            return false
+        }
 
     }
 
@@ -936,6 +939,8 @@ export default class Map{
     static reloadMap(mapData, canvas){
         const {width, height, rows, columns, plotted_tiles} = JSON.parse(mapData)
         //reset map data
+        let fill_color;
+
         canvas._mapData = {
             'width': canvas.width,
             'height' : canvas.height,
@@ -945,12 +950,30 @@ export default class Map{
 
             }
         }
-        console.log(canvas._mapData, '1st')
         canvas._width = width;
         canvas._height = height;
         canvas._row = rows;
         canvas._column = columns;
-        console.log(canvas._mapData, 'second')
+
+        Object.keys(plotted_tiles).map((key, id)=>{
+            let x = plotted_tiles[key].x
+            let y = plotted_tiles[key].y
+
+            let start = plotted_tiles[key].start
+            let end = plotted_tiles[key].end
+
+            fill_color = plotted_tiles[key].fill_color
+
+            if(start){
+                canvas.drawStart(x, y)
+            } else if(end){
+                canvas.drawEnd(x, y)
+            } else {
+                canvas.drawTile(x, y, fill_color)
+            }
+            return id
+        })
+        return canvas;
     }
 
     static RGBToHex(str){
