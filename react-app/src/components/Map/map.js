@@ -200,6 +200,20 @@ export default class Map{
         return `rgb(${data[0]},${data[1]},${data[2]}, ${data[3] / 255})`;
     }
 
+    /*
+        RGB to hex implementation credits to this post
+        https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
+    */
+
+    getRGBAToHex(x, y){
+        const rgb = this.getRGBAOfPixel(x, y).split(',')
+        const r = parseInt(rgb[0].substring(4,7))
+        const g = parseInt(rgb[1])
+        const b = parseInt(rgb[2])
+
+        return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+    }
+
     //resets map
     cleanMap(){
         this.setCanvasDimensions()

@@ -405,6 +405,18 @@ a{
         height: 30px;
         width: 30px;
     }
+
+    .map__id__div {
+        top: 82%;
+        left: 70%;
+    }
+    .map__id__div > input{
+        width: 50px;
+        height: 25px;
+        position: relative;
+        bottom: 5px;
+        left: 8px;
+    }
   }
 
   @media only screen and (max-height: 1000px) {
@@ -504,6 +516,19 @@ a{
 
     .map__name {
         top: 80%;
+    }
+
+    .map__id__div {
+        top: 82%;
+        left: 70%;
+    }
+
+    .map__id__div > input{
+        width: 50px;
+        height: 25px;
+        position: relative;
+        bottom: 5px;
+        left: 8px;
     }
 }
 
