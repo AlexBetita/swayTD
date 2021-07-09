@@ -151,6 +151,11 @@ export default class Map{
 
     }
 
+    //delete key
+    set delMapKey(arr){
+        delete this._mapData.plotted_tiles[arr]
+    }
+
     //set row
     set _row(row){
         this.rows = row
@@ -283,8 +288,7 @@ export default class Map{
             if(this.matrix[this.start[1]][this.start[0]] instanceof Node){
 
                 this.clearTile(this.start[0], this.start[1])
-                this.mapData = [this.getTileNumber(this.start[0], this.start[1]), this.getTileNumber(this.start[0], this.start[1]),
-                               false, false, this.start[0], this.start[1], this.tiles[8]]
+                this.delMapKey = this.getTileNumber(this.start[0], this.start[1])
             }
         }
 
@@ -305,8 +309,7 @@ export default class Map{
             if(this.matrix[this.end[1]][this.end[0]] instanceof Node){
 
                 this.clearTile(this.end[0], this.end[1])
-                this.mapData = [this.getTileNumber(this.end[0], this.end[1]), this.getTileNumber(this.end[0], this.end[1]),
-                               false, false, this.end[0], this.end[1], this.tiles[8]]
+                this.delMapKey = this.getTileNumber(this.end[0], this.end[1])
             }
         }
 
@@ -326,7 +329,7 @@ export default class Map{
         for(let i = 0; i < this.undo.length; i++){
             x = this.undo[i].split(',')[0]
             y = this.undo[i].split(',')[1]
-            this.clearTile(x, y)
+            this.clearTile(parseInt(x), parseInt(y))
         }
 
         this.undo = []
@@ -687,6 +690,7 @@ export default class Map{
     clearTile(x, y){
         try{
             let data = this.getTileNumber(x, y)
+            
             this.context.fillStyle = this.tiles[8]
             this.context.fillRect(x * this.tileWidth, y * this.tileHeight, this.tileWidth, this.tileHeight)
 
@@ -695,7 +699,7 @@ export default class Map{
             this.context.strokeRect(x * this.tileWidth, y * this.tileHeight, this.tileWidth, this.tileHeight);
 
             this.matrix[y][x] = 0
-            this.mapData = [data, data, false, false, x, y, this.tiles[8]]
+            this.delMapKey = data
         } catch {
             //out of bounds
             return false
