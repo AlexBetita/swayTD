@@ -210,7 +210,7 @@ const Map_ = () => {
         history.push(`/maps/${id}`);
       } else {
         const {new_map, fill_color} = Map.loadMap(currentMap.map_data,
-            canvasElement);
+            canvasElement.current);
 
         if (fill_color) {
           if (fill_color.includes('rgba')) {
@@ -234,7 +234,7 @@ const Map_ = () => {
         setMapId(currentMap['id']);
       }
     } else {
-      const new_map = new Map(width, height, canvasElement, row, column);
+      const new_map = new Map(width, height, canvasElement.current, row, column);
       canvas.current = new_map
       new_map.setCanvasDimensions();
     }

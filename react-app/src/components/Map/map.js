@@ -27,7 +27,7 @@ export default class Map{
         this.canvas = canvas
 
         //context for canvas for graphic rendering
-        this.context = canvas.current.getContext('2d')
+        this.context = canvas.getContext('2d')
 
         //size of tile
         this.tileWidth = width / column
@@ -190,7 +190,7 @@ export default class Map{
 
 
     getDataUrl(){
-        return this.canvas.current.toDataURL()
+        return this.canvas.toDataURL()
     }
 
     getImageData(x, y){
@@ -677,8 +677,8 @@ export default class Map{
 
     //set Canvas dimensions
     setCanvasDimensions(width = this.width, height = this.height){
-        this.canvas.current.width = width
-        this.canvas.current.height = height
+        this.canvas.width = width
+        this.canvas.height = height
     }
 
     //fill rect
@@ -690,7 +690,7 @@ export default class Map{
     clearTile(x, y){
         try{
             let data = this.getTileNumber(x, y)
-            
+
             this.context.fillStyle = this.tiles[8]
             this.context.fillRect(x * this.tileWidth, y * this.tileHeight, this.tileWidth, this.tileHeight)
 
