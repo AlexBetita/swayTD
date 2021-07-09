@@ -203,7 +203,6 @@ const Map_ = () => {
   };
 
   useEffect(() =>{
-    console.log('mounted 1')
     if(remounted){
 
     }
@@ -212,7 +211,6 @@ const Map_ = () => {
       if (!currentMap['owner']) {
         history.push(`/maps/${id}`);
       } else {
-        console.log('mounted 2')
 
         const {new_map, fill_color} = Map.loadMap(currentMap.map_data,
             canvasElement);
@@ -229,7 +227,6 @@ const Map_ = () => {
           color = '#ffffff';
           setStateColor('#ffffff');
         }
-        console.log('new map')
         // setCanvas(new_map);
         canvas.current = new_map;
         setName(currentMap['name']);
@@ -240,7 +237,6 @@ const Map_ = () => {
         setMapId(currentMap['id']);
       }
     } else {
-      console.log('mounted 3')
       const new_map = new Map(width, height, canvasElement, row, column);
       canvas.current = new_map
       new_map.setCanvasDimensions();
@@ -257,7 +253,6 @@ const Map_ = () => {
       // setHeight('')
       // setMapId('')
 
-      console.log('remounted')
       document.removeEventListener('mousedown', handlePathPopUpClick);
       document.removeEventListener('mousedown', handleLoadPopUpClick);
     };

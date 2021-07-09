@@ -366,6 +366,42 @@ function TipsModal() {
                       </div>
                   </li>
 
+                  <li id="tip8"
+                      tabIndex="0"
+                      className="tips__items">
+                      <div className='tips__content'>
+                        <div className='tips__container__flex'>
+                                <div className='tips__flex'>
+                                        <img className='tips__images' src={save} alt='save'/>
+                                        <p>
+                                          This button over here appears when your creating a new map from scratch. This allows us to save the map, after saving the map it'll navigate us to the edit page of the
+                                          newly created map.
+                                        </p>
+                                </div>
+
+                                <div className='tips__line'></div>
+
+                                <div className='tips__flex'>
+                                        <img className='tips__images' src={edit} alt='edit'/>
+                                        <p>
+                                          This is the edit button and it'll appear when your viewing a map that you own and is saved onto the database. This allows us to save the current changes made to the map.
+                                        </p>
+                                </div>
+
+                                <div className='tips__line'></div>
+
+                                <div className='tips__flex'>
+                                        <img className='tips__images' src={delete_icon} alt='delete'/>
+                                        <p>
+                                          This button will delete current map. Once a map has been deleted it may seem like it's still there, that's a fragment and if we accidentally delete a map a fragment is created
+                                          in which the user can resave that fragment, edit it, or just ignore it and the map will completely be gone, it's a neat feature!
+                                        </p>
+                                </div>
+
+                        </div>
+                      </div>
+                  </li>
+
 
                 </ol>
                 <div className="tips__navigation">
