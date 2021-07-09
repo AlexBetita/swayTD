@@ -43,6 +43,20 @@
     margin-right: 35px;
 }
 
+.div__map__index__buttons{
+    position: relative;
+    left: 27px;
+}
+
+.div__current__page{
+    position: relative;
+    left: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
 .search__container{
     display: flex;
     align-items: center;

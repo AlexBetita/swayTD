@@ -72,3 +72,8 @@
     display: flex;
     flex-direction: column;
 }
+
+
+.map__index__button:disabled{
+    cursor: not-allowed;
+}
