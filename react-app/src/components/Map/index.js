@@ -111,7 +111,9 @@ const Map_ = () => {
   const speedScrollBFS = useRef();
   const speedScrollLL = useRef();
 
-  const [canvas, setCanvas] = useState();
+  // const [canvas, setCanvas] = useState();
+  const canvas = useRef()
+
   const [name, setName] = useState('');
   const [errors, setErrors] = useState([]);
   const [mapId, setMapId] = useState(()=>{
@@ -203,7 +205,7 @@ const Map_ = () => {
 
   const reloadMap = () =>{
     const rm = Map.reloadMap(currentMap.map_data, canvas);
-    setCanvas(rm);
+    canvas.current = rm;
     setName(currentMap['name']);
     setRow(rm['rows']);
     setColumn(rm['columns']);
@@ -213,14 +215,19 @@ const Map_ = () => {
 
   useEffect(() =>{
     console.log('mounted 1')
+    if(remounted){
+
+    }
     setRemounted(false);
     if (currentMap) {
       if (!currentMap['owner']) {
         history.push(`/maps/${id}`);
       } else {
         console.log('mounted 2')
+
         const {new_map, fill_color} = Map.loadMap(currentMap.map_data,
             canvasElement);
+
         if (fill_color) {
           if (fill_color.includes('rgba')) {
             color = Map.rgbtohex(fill_color);
@@ -233,7 +240,9 @@ const Map_ = () => {
           color = '#ffffff';
           setStateColor('#ffffff');
         }
-        setCanvas(new_map);
+        console.log('new map')
+        // setCanvas(new_map);
+        canvas.current = new_map;
         setName(currentMap['name']);
         setRow(currentMap['rows']);
         setColumn(currentMap['columns']);
@@ -244,7 +253,7 @@ const Map_ = () => {
     } else {
       console.log('mounted 3')
       const new_map = new Map(width, height, canvasElement, row, column);
-      setCanvas(new_map);
+      canvas.current = new_map
       new_map.setCanvasDimensions();
     }
     document.addEventListener('mousedown', handlePathPopUpClick);
@@ -285,8 +294,8 @@ const Map_ = () => {
 
     const user_id = user.id;
 
-    let map_data = canvas.mapData;
-    const map_image = canvas.getDataUrl();
+    let map_data = canvas.current.mapData;
+    const map_image = canvas.current.getDataUrl();
 
     setErrors(newErrors);
 
@@ -325,37 +334,37 @@ const Map_ = () => {
 
     if (trigger === 'up' || trigger === 'out') {
       isPathing = false;
-      canvas._drawing = false;
+      canvas.current._drawing = false;
       canvasElement.current.removeEventListener('mousemove',
           (e)=> eventHandler(e), true);
     }
 
     if (e.target.tagName === 'CANVAS' &&
     isPathing && (trigger === 'move' || trigger === 'down')) {
-      const y = Math.ceil(e.offsetY / (canvas.height / canvas.rows)) - 1;
-      const x = Math.ceil(e.offsetX / (canvas.width/ canvas.columns)) - 1;
+      const y = Math.ceil(e.offsetY / (canvas.current.height / canvas.current.rows)) - 1;
+      const x = Math.ceil(e.offsetX / (canvas.current.width/ canvas.current.columns)) - 1;
 
       if (colorPickerB.current.classList.contains('active')) {
-        color = canvas.getRGBAToHex(x, y);
-        setStateColor(canvas.getRGBAToHex(x, y));
+        color = canvas.current.getRGBAToHex(x, y);
+        setStateColor(canvas.current.getRGBAToHex(x, y));
         colorPickerB.current.classList.remove('active');
         squareB.current.classList.add('active');
       } else if (squareB.current.classList.contains('active')) {
-        canvas.drawTile(x, y, color);
-        canvas._drawing = true;
+        canvas.current.drawTile(x, y, color);
+        canvas.current._drawing = true;
       } else if (clearB.current.classList.contains('active')) {
-        canvas.clearTile(x, y);
+        canvas.current.clearTile(x, y);
       } else if (endB.current.classList.contains('active')) {
-        canvas.drawEnd(x, y);
+        canvas.current.drawEnd(x, y);
         setErrors([]);
         endB.current.classList.remove('active');
       } else if (startB.current.classList.contains('active')) {
-        canvas.drawStart(x, y);
+        canvas.current.drawStart(x, y);
         setErrors([]);
         startB.current.classList.remove('active');
       } else if (mousDownClick.current.classList.contains('active')) {
-        canvas.drawTile(x, y, `#000000`);
-        canvas._drawing = true;
+        canvas.current.drawTile(x, y, `#000000`);
+        canvas.current._drawing = true;
       }
     }
   };
@@ -404,7 +413,7 @@ const Map_ = () => {
     isLoading();
     const data = await dispatch(fetchMapData({value}));
     finishedLoading();
-
+    canvas.current.current = null
     if (data.errors) {
       setErrors(data.errors);
     } else if (!data) {
@@ -416,7 +425,6 @@ const Map_ = () => {
           history.push(`/maps/${data.id}`);
         }, 0);
       } else {
-
         history.push(`/maps/create/${data.id}`);
       }
     }
@@ -429,8 +437,8 @@ const Map_ = () => {
       return;
     }
     const user_id = user.id;
-    let map_data = canvas.mapData;
-    const map_image = canvas.getDataUrl();
+    let map_data = canvas.current.mapData;
+    const map_image = canvas.current.getDataUrl();
     isLoading();
     const data = await dispatch(editMapData({name, map_data,
       user_id, id, map_image}));
@@ -470,15 +478,15 @@ const Map_ = () => {
 
 
   const drawGrid = () => {
-    canvas.drawGrid();
+    canvas.current.drawGrid();
   };
 
   const startDfs = () =>{
     setErrors([]);
     isTraversing();
-    const dfs = canvas.startDFS();
+    const dfs = canvas.current.startDFS();
     if (dfs === undefined) {
-      const res = canvas.drawPath('dfs', dfsSpeed, dfsColor);
+      const res = canvas.current.drawPath('dfs', dfsSpeed, dfsColor);
       if (res) {
         Promise.all(res).then(()=>{
           finishedTraversing();
@@ -493,9 +501,9 @@ const Map_ = () => {
   const startBfs = async () => {
     setErrors([]);
     isTraversing();
-    const bfs = canvas.startBFS();
+    const bfs = canvas.current.startBFS();
     if (bfs === undefined) {
-      const res = canvas.drawPath('bfs', bfsSpeed, bfsColor);
+      const res = canvas.current.drawPath('bfs', bfsSpeed, bfsColor);
       if (res) {
         Promise.all(res).then(()=>{
           finishedTraversing();
@@ -510,7 +518,7 @@ const Map_ = () => {
   const traverseLL = () => {
     setErrors([]);
     isTraversing();
-    const ll = canvas.startLL();
+    const ll = canvas.current.startLL();
     if (ll === undefined) {
       alert('Start and end nodes are not connected so no path found.');
       finishedTraversing();
@@ -518,7 +526,7 @@ const Map_ = () => {
       setErrors(['Please provide a start and end node for LL and make sure they are connected.']);
       finishedTraversing();
     } else {
-      const res = canvas.drawPath('ll', llSpeed, llColor);
+      const res = canvas.current.drawPath('ll', llSpeed, llColor);
       if (res) {
         Promise.all(res).then(()=>{
           finishedTraversing();
@@ -636,15 +644,15 @@ const Map_ = () => {
 
 
   const cleanMap = () =>{
-    canvas.cleanMap();
+    canvas.current.cleanMap();
   };
 
   const removeGrid = () =>{
-    canvas.removeGrid();
+    canvas.current.removeGrid();
   };
 
   const canvasWidthChange = (e) =>{
-    canvas.cleanMap();
+    canvas.current.cleanMap();
     e = parseInt(e.target.value);
 
     if (!isNaN(e)) {
@@ -652,26 +660,26 @@ const Map_ = () => {
         return;
       }
       setWidth(e);
-      canvas._width = e;
-      canvas.setCanvasDimensions();
+      canvas.current._width = e;
+      canvas.current.setCanvasDimensions();
     }
   };
 
   const canvasHeightChange = (e) =>{
-    canvas.cleanMap();
+    canvas.current.cleanMap();
     e = parseInt(e.target.value);
     if (!isNaN(e)) {
       if (e > 800 || e < 50) {
         return;
       }
       setHeight(e);
-      canvas._height = e;
-      canvas.setCanvasDimensions();
+      canvas.current._height = e;
+      canvas.current.setCanvasDimensions();
     }
   };
 
   const canvasRowChange = (e) =>{
-    canvas.cleanMap();
+    canvas.current.cleanMap();
 
     e = parseInt(e.target.value);
     if (!isNaN(e)) {
@@ -679,21 +687,21 @@ const Map_ = () => {
         return;
       }
       setRow(e);
-      canvas._row= e;
-      canvas.adjustMatrix();
+      canvas.current._row= e;
+      canvas.current.adjustMatrix();
     }
   };
 
   const canvasColumnChange = (e) =>{
     e = parseInt(e.target.value);
-    canvas.cleanMap();
+    canvas.current.cleanMap();
     if (!isNaN(e)) {
       if (e > 100 || e < 5) {
         return;
       }
       setColumn(e);
-      canvas._column= e;
-      canvas.adjustMatrix();
+      canvas.current._column= e;
+      canvas.current.adjustMatrix();
     }
   };
 
@@ -708,7 +716,7 @@ const Map_ = () => {
       return;
     }
     isTraversing();
-    const res = canvas.undoPath(true, false, false, dfsSpeed);
+    const res = canvas.current.undoPath(true, false, false, dfsSpeed);
     if (res) {
       Promise.all(res).then(()=>{
         finishedTraversing();
@@ -725,7 +733,7 @@ const Map_ = () => {
       return;
     }
     isTraversing();
-    const res = canvas.undoPath(false, true, false, bfsSpeed);
+    const res = canvas.current.undoPath(false, true, false, bfsSpeed);
     if (res) {
       Promise.all(res).then(()=>{
         finishedTraversing();
@@ -742,7 +750,7 @@ const Map_ = () => {
       return;
     }
     isTraversing();
-    const res = canvas.undoPath(false, false, true, llSpeed);
+    const res = canvas.current.undoPath(false, false, true, llSpeed);
     if (res) {
       Promise.all(res).then(()=>{
         finishedTraversing();
@@ -754,7 +762,7 @@ const Map_ = () => {
   };
 
   const undoDraw = () =>{
-    canvas.undoDraw();
+    canvas.current.undoDraw();
   };
 
   return (

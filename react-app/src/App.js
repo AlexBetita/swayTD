@@ -35,7 +35,7 @@ function App() {
         <Route path="/maps/create/" exact={true}>
           <Map />
         </Route>
-        <Route path="/maps/create/:id">
+        <Route path="/maps/create/:id" exact={true}>
           <Map />
         </Route>
         <Route path="/login" exact={true}>
