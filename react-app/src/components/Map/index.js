@@ -203,15 +203,12 @@ const Map_ = () => {
   };
 
   useEffect(() =>{
-    if(remounted){
 
-    }
     setRemounted(false);
     if (currentMap) {
       if (!currentMap['owner']) {
         history.push(`/maps/${id}`);
       } else {
-
         const {new_map, fill_color} = Map.loadMap(currentMap.map_data,
             canvasElement);
 

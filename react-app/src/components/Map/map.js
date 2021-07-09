@@ -695,7 +695,7 @@ export default class Map{
             this.context.strokeRect(x * this.tileWidth, y * this.tileHeight, this.tileWidth, this.tileHeight);
 
             this.matrix[y][x] = 0
-            this.mapData = [data, data, false, true, x, y, this.tiles[8]]
+            this.mapData = [data, data, false, false, x, y, this.tiles[8]]
         } catch {
             //out of bounds
             return false
