@@ -59,7 +59,9 @@ const MapHome = () => {
      useEffect(()=>{
         if(Object.keys(otherMaps).length === 0){
             const setMap = async () =>{
+                isLoading()
                 await dispatch(setMapData())
+                finishedLoading()
             }
             setMap()
         }
