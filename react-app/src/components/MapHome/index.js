@@ -23,7 +23,6 @@ const MapHome = () => {
     const currentPage = useRef(1);
     const mapButtonElements = useRef([]);
 
-
     const user = useSelector((state)=>{
         mapIndexButtons.current = []
         let totalIndices =  Math.ceil(state.session.map_total / 10)
@@ -68,6 +67,7 @@ const MapHome = () => {
 
     const [searchValue, setSearchValue] = useState('')
     const [errors, setErrors] = useState([]);
+    const [fetchedMap, setFetchedMap] = useState();
 
     const isLoading = () =>{
         balls.current.classList.remove('hidden')
@@ -118,6 +118,7 @@ const MapHome = () => {
         if(!newErrors.length){
             isLoading();
             const data = await dispatch(fetchMapData({value}))
+            setFetchedMap(data.id)
             finishedLoading();
             if(data.errors){
                 setErrors(data.errors)
@@ -210,7 +211,14 @@ const MapHome = () => {
                     </div>
 
                     {reverse.map((map, key)=>{
-                        return <MapComponent key={key} map={otherMaps[map]} user={user.id}/>
+                        const maps = []
+                        if(fetchedMap && key === 0){
+                            maps.push(<MapComponent key={key} map={otherMaps[fetchedMap]} user={user.id}/>)
+                        }
+                        if(!(fetchedMap === parseInt(map))){
+                            maps.push(<MapComponent key={key} map={otherMaps[map]} user={user.id}/>)
+                        }
+                        return maps
                     })}
 
                     <div className='balls hidden' ref={balls}>
