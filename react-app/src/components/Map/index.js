@@ -104,6 +104,13 @@ const Map_ = () => {
 
   const colorPickerB = useRef();
 
+  const colorPickerDFSB = useRef();
+  const colorPickerBFSB = useRef();
+  const colorPickerLLB = useRef();
+  const speedScrollDFS = useRef();
+  const speedScrollBFS = useRef();
+  const speedScrollLL = useRef();
+
   const [canvas, setCanvas] = useState();
   const [name, setName] = useState('');
   const [errors, setErrors] = useState([]);
@@ -126,6 +133,7 @@ const Map_ = () => {
   const [bfsSpeed, setBFSSpeed] = useState(0);
   const [llSpeed, setLLSpeed] = useState(0);
   const [llColor, setLLColor] = useState('#000000');
+  const [remounted, setRemounted] = useState(false);
 
   const eventHandler = (e) => {
     // setTimeout(()=>{
@@ -163,6 +171,12 @@ const Map_ = () => {
       dfsB.current.setAttribute('disabled', true);
       bfsB.current.setAttribute('disabled', true);
       llB.current.setAttribute('disabled', true);
+      colorPickerDFSB.current.setAttribute('disabled', true)
+      colorPickerBFSB.current.setAttribute('disabled', true)
+      colorPickerLLB.current.setAttribute('disabled', true)
+      speedScrollDFS.current.setAttribute('disabled', true)
+      speedScrollBFS.current.setAttribute('disabled', true)
+      speedScrollLL.current.setAttribute('disabled', true)
       undoBFSB.current.classList.add('disabled');
       undoDFSB.current.classList.add('disabled');
       undoLLB.current.classList.add('disabled');
@@ -174,6 +188,12 @@ const Map_ = () => {
       dfsB.current.removeAttribute('disabled');
       bfsB.current.removeAttribute('disabled');
       llB.current.removeAttribute('disabled');
+      colorPickerDFSB.current.removeAttribute('disabled');
+      colorPickerBFSB.current.removeAttribute('disabled')
+      colorPickerLLB.current.removeAttribute('disabled');
+      speedScrollDFS.current.removeAttribute('disabled')
+      speedScrollBFS.current.removeAttribute('disabled');
+      speedScrollLL.current.removeAttribute('disabled')
       undoBFSB.current.classList.remove('disabled');
       undoDFSB.current.classList.remove('disabled');
       undoLLB.current.classList.remove('disabled');
@@ -192,10 +212,13 @@ const Map_ = () => {
   };
 
   useEffect(() =>{
+    console.log('mounted 1')
+    setRemounted(false);
     if (currentMap) {
       if (!currentMap['owner']) {
         history.push(`/maps/${id}`);
       } else {
+        console.log('mounted 2')
         const {new_map, fill_color} = Map.loadMap(currentMap.map_data,
             canvasElement);
         if (fill_color) {
@@ -219,6 +242,7 @@ const Map_ = () => {
         setMapId(currentMap['id']);
       }
     } else {
+      console.log('mounted 3')
       const new_map = new Map(width, height, canvasElement, row, column);
       setCanvas(new_map);
       new_map.setCanvasDimensions();
@@ -226,23 +250,20 @@ const Map_ = () => {
     document.addEventListener('mousedown', handlePathPopUpClick);
     document.addEventListener('mousedown', handleLoadPopUpClick);
     return ()=> {
-      canvasElement.current = false;
-      startB.current = false;
-      endB.current = false;
-      squareB.current = false;
-      mousDownClick.current = false;
-      clearB.current = false;
-      pathPopUp.current = false;
-      pathPopUpB.current = false;
-      mapEditorBody.current = false;
-      mapIdDiv.current = false;
 
-      setCanvas();
-      setErrors();
+      // setCanvas('')
+      // setName('')
+      // setRow('')
+      // setColumn('')
+      // setWidth('')
+      // setHeight('')
+      // setMapId('')
+
+      console.log('remounted')
       document.removeEventListener('mousedown', handlePathPopUpClick);
       document.removeEventListener('mousedown', handleLoadPopUpClick);
     };
-  }, [dispatch]);
+  }, [dispatch, remounted]);
 
   const onSave = async (e) =>{
     e.preventDefault();
@@ -255,7 +276,11 @@ const Map_ = () => {
     setErrors([]);
 
     if (name.length < 2 || !name) {
-      newErrors.push('name is too short, minimum 3');
+      newErrors.push('Name is too short, minimum 3');
+    }
+
+    if(!isNaN(parseInt(name))){
+      newErrors.push("Names can't begin with numbers or is just all numbers.")
     }
 
     const user_id = user.id;
@@ -383,20 +408,16 @@ const Map_ = () => {
     if (data.errors) {
       setErrors(data.errors);
     } else if (!data) {
-      newErrors.push('Map Does not exist');
       setErrors(newErrors);
     } else {
-      setCanvas(Map.loadMap(data['map_data'], canvasElement));
-      setMapId(data.id);
-      setName(data.name);
+      setRemounted(true)
       if (data.user_id !== user.id) {
         setTimeout(()=>{
           history.push(`/maps/${data.id}`);
         }, 0);
       } else {
-        setTimeout(()=>{
-          history.push(`/maps/create/${data.id}`);
-        }, 0);
+
+        history.push(`/maps/create/${data.id}`);
       }
     }
   };
@@ -418,6 +439,8 @@ const Map_ = () => {
     if (data.errors) {
       setErrors(data.errors);
     } else {
+      // setCanvas([])
+      // setRemounted(true)
       alert('Succesfully Edited');
     }
   };
@@ -901,21 +924,9 @@ const Map_ = () => {
                     </div>
 
                     <div>
-                      <div className='map__icon__container'>
-                        <img className='map__icon' src={grid} alt='grid' onClick={drawGrid}/>
-                      </div>
 
                       <div className='map__icon__container'>
-                        <img className='map__icon'
-                          src={grid_red} alt='grid' onClick={removeGrid}
-                          // style={{
-                          //     /*  credits
-                          //         https://www.domysee.com/blogposts/coloring-white-images-css-filter
-                          //     */
-                          //     // 'filter': `opacity(0.6) drop-shadow(0 0 0 rgb(255, 0, 0)`
-                          //     'filter' : 'brightness(0.5) sepia(1) saturate(1000000%)'
-                          // }}
-                        />
+                        <img className='map__icon' src={undo_draw} alt='undo_draw' onClick={undoDraw}/>
                       </div>
                     </div>
 
@@ -967,12 +978,14 @@ const Map_ = () => {
                         <input
                           type="range" min="0" max="100" value={dfsSpeed}
                           onChange={(e)=> setDFSSpeed(e.target.value)}
+                          ref={speedScrollDFS}
                         >
                         </input>
                         <input
                           className='color__picker'
                           type='color'
                           onChange={(e)=>setDFSColor(e.target.value)}
+                          ref={colorPickerDFSB}
                         >
                         </input>
                         <div>
@@ -985,12 +998,14 @@ const Map_ = () => {
                         <input
                           type="range" min="0" max="100" value={bfsSpeed}
                           onChange={(e)=> setBFSSpeed(e.target.value)}
+                          ref={speedScrollBFS}
                         >
                         </input>
                         <input
                           className='color__picker'
                           type='color'
                           onChange={(e)=>setBFSColor(e.target.value)}
+                          ref={colorPickerBFSB}
                         >
                         </input>
                         <div>
@@ -1004,12 +1019,14 @@ const Map_ = () => {
                         <input
                           type="range" min="0" max="100" value={llSpeed}
                           onChange={(e)=> setLLSpeed(e.target.value)}
+                          ref={speedScrollLL}
                         >
                         </input>
                         <input
                           className='color__picker'
                           type='color'
                           onChange={(e)=>setLLColor(e.target.value)}
+                          ref={colorPickerLLB}
                         >
                         </input>
                       </div>
@@ -1032,39 +1049,51 @@ const Map_ = () => {
                                 Save Map Data
                             </button> */}
 
-                      <div className='map__icon__container'>
-                        <img className='map__icon' src={save} alt='save' onClick={onSave} ref={saveB}/>
-                      </div>
-
-                      <div className='map__icon__container'>
-                        <img className='map__icon' src={undo_draw} alt='undo_draw' onClick={undoDraw}/>
-                      </div>
-
                       {/* <button onClick={loadMap}>
                                 Load Map Data
                             </button> */}
+                        <div className='map__icon__container'>
+                            <img className='map__icon' src={grid} alt='grid' onClick={drawGrid}/>
+                        </div>
+
+                        <div className='map__icon__container'>
+                            <img className='map__icon'
+                            src={grid_red} alt='grid' onClick={removeGrid}
+                            // style={{
+                            //     /*  credits
+                            //         https://www.domysee.com/blogposts/coloring-white-images-css-filter
+                            //     */
+                            //     // 'filter': `opacity(0.6) drop-shadow(0 0 0 rgb(255, 0, 0)`
+                            //     'filter' : 'brightness(0.5) sepia(1) saturate(1000000%)'
+                            // }}
+                            />
+                        </div>
+
                     </div>
 
                     <div>
-                      <div className='map__icon__container' ref={searchPopUpB}>
-                        <img className='map__icon' src={search} alt='search' onClick={togglePopUpSearch}/>
-                      </div>
-                      <div className='popup__search hidden' ref={searchPopUp}>
-                        <input
-                          className='search__bar'
-                          value={searchValue}
-                          name='searchBar'
-                          placeholder='search'
-                          onChange={(e)=>setSearchValue(e.target.value)}
-                          ref={searchInput}
-                        >
-                        </input>
-                        <div className='map__icon__container'>
-                          <img className='map__icon' src={load} alt='load' onClick={loadMap}
-                            ref={searchImage}
-                          />
+                        <div className='map__icon__container' ref={searchPopUpB}>
+                            <img className='map__icon' src={search} alt='search' onClick={togglePopUpSearch}/>
                         </div>
-                      </div>
+                        <div className='popup__search hidden' ref={searchPopUp}>
+                            <input
+                            className='search__bar'
+                            value={searchValue}
+                            name='searchBar'
+                            placeholder='search'
+                            onChange={(e)=>setSearchValue(e.target.value)}
+                            ref={searchInput}
+                            >
+                            </input>
+                            <div className='map__icon__container'>
+                            <img className='map__icon' src={load} alt='load' onClick={loadMap}
+                                ref={searchImage}
+                            />
+                            </div>
+                        </div>
+                        <div className='map__icon__container'>
+                            <img className='map__icon' src={save} alt='save' onClick={onSave} ref={saveB}/>
+                        </div>
                     </div>
                   </div>
                 </>
@@ -1232,61 +1261,67 @@ const Map_ = () => {
                           </div>
 
                           <div className='popup__path hidden' ref={pathPopUp}>
-                            <div>
-                              <button onClick={startDfs} ref={dfsB}>
-                                            DFS
-                              </button>
-                              <img src={undo} alt='undo' onClick={undoDFS} ref={undoDFSB}/>
-                            </div>
-                                    DFS Speed: {dfsSpeed}
-                            <input
-                              type="range" min="0" max="100" value={dfsSpeed}
-                              onChange={(e)=> setDFSSpeed(e.target.value)}
-                            >
-                            </input>
-                            <input
-                              className='color__picker'
-                              type='color'
-                              onChange={(e)=>setDFSColor(e.target.value)}
-                            >
-                            </input>
-                            <div>
-                              <button onClick={startBfs} ref={bfsB}>
-                                            BFS
-                              </button>
-                              <img src={undo} alt='undo' onClick={undoBFS} ref={undoBFSB}/>
-                            </div>
-                                    BFS Speed: {bfsSpeed}
-                            <input
-                              type="range" min="0" max="100" value={bfsSpeed}
-                              onChange={(e)=> setBFSSpeed(e.target.value)}
-                            >
-                            </input>
-                            <input
-                              className='color__picker'
-                              type='color'
-                              onChange={(e)=>setBFSColor(e.target.value)}
-                            >
-                            </input>
-                            <div>
-                              <button onClick={traverseLL} ref={llB}>
-                                            LinkedList
+                                <div>
+                                  <button onClick={startDfs} ref={dfsB}>
+                                                    DFS
+                                  </button>
+                                  <img src={undo} alt='undo' onClick={undoDFS} ref={undoDFSB}/>
+                                </div>
+                                            DFS Speed: {dfsSpeed}
+                                <input
+                                  type="range" min="0" max="100" value={dfsSpeed}
+                                  onChange={(e)=> setDFSSpeed(e.target.value)}
+                                  ref={speedScrollDFS}
+                                >
+                                </input>
+                                <input
+                                  className='color__picker'
+                                  type='color'
+                                  onChange={(e)=>setDFSColor(e.target.value)}
+                                  ref={colorPickerDFSB}
+                                >
+                                </input>
+                                <div>
+                                  <button onClick={startBfs} ref={bfsB}>
+                                                    BFS
+                                  </button>
+                                  <img src={undo} alt='undo' onClick={undoBFS} ref={undoBFSB}/>
+                                </div>
+                                            BFS Speed: {bfsSpeed}
+                                <input
+                                  type="range" min="0" max="100" value={bfsSpeed}
+                                  onChange={(e)=> setBFSSpeed(e.target.value)}
+                                  ref={speedScrollBFS}
+                                >
+                                </input>
+                                <input
+                                  className='color__picker'
+                                  type='color'
+                                  onChange={(e)=>setBFSColor(e.target.value)}
+                                  ref={colorPickerBFSB}
+                                >
+                                </input>
+                                <div>
+                                  <button onClick={traverseLL} ref={llB}>
+                                                    LinkedList
 
-                              </button>
-                              <img src={undo} alt='undo' onClick={undoLL} ref={undoLLB}/>
-                            </div>
-                                        LL Speed: {llSpeed}
-                            <input
-                              type="range" min="0" max="100" value={llSpeed}
-                              onChange={(e)=> setLLSpeed(e.target.value)}
-                            >
-                            </input>
-                            <input
-                              className='color__picker'
-                              type='color'
-                              onChange={(e)=>setLLColor(e.target.value)}
-                            >
-                            </input>
+                                  </button>
+                                  <img src={undo} alt='undo' onClick={undoLL} ref={undoLLB}/>
+                                </div>
+                                            LL Speed: {llSpeed}
+                                <input
+                                  type="range" min="0" max="100" value={llSpeed}
+                                  onChange={(e)=> setLLSpeed(e.target.value)}
+                                  ref={speedScrollLL}
+                                >
+                                </input>
+                                <input
+                                  className='color__picker'
+                                  type='color'
+                                  onChange={(e)=>setLLColor(e.target.value)}
+                                  ref={colorPickerLLB}
+                                >
+                                </input>
                           </div>
 
                         </div>

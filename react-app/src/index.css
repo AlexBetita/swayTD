@@ -449,6 +449,10 @@ a{
         position: absolute;
         top: 30%;
     }
+
+    .p__tips{
+        font-size: 12px;
+    }
 }
 
 
@@ -565,6 +569,22 @@ a{
         top: 78%;
     }
 
+
+    .tips__navigation-button {
+        width: 0.5rem;
+        height: 0.5rem;
+    }
+
+    .tips__navigation-button.active {
+        border-color: #f7a99f;
+        width: 0.7rem;
+        height: 0.7rem;
+    }
+
+    .tips__navigation-button:hover{
+        width: 0.7rem;
+        height: 0.7rem;
+    }
 }
 
 
@@ -597,6 +617,26 @@ a{
         left: 50%;
         font-weight: bold;
         font-size: 25px;
+    }
+
+    .p__tips{
+        font-size: 12px;
+    }
+
+    .tips__navigation-button.active {
+        border-color: #f7a99f;
+        width: 0.7rem;
+        height: 0.7rem;
+    }
+
+    .tips__navigation-button {
+        width: 0.5rem;
+        height: 0.5rem;
+    }
+
+    .tips__navigation-button:hover{
+        width: 0.7rem;
+        height: 0.7rem;
     }
 
 }
