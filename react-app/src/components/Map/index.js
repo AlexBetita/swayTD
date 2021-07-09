@@ -202,17 +202,6 @@ const Map_ = () => {
     }
   };
 
-
-  const reloadMap = () =>{
-    const rm = Map.reloadMap(currentMap.map_data, canvas);
-    canvas.current = rm;
-    setName(currentMap['name']);
-    setRow(rm['rows']);
-    setColumn(rm['columns']);
-    setWidth(rm['width']);
-    setHeight(rm['height']);
-  };
-
   useEffect(() =>{
     console.log('mounted 1')
     if(remounted){
@@ -273,6 +262,16 @@ const Map_ = () => {
       document.removeEventListener('mousedown', handleLoadPopUpClick);
     };
   }, [dispatch, remounted]);
+
+  const reloadMap = () =>{
+    const rm = Map.reloadMap(currentMap.map_data, canvas.current);
+    canvas.current = rm;
+    setName(currentMap['name']);
+    setRow(rm['rows']);
+    setColumn(rm['columns']);
+    setWidth(rm['width']);
+    setHeight(rm['height']);
+  };
 
   const onSave = async (e) =>{
     e.preventDefault();
