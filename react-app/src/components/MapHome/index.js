@@ -2,8 +2,8 @@ import React, {useState, useEffect, useRef} from 'react';
 import { useSelector, useDispatch } from "react-redux"
 import { NavLink, useHistory } from 'react-router-dom';
 
-import  { fetchMapData } from "../../store/map";
-import { setMapData } from "../../store/map";
+import  { fetchMapData, setMapData } from "../../store/map";
+import { fetchMapsByIndex } from "../../store/session";
 
 import MapComponent from './MapComponent.js';
 
@@ -18,8 +18,21 @@ const MapHome = () => {
     const balls = useRef();
     const searchInput = useRef();
     const searchImage = useRef();
+    const mapIndexButtons = useRef([]);
+    const currentPage = useRef(1);
+    // const mapIndexElements = useRef([]);
 
     const user = useSelector((state)=>{
+        // mapIndexButtons.current = Math.ceil(state.session.map_total / 10)
+        mapIndexButtons.current = []
+        for(let i = 0; i < Math.ceil(state.session.map_total / 10); i++){
+            mapIndexButtons.current.push(
+                <button key={`mi${i + 1}`} type='button' value={i} onClick={loadMapByIndex}>
+                    {i + 1}
+                </button>
+            )
+        }
+
         return state.session.user
         })
 
@@ -36,6 +49,7 @@ const MapHome = () => {
     })
 
     const reverse = Object.keys(otherMaps).reverse()
+    const reverseUserMaps = Object.keys(maps).reverse()
 
     const [searchValue, setSearchValue] = useState('')
     const [errors, setErrors] = useState([]);
@@ -89,6 +103,11 @@ const MapHome = () => {
         }
     }
 
+    async function loadMapByIndex(e){
+        currentPage.current = parseInt(e.target.value) + 1
+        const data = await dispatch(fetchMapsByIndex(e.target.value))
+    }
+
     return (
         <>
         {user &&
@@ -112,10 +131,20 @@ const MapHome = () => {
                             Create Map
                         </button>
                     </NavLink>
-                    {Object.keys(maps).map((map, key)=>{
+
+                    <div>
+                        Current Page: {currentPage.current}
+                    </div>
+
+                    {reverseUserMaps.map((map, key)=>{
                         return <MapComponent key={key} map={maps[map]} user={user.id}/>
                     })}
 
+                    <div>
+                        {mapIndexButtons.current.map((b)=>{
+                            return b
+                        })}
+                    </div>
                 </div>
 
                 <div className='map__home__search__container'>

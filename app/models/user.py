@@ -72,11 +72,12 @@ class User(db.Model, UserMixin):
     def check_password(self, password):
         return check_password_hash(self.password, password)
 
-    def to_dict(self):
+    def to_dict(self, index=0):
         maps = {}
-        #print(self.map.count(), 'number of maps **********************************')
-        #self.map.order_by(Map.id.desc()).offset(10)
-        for i in self.map.order_by(Map.id.desc()).offset(10):
+        offset = 10
+        # print(self.map.count(), 'number of maps ***************')
+        # self.map.order_by(Map.id.desc()).offset(10)
+        for i in self.map.order_by(Map.id.desc()).offset(index * 10).limit(10):
             maps[i.id] = {
                 'name': i.name,
                 'map_data': i.map_data,
@@ -94,5 +95,25 @@ class User(db.Model, UserMixin):
           "email": self.email,
           "currency": self.currency,
           "profileImage": self.profileImage,
-          "maps": maps
+          "maps": maps,
+          "map_total": self.map.count(),
         }
+
+    def to_dict_maps(self, index=0):
+        maps = {}
+        offset = 10
+
+        for i in self.map.order_by(Map.id.desc()).offset(index * 10).limit(10):
+            maps[i.id] = {
+                'name': i.name,
+                'map_data': i.map_data,
+                'rows': i.rows,
+                'columns': i.columns,
+                'height': i.height,
+                'width': i.width,
+                'id': i.id,
+                'map_image': i.map_image,
+                'user_id': self.id
+            }
+
+        return maps

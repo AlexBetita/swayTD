@@ -1,7 +1,7 @@
 from dateutil import parser
 
 from flask import Blueprint, jsonify, request
-from flask_login import login_required
+from flask_login import login_required, current_user
 
 from app.forms import EditForm
 from app.models import User, db
@@ -93,3 +93,10 @@ def edit_user(id):
         return user.to_dict()
 
     return {'errors': ['Broken']}, 400
+
+
+@user_routes.route('/maps/<int:index>')
+@login_required
+def user_map_by_index(index):
+    user = User.query.get(current_user.id)
+    return user.to_dict_maps(index)
