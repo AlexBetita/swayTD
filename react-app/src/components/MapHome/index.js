@@ -104,8 +104,12 @@ const MapHome = () => {
     }
 
     async function loadMapByIndex(e){
+        setErrors([])
         currentPage.current = parseInt(e.target.value) + 1
         const data = await dispatch(fetchMapsByIndex(e.target.value))
+        if(data.errors){
+            setErrors(data.errors)
+        }
     }
 
     return (
