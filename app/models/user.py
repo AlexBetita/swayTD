@@ -1,8 +1,9 @@
 from .db import db
+from .map import Map
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 import datetime
-from sqlalchemy import event
+from sqlalchemy import event, desc
 import json
 
 user_scores = db.Table(
@@ -73,7 +74,9 @@ class User(db.Model, UserMixin):
 
     def to_dict(self):
         maps = {}
-        for i in self.map.all():
+        #print(self.map.count(), 'number of maps **********************************')
+        #self.map.order_by(Map.id.desc()).offset(10)
+        for i in self.map.order_by(Map.id.desc()).offset(10):
             maps[i.id] = {
                 'name': i.name,
                 'map_data': i.map_data,
