@@ -137,13 +137,16 @@ export const edit = payload => async (dispatch) => {
 const initialState = {
                     user: null,
                     maps: null,
+                    user_maps_offset: [],
+                    maps_offset: []
             }
 
 export default function reducer(state = initialState, action) {
     let newState;
     switch (action.type) {
         case SET_USER:
-            newState = {...state.user, ...state.maps}
+            newState = {...state.user, ...state.maps,
+                        ...state.user_maps_offset, ...state.maps_offset}
             newState.maps = action.payload.maps
 
             //save memory? i guess
@@ -160,7 +163,8 @@ export default function reducer(state = initialState, action) {
             }
             return newState
         case REMOVE_USER:
-            newState = {...state.user, ...state.maps}
+            newState = {...state.user, ...state.maps,
+                        ...state.user_maps_offset, ...state.maps_offset}
             return newState = {}
         case DELETE_MAP:
             newState = {...state}
