@@ -379,6 +379,13 @@ const Map_ = () => {
       canvasElement.current.removeEventListener('mousemove', (e)=> eventHandler(e));
       isPathing = false;
       mousDownClick.current.classList.remove('active');
+
+      startB.current.classList.remove('active');
+      endB.current.classList.remove('active');
+      clearB.current.classList.remove('active');
+      colorPickerB.current.classList.remove('active');
+      squareB.current.classList.remove('active');
+
     } else {
       addMouseDown(clickyGo);
       mousDownClick.current.classList.add('active');
@@ -534,6 +541,10 @@ const Map_ = () => {
     } else {
       startB.current.classList.add('active');
 
+      if(!mousDownClick.current.classList.contains('active')){
+        toggleMouseDown();
+      }
+
       endB.current.classList.remove('active');
       colorPickerB.current.classList.remove('active');
       clearB.current.classList.remove('active');
@@ -547,6 +558,10 @@ const Map_ = () => {
     } else {
       endB.current.classList.add('active');
 
+      if(!mousDownClick.current.classList.contains('active')){
+        toggleMouseDown();
+      }
+
       startB.current.classList.remove('active');
       colorPickerB.current.classList.remove('active');
       clearB.current.classList.remove('active');
@@ -559,6 +574,10 @@ const Map_ = () => {
       squareB.current.classList.remove('active');
     } else {
       squareB.current.classList.add('active');
+
+      if(!mousDownClick.current.classList.contains('active')){
+        toggleMouseDown();
+      }
 
       startB.current.classList.remove('active');
       colorPickerB.current.classList.remove('active');
@@ -574,6 +593,10 @@ const Map_ = () => {
     } else {
       clearB.current.classList.add('active');
 
+      if(!mousDownClick.current.classList.contains('active')){
+        toggleMouseDown();
+      }
+
       startB.current.classList.remove('active');
       colorPickerB.current.classList.remove('active');
       squareB.current.classList.remove('active');
@@ -585,6 +608,10 @@ const Map_ = () => {
       colorPickerB.current.classList.remove('active');
     } else {
       colorPickerB.current.classList.add('active');
+
+      if(!mousDownClick.current.classList.contains('active')){
+        toggleMouseDown();
+      }
 
       startB.current.classList.remove('active');
       endB.current.classList.remove('active');
