@@ -213,10 +213,10 @@ const MapHome = () => {
                     {reverse.map((map, key)=>{
                         const maps = []
                         if(fetchedMap && key === 0){
-                            maps.push(<MapComponent key={key} map={otherMaps[fetchedMap]} user={user.id}/>)
+                            maps.push(<MapComponent key={`sm${fetchedMap}`} map={otherMaps[fetchedMap]} user={user.id}/>)
                         }
                         if(!(fetchedMap === parseInt(map))){
-                            maps.push(<MapComponent key={key} map={otherMaps[map]} user={user.id}/>)
+                            maps.push(<MapComponent key={`sm${map}`} map={otherMaps[map]} user={user.id}/>)
                         }
                         return maps
                     })}
