@@ -3,7 +3,7 @@ import React, { useState, useRef } from 'react';
 import { Modal } from '../../context/Modal';
 
 //icons
-import bulb from '../img/bulb.png';
+import help from '../img/help.png';
 import start from '../img/flag_green.png';
 import stop from '../img/target_red.png';
 import pencil from '../img/pencil_orange.png';
@@ -15,10 +15,8 @@ import paint from '../img/paint.png';
 import square from '../img/square.png';
 import edit from '../img/edit.png';
 import delete_icon from '../img/delete_red.png';
-import load from '../img/load.png';
 import search from '../img/search.png';
 import grid_red from '../img/grid_red.png';
-import undo from '../img/undo.png';
 import copy_color from '../img/copy_color_blue.png';
 import reload from '../img/reload_blue.png';
 import undo_draw from '../img/undo_purple.png';
@@ -134,7 +132,7 @@ function TipsModal() {
   return (
     <>
       <div className='tips'>
-            <img className='bulb__icon' src={bulb} onClick={() => setShowModal(true)} alt='bulb'/>
+            <img className='bulb__icon' src={help} onClick={() => setShowModal(true)} alt='help'/>
       </div>
       {showModal && (
         <Modal toggleModal={() => {

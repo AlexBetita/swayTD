@@ -74,6 +74,13 @@
     justify-content: center;
 }
 
+.tips{
+    position: absolute;
+    right: 5%;
+    top: 15%;
+    cursor: pointer;
+}
+
 .tips__navigation-list,
 .tips__navigation-item {
     display: inline-block;
@@ -147,7 +154,12 @@
     justify-content: space-evenly;
 }
 
-
+.bulb__icon{
+    height: 30px;
+    width: 30px;
+    animation: light 1.2s infinite alternate;
+    background-color: #ff9a8d;
+}
 
 @media only screen and (min-height: 1250px) and (min-width: 1250px) {
     .tips__intro {
@@ -164,5 +176,22 @@
     .tips__flex{
         font-size: 20px;
     }
-    
+
+}
+
+@keyframes light {
+    from {
+      transform: scale(0.8);
+    }
+
+    to {
+      box-shadow: 0 0 20px #fff,
+      0 0 10px #f7a499,
+      0 0 20px #e7998e,
+      0 0 30px #e79488,
+      0 0 40px #fa8070,
+      0 0 50px #fa988b,
+      0 0 60px #fdada3;
+      transform: scale(1);
+    }
 }
