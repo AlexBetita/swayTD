@@ -70,15 +70,19 @@ const MapHome = () => {
     const [fetchedMap, setFetchedMap] = useState();
 
     const isLoading = () =>{
-        balls.current.classList.remove('hidden')
-        searchImage.current.classList.remove('hidden')
-        searchInput.current.setAttribute("disabled", true)
+        if(balls.current){
+            balls.current.classList.remove('hidden')
+            searchImage.current.classList.remove('hidden')
+            searchInput.current.setAttribute("disabled", true)
+        }
     }
 
     const finishedLoading = () =>{
-        balls.current.classList.add('hidden')
-        searchImage.current.classList.add('hidden')
-        searchInput.current.removeAttribute("disabled")
+        if(balls.current){
+            balls.current.classList.add('hidden')
+            searchImage.current.classList.add('hidden')
+            searchInput.current.removeAttribute("disabled")
+        }
     }
 
     const isLoadingMain = () =>{
