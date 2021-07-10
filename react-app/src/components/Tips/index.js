@@ -2,6 +2,10 @@ import React, { useState, useRef } from 'react';
 
 import { Modal } from '../../context/Modal';
 
+//Tippy Box
+import Tippy from '@tippyjs/react';
+import 'tippy.js/dist/tippy.css'; // optional
+
 //icons
 import help from '../img/help.png';
 import start from '../img/flag_green.png';
@@ -132,7 +136,13 @@ function TipsModal() {
   return (
     <>
       <div className='tips'>
+        <Tippy content="Tool Tips"
+            inertia={true}
+            arrow={true}
+            theme='sway'
+            >
             <img className='bulb__icon' src={help} onClick={() => setShowModal(true)} alt='help'/>
+        </Tippy>
       </div>
       {showModal && (
         <Modal toggleModal={() => {
@@ -168,7 +178,7 @@ function TipsModal() {
                           <div className='tips__flex'>
                               <img className='tips__images' src={pencil} alt='pencil'/>
                               <p>
-                                Let's start off with our first tool. The pencil, this is our bread and butter tool
+                                Let's start off with our first tool. The pencil or also the known as the draw tool, this is our bread and butter tool
                                 this is what you'll mostly be using to interact with the majority of the buttons here.
                                 Clicking on it will activate the ability to interact with the canvas and other buttons.
                                 Once activated you can draw on the board, go ahead and try it! Neat right?

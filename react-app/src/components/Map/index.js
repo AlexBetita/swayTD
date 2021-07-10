@@ -11,6 +11,9 @@ import {useParams, useHistory, NavLink} from 'react-router-dom';
 import {addMapData, fetchMapData, editMapData,
   deleteMapData} from '../../store/map';
 
+import Tippy from '@tippyjs/react';
+import 'tippy.js/dist/tippy.css'; // optional
+
 import Map from './map';
 import TipsModal from '../Tips';
 
@@ -40,12 +43,14 @@ import './Map.css';
 // moved color here to become big boy color
 let color = '#000000';
 
+
 const Map_ = () => {
   let isPathing = false;
   const {id} = useParams();
 
   const history = useHistory();
   const dispatch = useDispatch();
+
 
   const user = useSelector((state) => state.session.user);
   const currentMap = useSelector((state)=> {
@@ -67,11 +72,11 @@ const Map_ = () => {
     return false;
   });
 
-
   if (!user) {
     history.push('/login');
   }
 
+  //Element selectors
   const balls = useRef();
   const searchInput = useRef();
   const searchImage = useRef();
@@ -114,6 +119,8 @@ const Map_ = () => {
   // const [canvas, setCanvas] = useState();
   const canvas = useRef()
 
+
+  //States
   const [name, setName] = useState('');
   const [errors, setErrors] = useState([]);
   const [mapId, setMapId] = useState(()=>{
@@ -137,6 +144,7 @@ const Map_ = () => {
   const [llColor, setLLColor] = useState('#000000');
   const [remounted, setRemounted] = useState(false);
 
+  //Event handler for mouse events
   const eventHandler = (e) => {
     // setTimeout(()=>{
     //     clickyGo('move', e)
@@ -144,6 +152,7 @@ const Map_ = () => {
     clickyGo('move', e);
   };
 
+  //Loading handler
   const isLoading = () =>{
     balls.current.classList.remove('hidden');
     searchImage.current.classList.remove('hidden');
@@ -202,6 +211,8 @@ const Map_ = () => {
     }
   };
 
+
+  //When component mounts load  canvas
   useEffect(() =>{
 
     setRemounted(false);
@@ -255,6 +266,8 @@ const Map_ = () => {
     };
   }, [dispatch, remounted]);
 
+
+  //Reload the saved state of the map
   const reloadMap = () =>{
     const rm = Map.reloadMap(currentMap.map_data, canvas.current);
     canvas.current = rm;
@@ -265,6 +278,8 @@ const Map_ = () => {
     setHeight(rm['height']);
   };
 
+
+  //Savethe map
   const onSave = async (e) =>{
     e.preventDefault();
 
@@ -393,6 +408,7 @@ const Map_ = () => {
   };
 
 
+  //Load a map based on search results
   const loadMap = async (e) =>{
     e.preventDefault();
     if (searchImage.current.classList.contains('disabled')) {
@@ -428,6 +444,7 @@ const Map_ = () => {
     }
   };
 
+  //Edits the map  and saves in the database
   const editMap = async (e) =>{
     e.preventDefault();
     setErrors([]);
@@ -451,6 +468,7 @@ const Map_ = () => {
     }
   };
 
+  //Deletes the map
   const deleteMap = async (e) =>{
     e.preventDefault();
     setErrors([]);
@@ -479,6 +497,8 @@ const Map_ = () => {
     canvas.current.drawGrid();
   };
 
+
+  //Pathing functions
   const startDfs = () =>{
     setErrors([]);
     isTraversing();
@@ -669,6 +689,8 @@ const Map_ = () => {
     canvas.current.removeGrid();
   };
 
+
+  //Dimensions  handler
   const canvasWidthChange = (e) =>{
     canvas.current.cleanMap();
     e = parseInt(e.target.value);
@@ -728,6 +750,8 @@ const Map_ = () => {
     setStateColor(color);
   };
 
+
+  //Undo functions
   const undoDFS = async () => {
     setErrors([]);
     if (undoDFSB.current.classList.contains('disabled')) {
@@ -942,47 +966,89 @@ const Map_ = () => {
 
                     <div>
                       <div className='map__icon__container' ref={mousDownClick}>
-                        <img className='map__icon' src={pencil} alt='pencil' onClick={toggleMouseDown}/>
+                        <Tippy content="Draw"
+                               inertia={true}
+                               arrow={true}
+                               theme='sway'
+                               >
+                          <img className='map__icon' src={pencil} alt='pencil' onClick={toggleMouseDown}/>
+                        </Tippy>
                       </div>
                       <div className='map__icon__container' ref={colorPickerB}>
-                        <img className='map__icon' src={copy_color} onClick={toggleCopyColor}/>
+                        <Tippy content="Copy Color"
+                                inertia={true}
+                                arrow={true}
+                                theme='sway'
+                                >
+                          <img className='map__icon' src={copy_color} onClick={toggleCopyColor}/>
+                        </Tippy>
                       </div>
                     </div>
 
                     <div>
 
                       <div className='map__icon__container'>
+                        <Tippy content="Undo"
+                                inertia={true}
+                                arrow={true}
+                                theme='sway'
+                                >
                         <img className='map__icon' src={undo_draw} alt='undo_draw' onClick={undoDraw}/>
+                        </Tippy>
                       </div>
                     </div>
 
                     <div>
 
                       <div className='map__icon__container' ref={clearB}>
-                        <img className='map__icon' src={eraser} alt='eraser' onClick={toggleClearTile}/>
+                        <Tippy content="Eraser"
+                                inertia={true}
+                                arrow={true}
+                                theme='sway'
+                                >
+                          <img className='map__icon' src={eraser} alt='eraser' onClick={toggleClearTile}/>
+                        </Tippy>
                       </div>
 
                       <div className='map__icon__container'>
+                        <Tippy content="Clear All"
+                                inertia={true}
+                                arrow={true}
+                                theme='sway'
+                                >
                         <img className='map__icon' src={square} alt='square' onClick={cleanMap}/>
+                        </Tippy>
                       </div>
 
                     </div>
                     <div>
-                      <input
-                        className='color__picker'
-                        type='color'
-                        value={stateColor}
-                        onChange={(e)=>showColor(e)}
-                      >
-                      </input>
+                      <Tippy content="Color Picker"
+                               inertia={true}
+                               arrow={true}
+                               theme='sway'
+                               >
+                        <input
+                          className='color__picker'
+                          type='color'
+                          value={stateColor}
+                          onChange={(e)=>showColor(e)}
+                        >
+                        </input>
+                      </Tippy>
                       <div className='map__icon__container' ref={squareB} >
-                        <img
-                          className='map__icon' src={paint} alt='paint'
-                          onClick={toggleFillSquare}
-                          // style={{
-                          //     'filter': `opacity(0.5) drop-shadow(0 0 0 ${color}})`
-                          // }}
-                        />
+                        <Tippy content="Paint"
+                                inertia={true}
+                                arrow={true}
+                                theme='sway'
+                                >
+                          <img
+                            className='map__icon' src={paint} alt='paint'
+                            onClick={toggleFillSquare}
+                            // style={{
+                            //     'filter': `opacity(0.5) drop-shadow(0 0 0 ${color}})`
+                            // }}
+                          />
+                        </Tippy>
                       </div>
 
                     </div>
@@ -990,43 +1056,102 @@ const Map_ = () => {
                     <div>
 
                       <div className='map__icon__container' ref={pathPopUpB}>
-                        <img className='map__icon' src={path} alt='path' onClick={togglePopUpPath}/>
+                        <Tippy content="Pathing"
+                                inertia={true}
+                                arrow={true}
+                                theme='sway'
+                                >
+                          <img className='map__icon' src={path} alt='path' onClick={togglePopUpPath}/>
+                        </Tippy>
                       </div>
 
                       <div className='popup__path hidden' ref={pathPopUp}>
                         <div>
-                          <button onClick={startDfs} ref={dfsB}>
-                                            DFS
-                          </button>
+                          <Tippy content="Start Depth First Search"
+                                inertia={true}
+                                arrow={true}
+                                theme='sway'
+                                >
+                            <button onClick={startDfs} ref={dfsB}>
+                                              DFS
+                            </button>
+                          </Tippy>
+
+                          <Tippy content="Undo Depth First Search"
+                               inertia={true}
+                               arrow={true}
+                               theme='sway'
+                               >
                           <img src={undo} alt='undo' onClick={undoDFS} ref={undoDFSB}/>
+                          </Tippy>
+
                         </div>
                                     DFS Speed: {dfsSpeed}
-                        <input
-                          type="range" min="0" max="100" value={dfsSpeed}
-                          onChange={(e)=> setDFSSpeed(e.target.value)}
-                          ref={speedScrollDFS}
-                        >
-                        </input>
-                        <input
-                          className='color__picker'
-                          type='color'
-                          onChange={(e)=>setDFSColor(e.target.value)}
-                          ref={colorPickerDFSB}
-                        >
-                        </input>
+
+                        <Tippy content="Adjust Depth First Search Speed"
+                               inertia={true}
+                               arrow={true}
+                               theme='sway'
+                               >
+                            <input
+                              type="range" min="0" max="100" value={dfsSpeed}
+                              onChange={(e)=> setDFSSpeed(e.target.value)}
+                              ref={speedScrollDFS}
+                            >
+                            </input>
+                        </Tippy>
+
+                        <Tippy content="Adjust Depth First Search Color"
+                               inertia={true}
+                               arrow={true}
+                               theme='sway'
+                               >
+                          <input
+                            className='color__picker'
+                            type='color'
+                            onChange={(e)=>setDFSColor(e.target.value)}
+                            ref={colorPickerDFSB}
+                          >
+                          </input>
+                        </Tippy>
                         <div>
+                        <Tippy content="Start Breadth First Search"
+                               inertia={true}
+                               arrow={true}
+                               theme='sway'
+                               >
                           <button onClick={startBfs} ref={bfsB}>
                                             BFS
                           </button>
-                          <img src={undo} alt='undo' onClick={undoBFS} ref={undoBFSB}/>
+                          </Tippy>
+
+                          <Tippy content="Undo Breadth First Search"
+                               inertia={true}
+                               arrow={true}
+                               theme='sway'
+                               >
+                            <img src={undo} alt='undo' onClick={undoBFS} ref={undoBFSB}/>
+                          </Tippy>
                         </div>
                                     BFS Speed: {bfsSpeed}
+                        <Tippy content="Adjust Breadth First Search Speed"
+                               inertia={true}
+                               arrow={true}
+                               theme='sway'
+                               >
                         <input
                           type="range" min="0" max="100" value={bfsSpeed}
                           onChange={(e)=> setBFSSpeed(e.target.value)}
                           ref={speedScrollBFS}
                         >
                         </input>
+                        </Tippy>
+
+                        <Tippy content="Adjust Breadth First Search Color"
+                               inertia={true}
+                               arrow={true}
+                               theme='sway'
+                               >
                         <input
                           className='color__picker'
                           type='color'
@@ -1034,38 +1159,77 @@ const Map_ = () => {
                           ref={colorPickerBFSB}
                         >
                         </input>
+                        </Tippy>
                         <div>
+                        <Tippy content="Start Linked List Traversal"
+                               inertia={true}
+                               arrow={true}
+                               theme='sway'
+                               >
                           <button onClick={traverseLL} ref={llB}>
                                             LinkedList
 
                           </button>
+                          </Tippy>
+
+                          <Tippy content="Undo Linked List Traversal"
+                               inertia={true}
+                               arrow={true}
+                               theme='sway'
+                               >
                           <img src={undo} alt='undo' onClick={undoLL} ref={undoLLB}/>
+                          </Tippy>
                         </div>
                                     LL Speed: {llSpeed}
-                        <input
-                          type="range" min="0" max="100" value={llSpeed}
-                          onChange={(e)=> setLLSpeed(e.target.value)}
-                          ref={speedScrollLL}
-                        >
-                        </input>
-                        <input
-                          className='color__picker'
-                          type='color'
-                          onChange={(e)=>setLLColor(e.target.value)}
-                          ref={colorPickerLLB}
-                        >
-                        </input>
+                        <Tippy content="Adjust Linked List Traversal Speed"
+                               inertia={true}
+                               arrow={true}
+                               theme='sway'
+                               >
+                          <input
+                            type="range" min="0" max="100" value={llSpeed}
+                            onChange={(e)=> setLLSpeed(e.target.value)}
+                            ref={speedScrollLL}
+                          >
+                          </input>
+                        </Tippy>
+
+                        <Tippy content="Adjust Linked List Color"
+                               inertia={true}
+                               arrow={true}
+                               theme='sway'
+                               >
+                          <input
+                            className='color__picker'
+                            type='color'
+                            onChange={(e)=>setLLColor(e.target.value)}
+                            ref={colorPickerLLB}
+                          >
+                          </input>
+                        </Tippy>
                       </div>
 
                     </div>
 
                     <div>
                       <div className='map__icon__container' ref={startB}>
+                        <Tippy content="Place Start Node"
+                               inertia={true}
+                               arrow={true}
+                               theme='sway'
+                               >
                         <img className='map__icon' src={start} alt='start' onClick={toggleStart}/>
+                        </Tippy>
                       </div>
 
                       <div className='map__icon__container' ref={endB}>
+                        <Tippy content="Place End Node"
+                               inertia={true}
+                               arrow={true}
+                               theme='sway'
+                               >
                         <img className='map__icon' src={stop} alt='stop' onClick={toggleEnd}/>
+                        </Tippy>
                       </div>
                     </div>
 
@@ -1079,27 +1243,37 @@ const Map_ = () => {
                                 Load Map Data
                             </button> */}
                         <div className='map__icon__container'>
+                        <Tippy content="Draw Grid"
+                               inertia={true}
+                               arrow={true}
+                               theme='sway'
+                               >
                             <img className='map__icon' src={grid} alt='grid' onClick={drawGrid}/>
+                          </Tippy>
                         </div>
 
                         <div className='map__icon__container'>
-                            <img className='map__icon'
-                            src={grid_red} alt='grid' onClick={removeGrid}
-                            // style={{
-                            //     /*  credits
-                            //         https://www.domysee.com/blogposts/coloring-white-images-css-filter
-                            //     */
-                            //     // 'filter': `opacity(0.6) drop-shadow(0 0 0 rgb(255, 0, 0)`
-                            //     'filter' : 'brightness(0.5) sepia(1) saturate(1000000%)'
-                            // }}
-                            />
+                          <Tippy content="Remove Grid"
+                                inertia={true}
+                                arrow={true}
+                                theme='sway'
+                                >
+                              <img className='map__icon'
+                              src={grid_red} alt='grid' onClick={removeGrid}/>
+                          </Tippy>
                         </div>
 
                     </div>
 
                     <div>
                         <div className='map__icon__container' ref={searchPopUpB}>
-                            <img className='map__icon' src={search} alt='search' onClick={togglePopUpSearch}/>
+                          <Tippy content="Search"
+                                inertia={true}
+                                arrow={true}
+                                theme='sway'
+                                >
+                              <img className='map__icon' src={search} alt='search' onClick={togglePopUpSearch}/>
+                            </Tippy>
                         </div>
                         <div className='popup__search hidden' ref={searchPopUp}>
                             <input
@@ -1112,13 +1286,25 @@ const Map_ = () => {
                             >
                             </input>
                             <div className='map__icon__container'>
+                            <Tippy content="Load Map"
+                               inertia={true}
+                               arrow={true}
+                               theme='sway'
+                               >
                             <img className='map__icon' src={load} alt='load' onClick={loadMap}
                                 ref={searchImage}
                             />
+                            </Tippy>
                             </div>
                         </div>
                         <div className='map__icon__container'>
+                          <Tippy content="Save"
+                               inertia={true}
+                               arrow={true}
+                               theme='sway'
+                               >
                             <img className='map__icon' src={save} alt='save' onClick={onSave} ref={saveB}/>
+                            </Tippy>
                         </div>
                     </div>
                   </div>
@@ -1239,127 +1425,273 @@ const Map_ = () => {
                         </div>
 
                         <div>
-                          <div className='map__icon__container' ref={mousDownClick}>
-                            <img className='map__icon' src={pencil} alt='pencil' onClick={toggleMouseDown}/>
-                          </div>
+                        <Tippy content="Draw"
+                               inertia={true}
+                               arrow={true}
+                               theme='sway'
+                               >
+                          <img className='map__icon' src={pencil} alt='pencil' onClick={toggleMouseDown}/>
+                        </Tippy>
                           <div className='map__icon__container' ref={colorPickerB}>
+                          <Tippy content="Copy Color"
+                                inertia={true}
+                                arrow={true}
+                                theme='sway'
+                                >
                             <img className='map__icon' src={copy_color} onClick={toggleCopyColor}/>
+                          </Tippy>
                           </div>
                         </div>
 
                         <div>
 
                           <div className='map__icon__container'>
+                            <Tippy content="Reload Saved Map"
+                                inertia={true}
+                                arrow={true}
+                                theme='sway'
+                                >
                             <img className='map__icon reload' src={reload} alt='reload' onClick={reloadMap}/>
+                            </Tippy>
                           </div>
 
                           <div className='map__icon__container'>
+                          <Tippy content="Undo"
+                                inertia={true}
+                                arrow={true}
+                                theme='sway'
+                                >
                             <img className='map__icon' src={undo_draw} alt='undo_draw' onClick={undoDraw}/>
+                          </Tippy>
                           </div>
                         </div>
 
                         <div>
                           <div className='map__icon__container' ref={clearB}>
-                            <img className='map__icon' src={eraser} alt='eraser' onClick={toggleClearTile}/>
+                            <Tippy content="Eraser"
+                                  inertia={true}
+                                  arrow={true}
+                                  theme='sway'
+                                  >
+                              <img className='map__icon' src={eraser} alt='eraser' onClick={toggleClearTile}/>
+                            </Tippy>
                           </div>
 
                           <div className='map__icon__container'>
-                            <img className='map__icon' src={square} alt='square' onClick={cleanMap}/>
+                          <Tippy content="Clear All"
+                                inertia={true}
+                                arrow={true}
+                                theme='sway'
+                                >
+                          <img className='map__icon' src={square} alt='square' onClick={cleanMap}/>
+                          </Tippy>
                           </div>
                         </div>
 
                         <div>
+                            <Tippy content="Color Picker"
+                                  inertia={true}
+                                  arrow={true}
+                                  theme='sway'
+                                  >
+                            <input
+                              className='color__picker'
+                              type='color'
+                              value={stateColor}
+                              onChange={(e)=>showColor(e)}
+                            >
+                            </input>
+                          </Tippy>
+                          <div className='map__icon__container' ref={squareB} >
+                            <Tippy content="Paint"
+                                  inertia={true}
+                                  arrow={true}
+                                  theme='sway'
+                                  >
+                            <img
+                              className='map__icon' src={paint} alt='paint'
+                              onClick={toggleFillSquare}/>
+                          </Tippy>
+                          </div>
+                        </div>
+
+                        <div>
+                        <div className='map__icon__container' ref={pathPopUpB}>
+                        <Tippy content="Pathing"
+                                inertia={true}
+                                arrow={true}
+                                theme='sway'
+                                >
+                          <img className='map__icon' src={path} alt='path' onClick={togglePopUpPath}/>
+                        </Tippy>
+                      </div>
+
+                      <div className='popup__path hidden' ref={pathPopUp}>
+                        <div>
+                          <Tippy content="Start Depth First Search"
+                                inertia={true}
+                                arrow={true}
+                                theme='sway'
+                                >
+                            <button onClick={startDfs} ref={dfsB}>
+                                              DFS
+                            </button>
+                          </Tippy>
+
+                          <Tippy content="Undo Depth First Search"
+                               inertia={true}
+                               arrow={true}
+                               theme='sway'
+                               >
+                          <img src={undo} alt='undo' onClick={undoDFS} ref={undoDFSB}/>
+                          </Tippy>
+
+                        </div>
+                                    DFS Speed: {dfsSpeed}
+
+                        <Tippy content="Adjust Depth First Search Speed"
+                               inertia={true}
+                               arrow={true}
+                               theme='sway'
+                               >
+                            <input
+                              type="range" min="0" max="100" value={dfsSpeed}
+                              onChange={(e)=> setDFSSpeed(e.target.value)}
+                              ref={speedScrollDFS}
+                            >
+                            </input>
+                        </Tippy>
+
+                        <Tippy content="Adjust Depth First Search Color"
+                               inertia={true}
+                               arrow={true}
+                               theme='sway'
+                               >
                           <input
                             className='color__picker'
                             type='color'
-                            value={stateColor}
-                            onChange={(e)=>showColor(e)}
+                            onChange={(e)=>setDFSColor(e.target.value)}
+                            ref={colorPickerDFSB}
                           >
                           </input>
-                          <div className='map__icon__container' ref={squareB} >
-                            <img className='map__icon' src={paint} alt='paint' onClick={toggleFillSquare}/>
-                          </div>
-                        </div>
-
+                        </Tippy>
                         <div>
-                          <div className='map__icon__container' ref={pathPopUpB}>
-                            <img className='map__icon' src={path} alt='path' onClick={togglePopUpPath}/>
-                          </div>
+                        <Tippy content="Start Breadth First Search"
+                               inertia={true}
+                               arrow={true}
+                               theme='sway'
+                               >
+                          <button onClick={startBfs} ref={bfsB}>
+                                            BFS
+                          </button>
+                          </Tippy>
 
-                          <div className='popup__path hidden' ref={pathPopUp}>
-                                <div>
-                                  <button onClick={startDfs} ref={dfsB}>
-                                                    DFS
-                                  </button>
-                                  <img src={undo} alt='undo' onClick={undoDFS} ref={undoDFSB}/>
-                                </div>
-                                            DFS Speed: {dfsSpeed}
-                                <input
-                                  type="range" min="0" max="100" value={dfsSpeed}
-                                  onChange={(e)=> setDFSSpeed(e.target.value)}
-                                  ref={speedScrollDFS}
-                                >
-                                </input>
-                                <input
-                                  className='color__picker'
-                                  type='color'
-                                  onChange={(e)=>setDFSColor(e.target.value)}
-                                  ref={colorPickerDFSB}
-                                >
-                                </input>
-                                <div>
-                                  <button onClick={startBfs} ref={bfsB}>
-                                                    BFS
-                                  </button>
-                                  <img src={undo} alt='undo' onClick={undoBFS} ref={undoBFSB}/>
-                                </div>
-                                            BFS Speed: {bfsSpeed}
-                                <input
-                                  type="range" min="0" max="100" value={bfsSpeed}
-                                  onChange={(e)=> setBFSSpeed(e.target.value)}
-                                  ref={speedScrollBFS}
-                                >
-                                </input>
-                                <input
-                                  className='color__picker'
-                                  type='color'
-                                  onChange={(e)=>setBFSColor(e.target.value)}
-                                  ref={colorPickerBFSB}
-                                >
-                                </input>
-                                <div>
-                                  <button onClick={traverseLL} ref={llB}>
-                                                    LinkedList
-
-                                  </button>
-                                  <img src={undo} alt='undo' onClick={undoLL} ref={undoLLB}/>
-                                </div>
-                                            LL Speed: {llSpeed}
-                                <input
-                                  type="range" min="0" max="100" value={llSpeed}
-                                  onChange={(e)=> setLLSpeed(e.target.value)}
-                                  ref={speedScrollLL}
-                                >
-                                </input>
-                                <input
-                                  className='color__picker'
-                                  type='color'
-                                  onChange={(e)=>setLLColor(e.target.value)}
-                                  ref={colorPickerLLB}
-                                >
-                                </input>
-                          </div>
-
+                          <Tippy content="Undo Breadth First Search"
+                               inertia={true}
+                               arrow={true}
+                               theme='sway'
+                               >
+                            <img src={undo} alt='undo' onClick={undoBFS} ref={undoBFSB}/>
+                          </Tippy>
                         </div>
+                                    BFS Speed: {bfsSpeed}
+                        <Tippy content="Adjust Breadth First Search Speed"
+                               inertia={true}
+                               arrow={true}
+                               theme='sway'
+                               >
+                        <input
+                          type="range" min="0" max="100" value={bfsSpeed}
+                          onChange={(e)=> setBFSSpeed(e.target.value)}
+                          ref={speedScrollBFS}
+                        >
+                        </input>
+                        </Tippy>
+
+                        <Tippy content="Adjust Breadth First Search Color"
+                               inertia={true}
+                               arrow={true}
+                               theme='sway'
+                               >
+                        <input
+                          className='color__picker'
+                          type='color'
+                          onChange={(e)=>setBFSColor(e.target.value)}
+                          ref={colorPickerBFSB}
+                        >
+                        </input>
+                        </Tippy>
+                        <div>
+                        <Tippy content="Start Linked List Traversal"
+                               inertia={true}
+                               arrow={true}
+                               theme='sway'
+                               >
+                          <button onClick={traverseLL} ref={llB}>
+                                            LinkedList
+
+                          </button>
+                          </Tippy>
+
+                          <Tippy content="Undo Linked List Traversal"
+                               inertia={true}
+                               arrow={true}
+                               theme='sway'
+                               >
+                          <img src={undo} alt='undo' onClick={undoLL} ref={undoLLB}/>
+                          </Tippy>
+                        </div>
+                                    LL Speed: {llSpeed}
+                        <Tippy content="Adjust Linked List Traversal Speed"
+                               inertia={true}
+                               arrow={true}
+                               theme='sway'
+                               >
+                          <input
+                            type="range" min="0" max="100" value={llSpeed}
+                            onChange={(e)=> setLLSpeed(e.target.value)}
+                            ref={speedScrollLL}
+                          >
+                          </input>
+                        </Tippy>
+
+                        <Tippy content="Adjust Linked List Color"
+                               inertia={true}
+                               arrow={true}
+                               theme='sway'
+                               >
+                          <input
+                            className='color__picker'
+                            type='color'
+                            onChange={(e)=>setLLColor(e.target.value)}
+                            ref={colorPickerLLB}
+                          >
+                          </input>
+                        </Tippy>
+                      </div>
+
+                    </div>
 
 
                         <div>
                           <div className='map__icon__container' ref={startB}>
-                            <img className='map__icon' src={start} alt='start' onClick={toggleStart}/>
+                          <Tippy content="Place Start Node"
+                               inertia={true}
+                               arrow={true}
+                               theme='sway'
+                               >
+                          <img className='map__icon' src={start} alt='start' onClick={toggleStart}/>
+                          </Tippy>
                           </div>
 
                           <div className='map__icon__container' ref={endB}>
-                            <img className='map__icon' src={stop} alt='stop' onClick={toggleEnd}/>
+                          <Tippy content="Place End Node"
+                              inertia={true}
+                              arrow={true}
+                              theme='sway'
+                              >
+                          <img className='map__icon' src={stop} alt='stop' onClick={toggleEnd}/>
+                          </Tippy>
                           </div>
                         </div>
 
@@ -1371,20 +1703,24 @@ const Map_ = () => {
                                 Load Map Data
                             </button> */}
                           <div className='map__icon__container'>
+                          <Tippy content="Draw Grid"
+                               inertia={true}
+                               arrow={true}
+                               theme='sway'
+                               >
                             <img className='map__icon' src={grid} alt='grid' onClick={drawGrid}/>
+                          </Tippy>
                           </div>
 
                           <div className='map__icon__container'>
-                            <img className='map__icon'
-                              src={grid_red} alt='grid' onClick={removeGrid}
-                              // style={{
-                              //     /*  credits
-                              //         https://www.domysee.com/blogposts/coloring-white-images-css-filter
-                              //     */
-                              //     // 'filter': `opacity(0.6) drop-shadow(0 0 0 rgb(255, 0, 0)`
-                              //     'filter' : 'brightness(0.5) sepia(1) saturate(1000000%)'
-                              // }}
-                            />
+                          <Tippy content="Remove Grid"
+                                inertia={true}
+                                arrow={true}
+                                theme='sway'
+                                >
+                              <img className='map__icon'
+                              src={grid_red} alt='grid' onClick={removeGrid}/>
+                          </Tippy>
                           </div>
 
                         </div>
@@ -1393,7 +1729,13 @@ const Map_ = () => {
 
                           <div>
                             <div className='map__icon__container' ref={searchPopUpB}>
-                              <img className='map__icon' src={search} alt='search' onClick={togglePopUpSearch}/>
+                              <Tippy content="Search"
+                                  inertia={true}
+                                  arrow={true}
+                                  theme='sway'
+                                  >
+                                <img className='map__icon' src={search} alt='search' onClick={togglePopUpSearch}/>
+                              </Tippy>
                             </div>
                             <div className='popup__search hidden' ref={searchPopUp}>
                               <input
@@ -1406,16 +1748,27 @@ const Map_ = () => {
                               >
                               </input>
                               <div className='map__icon__container'>
-                                <img className='map__icon' src={load} alt='load' onClick={loadMap}
-                                  ref={searchImage}
-                                />
+                                <Tippy content="Load Map"
+                                inertia={true}
+                                arrow={true}
+                                theme='sway'
+                                >
+                                  <img className='map__icon' src={load} alt='load' onClick={loadMap}
+                                      ref={searchImage}
+                                  />
+                                </Tippy>
                               </div>
                             </div>
                           </div>
 
                           <div className='map__icon__container'>
-                            <img className='map__icon' src={edit} alt='edit' onClick={editMap} ref={editB}/>
-
+                            <Tippy content="Edit Map"
+                                  inertia={true}
+                                  arrow={true}
+                                  theme='sway'
+                                  >
+                              <img className='map__icon' src={edit} alt='edit' onClick={editMap} ref={editB}/>
+                            </Tippy>
                           </div>
                         </div>
                         {/* <button
@@ -1424,7 +1777,13 @@ const Map_ = () => {
                                 Delete Map
                             </button> */}
                         <div className='map__icon__container'>
-                          <img className='map__icon' src={delete_icon} alt='delete_icon' onClick={deleteMap} ref={deleteB}/>
+                          <Tippy content="Delete Map"
+                                    inertia={true}
+                                    arrow={true}
+                                    theme='sway'
+                                    >
+                            <img className='map__icon' src={delete_icon} alt='delete_icon' onClick={deleteMap} ref={deleteB}/>
+                          </Tippy>
                         </div>
 
                       </div>

@@ -670,3 +670,28 @@ a{
         width: 25px;
     }
 }
+
+
+/*Tippy Box*/
+
+.tippy-box[data-inertia][data-state='visible'] {
+  transition-timing-function: cubic-bezier(1000);
+}
+
+.tippy-box[data-theme~='sway'] {
+    background-color: #f3c4be;
+    color: purple;
+}
+
+.tippy-box[data-theme~='sway'][data-placement^='top'] > .tippy-arrow::before {
+    border-top-color: #f3c4be;
+}
+.tippy-box[data-theme~='sway'][data-placement^='bottom'] > .tippy-arrow::before {
+    border-bottom-color: #f3c4be;
+}
+.tippy-box[data-theme~='sway'][data-placement^='left'] > .tippy-arrow::before {
+    border-left-color: #f3c4be;
+}
+.tippy-box[data-theme~='sway'][data-placement^='right'] > .tippy-arrow::before {
+    border-right-color: #f3c4be;
+}
