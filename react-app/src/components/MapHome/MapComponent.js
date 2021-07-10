@@ -4,6 +4,9 @@ import { useDispatch } from 'react-redux';
 
 import { deleteMapData } from '../../store/map';
 
+import Tippy from '@tippyjs/react';
+import 'tippy.js/dist/tippy.css'; // optional
+
 import edit from '../img/edit.png';
 import delete_red from '../img/delete_red.png';
 import view from '../img/view.png';
@@ -86,13 +89,31 @@ const MapComponent = ({map, user}) => {
                 </div>
                 {user === map.user_id &&
                     <div className='map__component__buttons'>
-                        <img src={delete_red} alt='delete' onClick={deleteMap}/>
-                        <img src={edit} alt='edit' onClick={editMap}/>
+                        <Tippy content="Delete Map"
+                                    inertia={true}
+                                    arrow={true}
+                                    theme='sway'
+                                    >
+                            <img src={delete_red} alt='delete' onClick={deleteMap}/>
+                        </Tippy>
+                        <Tippy content="Edit Map"
+                                    inertia={true}
+                                    arrow={true}
+                                    theme='sway'
+                                    >
+                            <img src={edit} alt='edit' onClick={editMap}/>
+                        </Tippy>
                     </div>
                 }
                 {user !== map.user_id &&
                     <div className='map__component__buttons'>
-                        <img src={view} alt='view' onClick={viewMap}></img>
+                        <Tippy content="View Map"
+                                    inertia={true}
+                                    arrow={true}
+                                    theme='sway'
+                                    >
+                            <img src={view} alt='view' onClick={viewMap}></img>
+                        </Tippy>
                     </div>
                 }
             </div>

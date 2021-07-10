@@ -7,6 +7,9 @@ import { useHistory} from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 
+import Tippy from '@tippyjs/react';
+import 'tippy.js/dist/tippy.css'; // optional
+
 import { logout, edit } from '../../store/session';
 import { isEmail } from '../utils';
 
@@ -177,8 +180,14 @@ const EditForm = () => {
                     className='back__arrow__logout'
                     to='/'
                     >
-                <img src={arrow} alt='arrow'>
-                </img>
+                <Tippy content="Back to home"
+                                    inertia={true}
+                                    arrow={true}
+                                    theme='sway'
+                                >
+                    <img src={arrow} alt='arrow'>
+                    </img>
+                </Tippy>
             </NavLink>
             <div className='main__home'>
                 <form className='logout__form' onSubmit={onEdit}>
@@ -188,13 +197,19 @@ const EditForm = () => {
                         ))}
                     </div>
                     <div className='logout__edit'>
-                        <img
-                            className='logout__edit'
-                            src={logoutIcon} alt='logout'
-                            onClick={onLogout}
-                            ref={logoutImage}
-                            >
-                        </img>
+                        <Tippy content="Logout"
+                                            inertia={true}
+                                            arrow={true}
+                                            theme='sway'
+                                        >
+                            <img
+                                className='logout__edit'
+                                src={logoutIcon} alt='logout'
+                                onClick={onLogout}
+                                ref={logoutImage}
+                                >
+                            </img>
+                        </Tippy>
                     </div>
                     <img
                         className='home__profile__image'

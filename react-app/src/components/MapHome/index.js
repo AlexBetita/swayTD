@@ -2,6 +2,9 @@ import React, {useState, useEffect, useRef, createRef} from 'react';
 import { useSelector, useDispatch } from "react-redux"
 import { NavLink, useHistory } from 'react-router-dom';
 
+import Tippy from '@tippyjs/react';
+import 'tippy.js/dist/tippy.css'; // optional
+
 import  { fetchMapData, setMapData } from "../../store/map";
 import { fetchMapsByIndex } from "../../store/session";
 
@@ -158,13 +161,25 @@ const MapHome = () => {
                     <NavLink
                             className='back__arrow'
                             to='/'>
-                        <img src={arrow} alt='arrow'>
-                        </img>
+                        <Tippy content="Back to home"
+                            inertia={true}
+                            arrow={true}
+                            theme='sway'
+                        >
+                            <img src={arrow} alt='arrow'>
+                            </img>
+                        </Tippy>
                     </NavLink>
                     <NavLink to='/maps/create'>
-                        <button className='create__map'>
-                            Create Map
-                        </button>
+                        <Tippy content="Create a map"
+                                    inertia={true}
+                                    arrow={true}
+                                    theme='sway'
+                                    >
+                            <button className='create__map'>
+                                Create Map
+                            </button>
+                        </Tippy>
                     </NavLink>
 
                     <div className='div__current__page'>
@@ -202,11 +217,17 @@ const MapHome = () => {
                             ref={searchInput}
                         >
                         </input>
-                        <img
-                            className='map__home__load' src={search} alt='load'
-                            onClick={onSearch}
-                            ref={searchImage}
-                        ></img>
+                            <Tippy content="Search"
+                                    inertia={true}
+                                    arrow={true}
+                                    theme='sway'
+                                    >
+                                <img
+                                    className='map__home__load' src={search} alt='load'
+                                    onClick={onSearch}
+                                    ref={searchImage}
+                                ></img>
+                            </Tippy>
                         <div className='balls hidden' ref={balls}>
                             <div className='ball1'></div>
                             <div className='ball2'></div>

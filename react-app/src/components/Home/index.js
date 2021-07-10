@@ -7,6 +7,9 @@ import { useHistory} from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 
+import Tippy from '@tippyjs/react';
+import 'tippy.js/dist/tippy.css'; // optional
+
 import { logout } from '../../store/session';
 
 import coin from '../img/coin.png';
@@ -63,15 +66,29 @@ const Home = () => {
                             src={user.profileImage} alt='profileImage'>
                         </img>
                         <div className='home__edit'>
-                            <button className='edit__profile__button' onClick={editProfile}>
-                                Edit Profile
-                            </button>
-                            <img
-                                className='logout__home'
-                                src={logoutIcon} alt='logout'
-                                onClick={onLogout}
-                                >
-                            </img>
+                            <Tippy content="Edit Your Profile"
+                                        inertia={true}
+                                        arrow={true}
+                                        theme='sway'
+                                    >
+                                <button className='edit__profile__button' onClick={editProfile}>
+                                    Edit Profile
+                                </button>
+                            </Tippy>
+
+                            <Tippy content="Logout"
+                                    inertia={true}
+                                    arrow={true}
+                                    theme='sway'
+                                    >
+                                <img
+                                    className='logout__home'
+                                    src={logoutIcon} alt='logout'
+                                    onClick={onLogout}
+                                    >
+                                </img>
+                            </Tippy>
+
                         </div>
                     </div>
                     <div>

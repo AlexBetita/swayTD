@@ -385,8 +385,14 @@ const SearchedMap = () => {
                     <NavLink
                         className='arrowMap'
                         to='/maps'>
-                    <img src={arrow} alt='arrow' className='back__arrow__image'>
-                    </img>
+                        <Tippy content="Back to maps"
+                                inertia={true}
+                                arrow={true}
+                                theme='sway'
+                        >
+                            <img src={arrow} alt='arrow' className='back__arrow__image'>
+                            </img>
+                        </Tippy>
                     </NavLink>
                 <ul>
                     {errors.map((error, idx) => (
