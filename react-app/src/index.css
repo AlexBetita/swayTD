@@ -1,4 +1,12 @@
+@font-face {
+    font-family: 'RobotoMono';
+    src: local('RobotoMono'), url(./fonts/RobotoMono-VariableFont_wght.ttf) format('truetype');
+  }
 /* TODO Add site wide styles */
+*{
+    font-family: 'RobotoMono';
+}
+
 body{
     margin: 0;
     background-color: rgba(236, 229, 229, 0.575);
