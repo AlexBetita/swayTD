@@ -1431,13 +1431,15 @@ const Map_ = () => {
                         </div>
 
                         <div>
-                        <Tippy content="Draw"
-                               inertia={true}
-                               arrow={true}
-                               theme='sway'
-                               >
-                          <img className='map__icon' src={pencil} alt='pencil' onClick={toggleMouseDown}/>
-                        </Tippy>
+                        <div className='map__icon__container' ref={mousDownClick}>
+                            <Tippy content="Draw"
+                                  inertia={true}
+                                  arrow={true}
+                                  theme='sway'
+                                  >
+                              <img className='map__icon' src={pencil} alt='pencil' onClick={toggleMouseDown}/>
+                            </Tippy>
+                        </div>
                           <div className='map__icon__container' ref={colorPickerB}>
                           <Tippy content="Copy Color"
                                 inertia={true}
