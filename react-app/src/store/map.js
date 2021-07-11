@@ -27,8 +27,8 @@ const setMap = (payload) => ({
 })
 
 //thunks
-export const setMapData = () => async (dispatch) =>{
-    const response = await fetch("/api/maps/", {
+export const setMapData = index => async (dispatch) =>{
+    const response = await fetch(`/api/maps/${index}`, {
         headers: {
             'Content-Type': 'application/json'
         }

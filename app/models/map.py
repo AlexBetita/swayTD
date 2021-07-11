@@ -40,6 +40,12 @@ class Map(db.Model):
             'profileImage': self.user.profileImage,
             }
 
+    # def to_dict_with_index(self, index=0):
+    #     offset = 15
+    #     maps = {}
+    #     for i in
+    #     return maps
+
 # Credits
 # https://stackoverflow.com/questions/9234082/setting-delete-orphan-on-sqlalchemy-relationship-causes-assertionerror-this-att
 

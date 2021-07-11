@@ -10,13 +10,15 @@ from app.models import Map, db, User
 map_routes = Blueprint('maps', __name__)
 
 
-@map_routes.route('/')
+@map_routes.route('/<int:index>')
 @login_required
-def maps():
+def maps(index):
+    limit_ = index * 15
+    offset_ = 15 * (index - 1)
     user_maps = User.query.get(current_user.id).map.all()
     map_ids = [i.id for i in user_maps]
     maps = db.session.query(Map).filter(not_(Map.id.in_(map_ids))). \
-        order_by(Map.id.desc()).limit(15).all()
+        order_by(Map.id.desc()).offset(offset_).limit(limit_).all()
     return {'maps': {maps[i].id: maps[i].to_dict() for i in range(len(maps))}}
 
 

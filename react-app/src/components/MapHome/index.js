@@ -30,6 +30,7 @@ const MapHome = () => {
     const currentPage = useRef(mapIndex);
     const mapButtonElements = useRef([]);
     const searchContainer = useRef();
+    const searchMapIndex = useRef(1);
 
     const mapTotal = useSelector((state)=>{
         return state.session.map_total
@@ -122,7 +123,7 @@ const MapHome = () => {
         if(Object.keys(otherMaps).length === 0){
             const setMap = async () =>{
                 isLoading()
-                await dispatch(setMapData())
+                await dispatch(setMapData(searchMapIndex.current))
                 finishedLoading()
             }
             setMap()
@@ -183,7 +184,13 @@ const MapHome = () => {
     }
 
     async function loadMoreMaps(){
-        return console.log('Loading more maps')
+        searchMapIndex.current += 1
+        isLoading()
+        const data = await dispatch(setMapData(searchMapIndex.current))
+        finishedLoading()
+        if(!Object.keys(data.maps).length){
+            searchMapIndex.current -= 1
+        }
     }
 
     return (
