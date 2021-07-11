@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useRef, useState } from 'react';
 import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
 
@@ -13,15 +13,26 @@ import view from '../img/view.png';
 
 import './MapComponent.css';
 
-const MapComponent = ({map, user}) => {
+const MapComponent = ({map, user, helperFunction}) => {
+
 
     const history = useHistory()
     const dispatch = useDispatch();
 
+    // const deleted = useRef(false)
     const mapImageElement = useRef();
 
     const [errors, setErrors] = useState([]);
+    // const [deleted, setDeleted] = useState(false)
 
+    // useEffect(()=>{
+    //     console.log(deleted, 'deleted')
+    //     if(deleted){
+    //         return (()=>{
+    //             helperFunction(mapIndex)
+    //         })
+    //     }
+    // }, [dispatch])
 
     const enlargeImage = (e) =>{
         e.preventDefault();
@@ -42,13 +53,16 @@ const MapComponent = ({map, user}) => {
         }, 0)
     }
 
-    const deleteMap = async () =>{
+    async function deleteMap(){
         setErrors([])
         let id = map.id
+        // await setDeleted(true)
         const data = await dispatch(deleteMapData({id}))
         if(data.errors){
             setErrors(data.errors);
         } else {
+            // deleted = true
+            helperFunction()
             alert('Successfully Deleted')
         }
     }

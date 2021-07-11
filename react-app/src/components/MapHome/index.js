@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef, createRef} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { useSelector, useDispatch } from "react-redux"
 import { NavLink, useHistory } from 'react-router-dom';
 
@@ -30,6 +30,10 @@ const MapHome = () => {
     const currentPage = useRef(mapIndex);
     const mapButtonElements = useRef([]);
 
+    const mapTotal = useSelector((state)=>{
+        return state.session.map_total
+    })
+
     const user = useSelector((state)=>{
         mapIndexButtons.current = []
         let totalIndices =  Math.ceil(state.session.map_total / 10)
@@ -52,7 +56,7 @@ const MapHome = () => {
         if(currentPage.current === (i + 1)){
             mapButtonElements.current[i].setAttribute('disabled', true)
 
-        } else {
+        } else if(mapButtonElements.current[i]){
             mapButtonElements.current[i].removeAttribute('disabled')
         }
     }
@@ -139,16 +143,32 @@ const MapHome = () => {
         }
     }
 
-    async function loadMapByIndex(e){
+    async function loadMapByIndex(e, newIndex = false){
         setErrors([])
         isLoadingMain()
-        currentPage.current = parseInt(e.target.value) + 1
+        let index;
+        if(e){
+            currentPage.current = parseInt(e.target.value) + 1
+            index = parseInt(e.target.value)
+        } else if(newIndex){
+            currentPage.current = parseInt(newIndex)
+            index = parseInt(newIndex) - 1
+        }
         dispatch(setIndex(currentPage.current))
-        const data = await dispatch(fetchMapsByIndex(e.target.value))
+        const data = await dispatch(fetchMapsByIndex(index))
         if(data.errors){
             setErrors(data.errors)
         }
         finishedLoadingMain()
+    }
+
+    const changeCurrentPageIndexOnDelete = () => {
+        let newMapTotal = mapTotal - 1
+        let newMapIndex = Math.ceil(newMapTotal / 10)
+        if(newMapIndex !== 0 && (newMapIndex < currentPage.current)){
+            currentPage.current = newMapIndex
+            loadMapByIndex(false, newMapIndex)
+        }
     }
 
     return (
@@ -198,7 +218,11 @@ const MapHome = () => {
 
 
                     {reverseUserMaps.map((map, key)=>{
-                        return <MapComponent key={key} map={maps[map]} user={user.id}/>
+                        return <MapComponent key={key}
+                                            map={maps[map]}
+                                            user={user.id}
+                                            helperFunction={changeCurrentPageIndexOnDelete}
+                                            />
                     })}
 
                     <div className='div__map__index__buttons'>
@@ -243,10 +267,18 @@ const MapHome = () => {
                     {reverse.map((map, key)=>{
                         const maps = []
                         if(fetchedMap && key === 0){
-                            maps.push(<MapComponent key={`sm${fetchedMap}`} map={otherMaps[fetchedMap]} user={user.id}/>)
+                            maps.push(<MapComponent key={`sm${fetchedMap}`}
+                                                    map={otherMaps[fetchedMap]}
+                                                    user={user.id}
+                                                    helperFunction={changeCurrentPageIndexOnDelete}
+                                                    />)
                         }
                         if(!(fetchedMap === parseInt(map))){
-                            maps.push(<MapComponent key={`sm${map}`} map={otherMaps[map]} user={user.id}/>)
+                            maps.push(<MapComponent key={`sm${map}`}
+                                                    map={otherMaps[map]}
+                                                    user={user.id}
+                                                    helperFunction={changeCurrentPageIndexOnDelete}
+                                                    />)
                         }
                         return maps
                     })}

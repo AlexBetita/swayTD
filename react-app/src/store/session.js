@@ -221,6 +221,11 @@ export default function reducer(state = initialState, action) {
             newState.map_total -= 1
             delete newState.maps[action.payload.id]
 
+            let newMapIndex = Math.ceil(newState.map_total / 10)
+            if(newMapIndex !== 0 && (newMapIndex < newState.current_index)){
+                newState.current_index = newMapIndex;
+            }
+
             return newState
         default:
             return state;
