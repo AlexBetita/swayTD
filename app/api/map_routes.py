@@ -10,7 +10,17 @@ from app.models import Map, db, User
 map_routes = Blueprint('maps', __name__)
 
 
-@map_routes.route('/<int:index>')
+def isInt(value):
+    try:
+        int(value)
+        value = int(value)
+        return True
+    except ValueError:
+        value = value
+        return False
+
+
+@map_routes.route('/page/<int:index>')
 @login_required
 def maps(index):
     limit_ = index * 15
@@ -57,21 +67,11 @@ def create_map():
 @map_routes.route('/<value>', methods=['GET', 'DELETE', 'PUT'])
 @login_required
 def get_map(value):
-
-    def isInt(value):
-        try:
-            int(value)
-            value = int(value)
-            return True
-        except ValueError:
-            value = value
-            return False
-
     if isInt(value):
-        map_ = Map.query.filter(Map.id == value).first()
+        map_ = Map.query.filter(Map.id == value).all()
     else:
-        map_ = Map.query.filter(Map.name == value).first()
-
+        substring = "%{}%".format(value)
+        map_ = Map.query.filter(Map.name.ilike(substring)).all()
     if map_:
         if request.method == 'DELETE':
             db.session.delete(map_)
@@ -96,5 +96,18 @@ def get_map(value):
             db.session.commit()
             return map_.to_dict()
         else:
-            return map_.to_dict()
+            return {'maps': {map_[i].id: map_[i].to_dict()
+                    for i in range(len(map_))}}
+    return {'errors': [f'No maps found with: {value}']}, 400
+
+
+@map_routes.route('/load/<value>', methods=['GET'])
+@login_required
+def load_map(value):
+    if isInt(value):
+        map_ = Map.query.filter(Map.id == value).first()
+    else:
+        map_ = Map.query.filter(Map.name == value).first()
+    if map_:
+        return map_.to_dict()
     return {'errors': ['map does not exist']}, 400

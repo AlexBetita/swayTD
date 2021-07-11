@@ -4,6 +4,7 @@ export const ADD_MAP = "maps/ADD_MAP"
 const GET_MAP = "maps/GET_MAP"
 export const DELETE_MAP = "maps/DELETE_MAP"
 const SET_MAP = "maps/SET_MAP"
+const SEARCH_MAPS = "maps/SEARCH_MAPS"
 
 //action creators
 const addMap = (payload) => ({
@@ -26,9 +27,14 @@ const setMap = (payload) => ({
     payload
 })
 
+const searchMaps = (payload) =>({
+    type: SEARCH_MAPS,
+    payload
+})
+
 //thunks
 export const setMapData = index => async (dispatch) =>{
-    const response = await fetch(`/api/maps/${index}`, {
+    const response = await fetch(`/api/maps/page/${index}`, {
         headers: {
             'Content-Type': 'application/json'
         }
@@ -116,12 +122,23 @@ export const deleteMapData = (payload) => async (dispatch) => {
 
 export const fetchMapData = (payload) => async (dispatch) => {
     const {value} = payload;
-    const response = await fetch(`/api/maps/${value}`)
+    const response = await fetch(`/api/maps/load/${value}`)
     const data = await response.json();
     if (data.errors){
         return data;
     }
     dispatch(getMap(data))
+    return data
+}
+
+export const searchMapData = (payload) => async (dispatch) => {
+    const {value} = payload;
+    const response = await fetch(`/api/maps/${value}`)
+    const data = await response.json();
+    if (data.errors){
+        return data;
+    }
+    dispatch(searchMaps(data))
     return data
 }
 
@@ -138,6 +155,7 @@ export default function reducer(state = initialState, action){
             return newState
         case ADD_MAP:
             newState = {...state}
+
             // newState = {
             //     ...state,
             //     [action.payload.id] : action.payload
@@ -147,12 +165,19 @@ export default function reducer(state = initialState, action){
             newState = {...state}
             newState = {
                 ...state,
-                [action.payload.id] : action.payload
+                [action.payload.id] : action.payload,
             }
             return newState
         case DELETE_MAP:
             newState = {...state}
             delete newState[action.payload.id]
+            return newState
+        case SEARCH_MAPS:
+            newState = {...state}
+            newState = {
+                ...state,
+                ...action.payload.maps
+            }
             return newState
         case REMOVE_USER:
             return newState = {}

@@ -11,14 +11,14 @@ import { useParams, useHistory, NavLink } from 'react-router-dom';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css'; // optional
 
-import { fetchMapData } from "../../store/map";
+import SearchResults from "./SearchResults";
+import { fetchMapData, searchMapData } from "../../store/map";
 
 import TipsModal from '../Tips';
 import Map from '../Map/map';
 
 import arrow from '../img/arrow.png';
 import path from '../img/path.png';
-import load from '../img/load.png';
 import search from '../img/search.png';
 import undo from '../img/undo.png';
 
@@ -51,6 +51,7 @@ const SearchedMap = () => {
             return false
         })
 
+    // const searchResultElements = useRef();
 
     const balls = useRef();
     const searchInput = useRef();
@@ -92,6 +93,8 @@ const SearchedMap = () => {
     const [bfsSpeed, setBFSSpeed] = useState(0);
     const [llSpeed, setLLSpeed] = useState(0);
     const [llColor, setLLColor] = useState('#000000');
+
+    const [searchResultElements, setSearchResultElements] = useState();
 
     if(!currentMap && user){
         history.push('/maps')
@@ -201,8 +204,42 @@ const SearchedMap = () => {
         } else{
             alert('Map does not exist')
         }
+
     }
 
+
+    const searchMap = async () =>{
+        if(searchImage.current.classList.contains('disabled')){
+            return
+        }
+        let newErrors = []
+        setErrors([])
+        const value = searchValue
+        if(!searchValue){
+            setErrors(newErrors)
+            return
+        }
+
+        isLoading()
+        const data = await dispatch(searchMapData({value}))
+        finishedLoading()
+
+        if(data.errors){
+            setErrors(data.errors)
+        } else if (!data){
+            setErrors(newErrors)
+        } else if(data){
+            const results = data.maps
+            setSearchResultElements(Object.keys(results).map((key)=>{
+                return (
+                    <SearchResults key={`sr${key}`} data={results[key]}/>
+                )
+            }))
+            searchPopUp.current.classList.add('results')
+        } else {
+            setErrors(['No maps found'])
+        }
+    }
 
 
 
@@ -230,7 +267,6 @@ const SearchedMap = () => {
         if(pathPopUp.current.contains(e.target)){
             return
         }
-
         pathPopUp.current.classList.add('hidden')
         pathPopUpB.current.classList.remove('active')
     }
@@ -240,7 +276,9 @@ const SearchedMap = () => {
             return
         }
         searchPopUp.current.classList.add('hidden')
+        searchPopUp.current.classList.remove('results')
         searchPopUpB.current.classList.remove('active')
+        setSearchResultElements()
     }
 
     const startDfs = () =>{
@@ -613,6 +651,7 @@ const SearchedMap = () => {
                               </Tippy>
                             </div>
                             <div className='popup__search hidden' ref={searchPopUp}>
+                              {searchResultElements && searchResultElements}
                               <input
                                 className='search__bar'
                                 value={searchValue}
@@ -623,14 +662,17 @@ const SearchedMap = () => {
                               >
                               </input>
                               <div className='map__icon__container'>
-                                <Tippy content="Load Map"
-                                inertia={true}
-                                arrow={true}
-                                theme='sway'
+                                <Tippy content="Search For Results"
+                                    inertia={true}
+                                    arrow={true}
+                                    theme='sway'
                                 >
-                                  <img className='map__icon' src={load} alt='load' onClick={loadMap}
+                                  {/* <img className='map__icon' src={load} alt='load' onClick={searchMap}
                                       ref={searchImage}
-                                  />
+                                  /> */}
+                                  <button type='button' onClick={searchMap} ref={searchImage}>
+                                        Search
+                                  </button>
                                 </Tippy>
                               </div>
                             </div>

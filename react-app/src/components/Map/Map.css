@@ -207,6 +207,13 @@ canvas{
     display: none;
 }
 
+.popup__search.results{
+    left: 0;
+    bottom: 100%;
+    width: 100%;
+    height: revert;
+}
+
 .popup__path div{
     all: revert;
 }

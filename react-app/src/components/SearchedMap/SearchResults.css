@@ -1,0 +1,38 @@
+.img__search__results{
+    min-width: 50px;
+    min-height: 50px;
+    width: 50px;
+    height: 50px;
+    border: 1px dashed  #ff9a8d;
+    margin-right: 10px;
+}
+
+.img__search__results:hover{
+    border: 2px solid  #ff9a8d;
+}
+
+.img__search__results__owner{
+    min-width: 40px;
+    min-height: 40px;
+    max-width: 40px;
+    max-height: 40px;
+    border-radius: 50%;
+    border: 3px dashed purple;
+    text-align: center;
+    cursor: pointer;
+}
+
+.img__search__results__owner:hover{
+    border: 3.5px dashed rgb(182, 26, 182);
+}
+
+
+#search__results__container{
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+}
+
+#search__results__container  > * {
+    margin-left: 10px;
+}
