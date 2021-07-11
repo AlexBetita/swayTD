@@ -212,6 +212,8 @@ canvas{
     bottom: 100%;
     width: 100%;
     height: revert;
+    justify-content: revert;
+    height: 400px;
     overflow: auto;
 }
 
