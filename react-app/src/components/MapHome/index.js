@@ -6,7 +6,7 @@ import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css'; // optional
 
 import  { fetchMapData, setMapData } from "../../store/map";
-import { fetchMapsByIndex } from "../../store/session";
+import { fetchMapsByIndex, setIndex } from "../../store/session";
 
 import MapComponent from './MapComponent.js';
 
@@ -18,12 +18,16 @@ const MapHome = () => {
     const history = useHistory();
     const dispatch = useDispatch();
 
+    const mapIndex = useSelector((state)=>{
+        return state.session.current_index
+    })
+
     const balls = useRef();
     const ballsMain = useRef();
     const searchInput = useRef();
     const searchImage = useRef();
     const mapIndexButtons = useRef([]);
-    const currentPage = useRef(1);
+    const currentPage = useRef(mapIndex);
     const mapButtonElements = useRef([]);
 
     const user = useSelector((state)=>{
@@ -139,6 +143,7 @@ const MapHome = () => {
         setErrors([])
         isLoadingMain()
         currentPage.current = parseInt(e.target.value) + 1
+        dispatch(setIndex(currentPage.current))
         const data = await dispatch(fetchMapsByIndex(e.target.value))
         if(data.errors){
             setErrors(data.errors)

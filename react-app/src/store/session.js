@@ -3,6 +3,7 @@ import { ADD_MAP, DELETE_MAP } from "./map"
 export const SET_USER = "session/SET_USER"
 export const REMOVE_USER = "session/REMOVE_USER"
 export const GET_USER_MAP_BY_INDEX = "session/GET_USER_MAP_BY_INDEX"
+export const SET_INDEX = "session/SET_INDEX"
 
 // action creators
 const setUser = (user) => ({
@@ -19,6 +20,10 @@ const setUsersMapByIndex = (payload) => ({
     payload
 })
 
+export const setIndex = (payload) => ({
+    type: SET_INDEX,
+    payload
+})
 
 // thunks
 export const authenticate = () => async (dispatch) => {
@@ -159,6 +164,7 @@ const initialState = {
                     user_maps_offset: [],
                     maps_offset: [],
                     map_total: null,
+                    current_index: null,
             }
 
 export default function reducer(state = initialState, action) {
@@ -168,11 +174,12 @@ export default function reducer(state = initialState, action) {
             newState = {...state.user, ...state.maps,
                         ...state.user_maps_offset, ...state.maps_offset,
                         ...state.map_total,
+                        ...state.current_index
                     }
 
             newState.maps = action.payload.maps
             newState.map_total = action.payload.map_total
-
+            newState.current_index = 1
             //save memory? i guess
             delete action.payload.maps
             newState.user = action.payload
@@ -202,6 +209,12 @@ export default function reducer(state = initialState, action) {
             newState = {...state.user, ...state.maps,
                         ...state.user_maps_offset, ...state.maps_offset}
             return newState = {}
+        case SET_INDEX:
+            newState = {...state}
+
+            newState.current_index = action.payload
+
+            return newState
         case DELETE_MAP:
             newState = {...state}
 
