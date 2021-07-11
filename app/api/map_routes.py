@@ -16,7 +16,7 @@ def maps():
     user_maps = User.query.get(current_user.id).map.all()
     map_ids = [i.id for i in user_maps]
     maps = db.session.query(Map).filter(not_(Map.id.in_(map_ids))). \
-        order_by(Map.id.desc()).limit(10).all()
+        order_by(Map.id.desc()).limit(15).all()
     return {'maps': {maps[i].id: maps[i].to_dict() for i in range(len(maps))}}
 
 

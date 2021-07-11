@@ -29,6 +29,7 @@ const MapHome = () => {
     const mapIndexButtons = useRef([]);
     const currentPage = useRef(mapIndex);
     const mapButtonElements = useRef([]);
+    const searchContainer = useRef();
 
     const mapTotal = useSelector((state)=>{
         return state.session.map_total
@@ -109,7 +110,15 @@ const MapHome = () => {
         history.push('/login')
     }
 
-     useEffect(()=>{
+
+
+    useEffect(()=>{
+        searchContainer.current.addEventListener('scroll', ()=>{
+            if(searchContainer.current.scrollTop + searchContainer.current.clientHeight >=
+               searchContainer.current.scrollHeight){
+                loadMoreMaps()
+            }
+        })
         if(Object.keys(otherMaps).length === 0){
             const setMap = async () =>{
                 isLoading()
@@ -173,6 +182,10 @@ const MapHome = () => {
         }
     }
 
+    async function loadMoreMaps(){
+        return console.log('Loading more maps')
+    }
+
     return (
         <>
         {user &&
@@ -234,7 +247,7 @@ const MapHome = () => {
                     </div>
                 </div>
 
-                <div className='map__home__search__container'>
+                <div className='map__home__search__container' ref={searchContainer}>
                     <label>
                         Search Map
                     </label>

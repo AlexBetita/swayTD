@@ -414,7 +414,7 @@ const SearchedMap = () => {
 
                     <div className='map__name'>
                         Map Name:
-                        <input
+                        {/* <input
                             maxLength = "50"
                             className='input__map__name'
                             type='text'
@@ -423,7 +423,8 @@ const SearchedMap = () => {
                             value={name}
                         >
 
-                        </input>
+                        </input> */}
+                        {` ${name}`}
                     </div>
 
                     <div className='map__ui'>

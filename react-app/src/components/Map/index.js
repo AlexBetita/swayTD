@@ -214,7 +214,7 @@ const Map_ = () => {
 
   //When component mounts load  canvas
   useEffect(() =>{
-
+    setStateColor(color);
     setRemounted(false);
     if (currentMap) {
       if (!currentMap['owner']) {
@@ -260,7 +260,7 @@ const Map_ = () => {
       // setWidth('')
       // setHeight('')
       // setMapId('')
-
+      // color = '#000000';
       document.removeEventListener('mousedown', handlePathPopUpClick);
       document.removeEventListener('mousedown', handleLoadPopUpClick);
     };
@@ -487,7 +487,11 @@ const Map_ = () => {
       setColumn(50);
       setWidth(700);
       setHeight(700);
-      alert('Succesfully deleted');
+      alert(`
+            Succesfully deleted.
+            A fragment of the map is
+            created incase you accidentally
+            deleted. You can resave this again.`);
       history.push('/maps/create');
     }
   };
