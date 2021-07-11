@@ -186,16 +186,30 @@ export default function reducer(state = initialState, action) {
             return newState
         case ADD_MAP:
             newState = {...state}
-
             if(!newState.maps[action.payload.id]){
                 newState.map_total += 1
             }
 
-            newState.maps = {
-                ...state.maps,
-                [action.payload.id] : {
-                    ...action.payload,
+            if(newState.map_total < 10){
+                newState.maps = {
+                    ...state.maps,
+                    [action.payload.id] : {
+                        ...action.payload,
+                    }
                 }
+            } else {
+                newState.maps ={
+                    ...state.maps
+                }
+                let mapKeys = Object.keys(newState.maps)
+                let oldestMap = Math.min(...mapKeys)
+                newState.maps ={
+                    ...state.maps,
+                    [action.payload.id] : {
+                        ...action.payload,
+                    }
+                }
+                delete newState.maps[oldestMap]
             }
 
             return newState
