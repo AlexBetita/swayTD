@@ -2,8 +2,9 @@ import json
 
 from flask import Blueprint, jsonify, request
 from flask_login import login_required, current_user
+from sqlalchemy import not_
 
-from app.models import Map, db
+from app.models import Map, db, User
 
 
 map_routes = Blueprint('maps', __name__)
@@ -12,7 +13,10 @@ map_routes = Blueprint('maps', __name__)
 @map_routes.route('/')
 @login_required
 def maps():
-    maps = db.session.query(Map).order_by(Map.id.desc()).limit(10).all()
+    user_maps = User.query.get(current_user.id).map.all()
+    map_ids = [i.id for i in user_maps]
+    maps = db.session.query(Map).filter(not_(Map.id.in_(map_ids))). \
+        order_by(Map.id.desc()).limit(10).all()
     return {'maps': {maps[i].id: maps[i].to_dict() for i in range(len(maps))}}
 
 
