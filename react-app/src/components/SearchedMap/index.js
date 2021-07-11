@@ -37,7 +37,7 @@ const SearchedMap = () => {
             history.push('/login')
             return
         } else {
-            return true
+            return state.session.user.id
         }
     })
 
@@ -102,13 +102,17 @@ const SearchedMap = () => {
 
     useEffect(() =>{
         if(currentMap){
-            let {new_map} = Map.loadMap(currentMap.map_data, canvasElement.current)
-            setCanvas(new_map)
-            setName(currentMap['name'])
-            setRow(currentMap['rows'])
-            setColumn(currentMap['columns'])
-            setWidth(currentMap['width'])
-            setHeight(currentMap['height'])
+            if(currentMap.user_id === user){
+                history.push(`/maps/create/${currentMap.id}`)
+            } else {
+                let {new_map} = Map.loadMap(currentMap.map_data, canvasElement.current)
+                setCanvas(new_map)
+                setName(currentMap['name'])
+                setRow(currentMap['rows'])
+                setColumn(currentMap['columns'])
+                setWidth(currentMap['width'])
+                setHeight(currentMap['height'])
+            }
         } else {
             loadMap()
         }
@@ -232,7 +236,7 @@ const SearchedMap = () => {
             const results = data.maps
             setSearchResultElements(Object.keys(results).map((key)=>{
                 return (
-                    <SearchResults key={`sr${key}`} data={results[key]}/>
+                    <SearchResults key={`sr${key}`} data={results[key]} create={false}/>
                 )
             }))
             searchPopUp.current.classList.add('results')

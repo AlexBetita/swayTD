@@ -8,14 +8,15 @@
 import React, {useRef, useEffect, useState} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {useParams, useHistory, NavLink} from 'react-router-dom';
-import {addMapData, fetchMapData, editMapData,
-  deleteMapData} from '../../store/map';
+import {addMapData, editMapData,
+  deleteMapData, searchMapData} from '../../store/map';
 
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css'; // optional
 
 import Map from './map';
 import TipsModal from '../Tips';
+import SearchResults from '../SearchedMap/SearchResults';
 
 import coin from '../img/coin.png';
 import arrow from '../img/arrow.png';
@@ -144,6 +145,8 @@ const Map_ = () => {
   const [llColor, setLLColor] = useState('#000000');
   const [remounted, setRemounted] = useState(false);
 
+  const [searchResultElements, setSearchResultElements] = useState();
+
   //Event handler for mouse events
   const eventHandler = (e) => {
     // setTimeout(()=>{
@@ -252,8 +255,8 @@ const Map_ = () => {
     document.addEventListener('mousedown', handlePathPopUpClick);
     document.addEventListener('mousedown', handleLoadPopUpClick);
     return ()=> {
-
-      // setCanvas('')
+      // console.log('im unmounting')
+      // canvas.current = ''
       // setName('')
       // setRow('')
       // setColumn('')
@@ -409,40 +412,74 @@ const Map_ = () => {
 
 
   //Load a map based on search results
-  const loadMap = async (e) =>{
-    e.preventDefault();
-    if (searchImage.current.classList.contains('disabled')) {
-      return;
-    }
-    const newErrors = [];
-    setErrors([]);
+  // const loadMap = async (e) =>{
+  //   e.preventDefault();
+  //   if (searchImage.current.classList.contains('disabled')) {
+  //     return;
+  //   }
+  //   const newErrors = [];
+  //   setErrors([]);
 
-    const value = searchValue;
-    if (!searchValue) {
-      newErrors.push(['Please provide an value']);
-      setErrors(newErrors);
-      return;
+  //   const value = searchValue;
+  //   if (!searchValue) {
+  //     newErrors.push(['Please provide an value']);
+  //     setErrors(newErrors);
+  //     return;
+  //   }
+
+  //   isLoading();
+  //   const data = await dispatch(fetchMapData({value}));
+  //   finishedLoading();
+  //   canvas.current.current = null
+  //   if (data.errors) {
+  //     setErrors(data.errors);
+  //   } else if (!data) {
+  //     setErrors(newErrors);
+  //   } else {
+  //     setRemounted(true)
+  //     if (data.user_id !== user.id) {
+  //       setTimeout(()=>{
+  //         history.push(`/maps/${data.id}`);
+  //       }, 0);
+  //     } else {
+  //       history.push(`/maps/create/${data.id}`);
+  //     }
+  //   }
+  // };
+
+  //Search map
+  const searchMap = async () =>{
+    if(searchImage.current.classList.contains('disabled')){
+        return
+    }
+    let newErrors = []
+    setErrors([])
+    const value = searchValue
+    if(!searchValue){
+        setErrors(newErrors)
+        return
     }
 
-    isLoading();
-    const data = await dispatch(fetchMapData({value}));
-    finishedLoading();
-    canvas.current.current = null
-    if (data.errors) {
-      setErrors(data.errors);
-    } else if (!data) {
-      setErrors(newErrors);
+    isLoading()
+    const data = await dispatch(searchMapData({value}))
+    finishedLoading()
+
+    if(data.errors){
+        setErrors(data.errors)
+    } else if (!data){
+        setErrors(newErrors)
+    } else if(data){
+        const results = data.maps
+        setSearchResultElements(Object.keys(results).map((key)=>{
+            return (
+                <SearchResults key={`sr${key}`} data={results[key]} create={true}/>
+            )
+        }))
+        searchPopUp.current.classList.add('results')
     } else {
-      setRemounted(true)
-      if (data.user_id !== user.id) {
-        setTimeout(()=>{
-          history.push(`/maps/${data.id}`);
-        }, 0);
-      } else {
-        history.push(`/maps/create/${data.id}`);
-      }
+        setErrors(['No maps found'])
     }
-  };
+  }
 
   //Edits the map  and saves in the database
   const editMap = async (e) =>{
@@ -677,12 +714,14 @@ const Map_ = () => {
   };
 
   const handleLoadPopUpClick = (e) =>{
-    if (searchPopUp.current.contains(e.target)) {
-      return;
+    if(searchPopUp.current.contains(e.target)){
+        return
     }
-    searchPopUp.current.classList.add('hidden');
-    searchPopUpB.current.classList.remove('active');
-  };
+    searchPopUp.current.classList.add('hidden')
+    searchPopUp.current.classList.remove('results')
+    searchPopUpB.current.classList.remove('active')
+    setSearchResultElements()
+  }
 
 
   const cleanMap = () =>{
@@ -1286,6 +1325,7 @@ const Map_ = () => {
                             </Tippy>
                         </div>
                         <div className='popup__search hidden' ref={searchPopUp}>
+                            {searchResultElements && searchResultElements}
                             <input
                             className='search__bar'
                             value={searchValue}
@@ -1296,15 +1336,18 @@ const Map_ = () => {
                             >
                             </input>
                             <div className='map__icon__container'>
-                            <Tippy content="Load Map"
-                               inertia={true}
-                               arrow={true}
-                               theme='sway'
-                               >
-                            <img className='map__icon' src={load} alt='load' onClick={loadMap}
-                                ref={searchImage}
-                            />
-                            </Tippy>
+                              <Tippy content="Search For Results"
+                                      inertia={true}
+                                      arrow={true}
+                                      theme='sway'
+                                  >
+                                    {/* <img className='map__icon' src={load} alt='load' onClick={searchMap}
+                                        ref={searchImage}
+                                    /> */}
+                                    <button type='button' onClick={searchMap} ref={searchImage}>
+                                          Search
+                                    </button>
+                                </Tippy>
                             </div>
                         </div>
                         <div className='map__icon__container'>
@@ -1750,6 +1793,7 @@ const Map_ = () => {
                               </Tippy>
                             </div>
                             <div className='popup__search hidden' ref={searchPopUp}>
+                              {searchResultElements && searchResultElements}
                               <input
                                 className='search__bar'
                                 value={searchValue}
@@ -1760,14 +1804,17 @@ const Map_ = () => {
                               >
                               </input>
                               <div className='map__icon__container'>
-                                <Tippy content="Load Map"
-                                inertia={true}
-                                arrow={true}
-                                theme='sway'
+                                <Tippy content="Search For Results"
+                                    inertia={true}
+                                    arrow={true}
+                                    theme='sway'
                                 >
-                                  <img className='map__icon' src={load} alt='load' onClick={loadMap}
+                                  {/* <img className='map__icon' src={load} alt='load' onClick={searchMap}
                                       ref={searchImage}
-                                  />
+                                  /> */}
+                                  <button type='button' onClick={searchMap} ref={searchImage}>
+                                        Search
+                                  </button>
                                 </Tippy>
                               </div>
                             </div>

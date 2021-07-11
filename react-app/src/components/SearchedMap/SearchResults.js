@@ -8,14 +8,16 @@ import './SearchResults.css'
 
 import load from '../img/load.png';
 
-const SearchResults = ({data}) =>{
-    // console.log(data.id)
+const SearchResults = ({data, create}) =>{
+
     const history = useHistory()
-    
+
     const loadMap = () =>{
-        setTimeout(()=>{
+        if(create){
+            history.push(`/maps/${data.id}`)
+        } else {
             history.push(`/maps/create/${data.id}`)
-        }, 0)
+        }
     }
 
     return(

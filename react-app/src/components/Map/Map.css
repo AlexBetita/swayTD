@@ -212,6 +212,7 @@ canvas{
     bottom: 100%;
     width: 100%;
     height: revert;
+    overflow: auto;
 }
 
 .popup__path div{
