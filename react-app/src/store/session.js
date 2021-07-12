@@ -1,4 +1,4 @@
-import { ADD_MAP, DELETE_MAP } from "./map"
+import { ADD_MAP, DELETE_MAP, SEARCH_MAPS } from "./map"
 // constants
 export const SET_USER = "session/SET_USER"
 export const REMOVE_USER = "session/REMOVE_USER"
@@ -227,6 +227,23 @@ export default function reducer(state = initialState, action) {
             newState = {...state}
 
             newState.current_index = action.payload
+
+            return newState
+        case SEARCH_MAPS:
+            newState = {...state}
+
+            let ownedMaps = {}
+
+            Object.keys(action.payload.maps).map((key)=>{
+                if(newState.user.id === action.payload.maps[key].user_id){
+                    ownedMaps[key] = action.payload.maps[key]
+                }
+            })
+
+            newState.maps = {
+                ...state.maps,
+                ...ownedMaps
+            }
 
             return newState
         case DELETE_MAP:

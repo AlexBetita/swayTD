@@ -8,7 +8,7 @@
 import React, {useRef, useEffect, useState} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {useParams, useHistory, NavLink} from 'react-router-dom';
-import {addMapData, editMapData,
+import {addMapData, editMapData, fetchMapData,
   deleteMapData, searchMapData} from '../../store/map';
 
 import Tippy from '@tippyjs/react';

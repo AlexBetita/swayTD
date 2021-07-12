@@ -4,7 +4,7 @@ export const ADD_MAP = "maps/ADD_MAP"
 const GET_MAP = "maps/GET_MAP"
 export const DELETE_MAP = "maps/DELETE_MAP"
 const SET_MAP = "maps/SET_MAP"
-const SEARCH_MAPS = "maps/SEARCH_MAPS"
+export const SEARCH_MAPS = "maps/SEARCH_MAPS"
 
 //action creators
 const addMap = (payload) => ({

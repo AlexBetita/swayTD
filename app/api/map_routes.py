@@ -23,7 +23,7 @@ def isInt(value):
 @map_routes.route('/page/<int:index>')
 @login_required
 def maps(index):
-    limit_ = index * 15
+    limit_ = 15
     offset_ = 15 * (index - 1)
     user_maps = User.query.get(current_user.id).map.all()
     map_ids = [i.id for i in user_maps]
