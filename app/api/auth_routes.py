@@ -74,6 +74,12 @@ def sign_up():
     """
     Creates a new user and logs them in
     """
+    form = SignUpForm()
+    form['csrf_token'].data = request.cookies['csrf_token']
+
+    user = User.query.filter(User.username == form.data['username']).first()
+    if(user):
+        return {'errors': ['Username already taken']}, 400
 
     if "image" not in request.files:
         return {'errors': ['image required']}, 400
@@ -95,8 +101,6 @@ def sign_up():
 
     url = upload["url"]
 
-    form = SignUpForm()
-    form['csrf_token'].data = request.cookies['csrf_token']
     if form.validate_on_submit():
         user = User(
             username=form.data['username'],

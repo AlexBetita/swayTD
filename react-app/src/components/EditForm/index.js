@@ -123,6 +123,9 @@ const EditForm = () => {
             if(password.length < 3){
                 newErrors.push('Password too short. Minimum is 3')
             }
+            if(password.length > 20){
+                newErrors.push('Password too long. Maximum is 20')
+            }
             if(password !== repeatPassword){
                 newErrors.push("Passwords don't match")
             }

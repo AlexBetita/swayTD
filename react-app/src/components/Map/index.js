@@ -293,8 +293,12 @@ const Map_ = () => {
     const newErrors = [];
     setErrors([]);
 
-    if (name.length < 2 || !name) {
+    if (name.length <= 2 || !name) {
       newErrors.push('Name is too short, minimum 3');
+    }
+
+    if (name.length > 50) {
+      newErrors.push('Name is too long, maximum 50');
     }
 
     if(!isNaN(parseInt(name))){
@@ -486,9 +490,28 @@ const Map_ = () => {
   const editMap = async (e) =>{
     e.preventDefault();
     setErrors([]);
+    const newErrors = [];
     if (!balls.current.classList.contains('hidden')) {
       return;
     }
+
+    if (name.length <= 2 || !name) {
+      newErrors.push('Name is too short, minimum 3');
+    }
+
+    if (name.length > 50) {
+      newErrors.push('Name is too long, maximum 50');
+    }
+
+    if(!isNaN(parseInt(name))){
+      newErrors.push("Names can't begin with numbers or is just all numbers.")
+    }
+
+    if(newErrors.length){
+      setErrors(newErrors)
+      return
+    }
+
     const user_id = user.id;
     let map_data = canvas.current.mapData;
     const map_image = canvas.current.getDataUrl();

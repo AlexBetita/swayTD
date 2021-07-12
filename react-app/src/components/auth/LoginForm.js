@@ -57,6 +57,10 @@ const LoginForm = () => {
       newErrors.push('Please provide a valid email')
     }
 
+    if(password.length < 3){
+      newErrors.push('Password too short')
+    }
+
     if(!newErrors.length){
       await isLoading()
       const data = await dispatch(login(email, password));
