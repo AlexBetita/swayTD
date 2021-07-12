@@ -318,6 +318,7 @@ const Map_ = () => {
       } else if (newErrors.length) {
         setErrors(newErrors);
       } else {
+        setMapId(data.id);
         alert('Successfully Saved');
         setTimeout(()=>{
           history.push(`/maps/create/${data.id}`);

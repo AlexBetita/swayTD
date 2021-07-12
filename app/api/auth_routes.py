@@ -91,7 +91,7 @@ def sign_up():
         # if the dictionary doesn't have a url key
         # it means that there was an error when we tried to upload
         # so we send back that error message
-        return upload, 400
+        return {'errors': [upload]}, 400
 
     url = upload["url"]
 

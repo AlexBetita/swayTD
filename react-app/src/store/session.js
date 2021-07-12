@@ -56,7 +56,7 @@ export const login = (email, password) => async (dispatch) => {
         return data;
     }
     dispatch(setUser(data))
-    return {}
+    return data
 }
 
 export const demologin = () => async (dispatch) => {
@@ -71,7 +71,7 @@ export const demologin = () => async (dispatch) => {
         return data;
     }
     dispatch(setUser(data))
-    return {}
+    return data
 }
 
 export const logout = () => async (dispatch) => {
@@ -111,7 +111,7 @@ export const signUp = (username, email, password, profileImage) => async (dispat
         return data;
     }
     dispatch(setUser(data))
-    return {};
+    return data
 }
 
 export const edit = payload => async (dispatch) => {

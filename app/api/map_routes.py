@@ -68,10 +68,16 @@ def create_map():
 @login_required
 def get_map(value):
     if isInt(value):
-        map_ = Map.query.filter(Map.id == value).all()
+        if request.method == 'GET':
+            map_ = Map.query.filter(Map.id == value).all()
+        else:
+            map_ = Map.query.filter(Map.id == value).first()
     else:
-        substring = "%{}%".format(value)
-        map_ = Map.query.filter(Map.name.ilike(substring)).all()
+        if request.method == 'GET':
+            substring = "%{}%".format(value)
+            map_ = Map.query.filter(Map.name.ilike(substring)).all()
+        else:
+            map_ = Map.query.filter(Map.name == value).first()
     if map_:
         if request.method == 'DELETE':
             db.session.delete(map_)

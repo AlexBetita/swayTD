@@ -33,25 +33,29 @@ const SignUpForm = () => {
   const [errors, setErrors] = useState([]);
 
   const isLoading = () =>{
-    balls.current.classList.remove('hidden')
-    signupB.current.setAttribute("disabled", true)
-    loginB.current.setAttribute("disabled", true)
-    usernameInput.current.setAttribute("disabled", true)
-    emailInput.current.setAttribute("disabled", true)
-    passwordInput.current.setAttribute("disabled", true)
-    repeatpasswordInput.current.setAttribute("disabled", true)
-    profileImageInput.current.setAttribute("disabled", true)
+    if(balls.current){
+      balls.current.classList.remove('hidden')
+      signupB.current.setAttribute("disabled", true)
+      loginB.current.setAttribute("disabled", true)
+      usernameInput.current.setAttribute("disabled", true)
+      emailInput.current.setAttribute("disabled", true)
+      passwordInput.current.setAttribute("disabled", true)
+      repeatpasswordInput.current.setAttribute("disabled", true)
+      profileImageInput.current.setAttribute("disabled", true)
+    }
   }
 
   const finishedLoading = () =>{
-    balls.current.classList.add('hidden')
-    signupB.current.removeAttribute("disabled")
-    loginB.current.removeAttribute("disabled")
-    usernameInput.current.removeAttribute("disabled")
-    emailInput.current.removeAttribute("disabled")
-    passwordInput.current.removeAttribute("disabled")
-    repeatpasswordInput.current.removeAttribute("disabled")
-    profileImageInput.current.removeAttribute("disabled")
+    if(balls.current){
+      balls.current.classList.add('hidden')
+      signupB.current.removeAttribute("disabled")
+      loginB.current.removeAttribute("disabled")
+      usernameInput.current.removeAttribute("disabled")
+      emailInput.current.removeAttribute("disabled")
+      passwordInput.current.removeAttribute("disabled")
+      repeatpasswordInput.current.removeAttribute("disabled")
+      profileImageInput.current.removeAttribute("disabled")
+    }
   }
 
   const onSignUp = async (e) => {
