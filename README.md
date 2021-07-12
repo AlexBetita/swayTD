@@ -1,32 +1,57 @@
-Welcome to the swayTD wiki!
+## Welcome to the swayTD wiki!
+## Live link: [SwayTD](https://swaytd.herokuapp.com/)
 
-### Description
+##### Table of Contents
+* [SwayTD at a Glance](#glance)
+* [Technologies Used](#technologies)
+* [Frontend Overview](#front_end_overview)
+* [Code Snippets](#code_snippets)
+* [Wiki](#wiki)
 
-SwayTD is a single player tower defense game, with the goal to survive waves of mobs, score the most points on the leaderboard based on the map size and earn in game currency, a player can customize their map starting at a minimum of 10x10 tile size and up to 30x30 tile size and save it for other players to play around with, users can place starting point and end point for the mobs.
+<a name="glance"/>
 
-The player can then purchase towers and place them on map to defend against waves of mobs in phases. A player can choose to sell the tower that they've placed at a discount. When the player starts the game a number mobs spawn in intervals and when the round ends the player can then decide when to start the next round and mobs row more sturdy as each round passes by, the player must survive as much as possible to earn more points.
+##### SwayTD at a Glance
+SwayTD is fullstack app made using Python, PSQL, React and Node. It is a single player tower defense game, with a built in map editor.
+Users can create/edit there own map, search for other players maps and play on them, it has a pathfinding visualizer. Users can play a tower defense.
 
-The player can create, delete custom maps using currency earned through playing or use custom maps made by other players.
-The player has access to a profile page where they can edit their details.
+##### Users can create maps with the tools provided
+![draw_map](https://user-images.githubusercontent.com/77173456/125217277-1a95ad80-e275-11eb-92ab-0312187f65d2.gif)
 
-Rules of tower placement:
-  * Towers cant block a path for start and end.
+##### Users can visualize the path mobs will take using different algorithms
+![path_traversal](https://user-images.githubusercontent.com/77173456/125217363-4add4c00-e275-11eb-9808-60470a4b8d7d.gif)
 
-Rules of start and end placement:
-  * They can only be placed before the start of the first wave.
-  * They cant be adjusted at all once the first wave starts.
-  * Start and end must always be reachable.
+##### Users have their own map page where its indexed based on latest created maps to oldest maps, on the side users can view maps other users created
+as well as search for more maps, it has infinity scroll built in so users can just scroll to search for more maps.
+![map_showcase](https://user-images.githubusercontent.com/77173456/125217494-a8719880-e275-11eb-927d-edac2e142baf.gif)
 
-Rules of tile placement:
-  * Cannot cover the whole board must at least have room for towers.
+<a name="technologies"/>
 
-Game goal:
-  * Survive as long as possible
-  * A player starts out with 20 life when it reaches zero then its game over and their score is saved in the leaderboards corresponding with map size
-  * Scoring is based of map size, current round and monster types.
-  * Currency earned after every game is calculated off score.
+### Technologies Used
 
-The player can start a new game when they lose all life or when they quit current game.
+<!-- For more icons please follow  https://github.com/MikeCodesDotNET/ColoredBadges -->
+<img src="https://github.com/devicons/devicon/blob/master/icons/javascript/javascript-original.svg" alt="javaScript" width="50" height="50">
+<img src="https://github.com/devicons/devicon/blob/master/icons/html5/html5-original.svg" alt="html" width="50" height="50">
+<img src="https://github.com/devicons/devicon/blob/master/icons/css3/css3-original.svg" alt="css" width="50" height="50">
+<img src="https://github.com/devicons/devicon/blob/master/icons/git/git-original.svg" alt="git" width="50" height="50">
+<img src="https://github.com/devicons/devicon/blob/master/icons/react/react-original.svg" alt="react" width="50" height="50">
+<img src="https://github.com/devicons/devicon/blob/master/icons/redux/redux-original.svg" alt="redux" width="50" height="50">
+<img src="https://github.com/devicons/devicon/blob/master/icons/npm/npm-original-wordmark.svg" alt="redux" width="50" height="50">
+<img src="https://github.com/devicons/devicon/blob/master/icons/postgresql/postgresql-plain.svg" alt="psql" width="50" height="50">
+<img src="https://github.com/devicons/devicon/blob/master/icons/python/python-original.svg" alt="python" width="50" height="50">
 
-### Comments
-* I chose this project for it allows me to work on js canvas, object oriented programming, game state, animation state, object collision, object detection, object placement, pathing algorithms, animations and game logic. Also I love gaming and have been gaming my whole life and this is one of the things I'm passionate about learning and implementing.
+<a name="front_end_overview"/>
+
+
+### Front End Overview
+
+SwayTD is mostly built on the frontend using Javascripts `canvas` element. It maximizes the use of CSS, HTML5, JavaScript, and OOP for a dynamic and smooth experience. Only external library used for design is Tippy.js react for that nice tooltip popup.
+
+### Frontend Technologies Used:
+
+#### React
+
+SwayTD is react application, it makes extensive use and heavily relies on React core libraries. Without the React ecosystem, SwayTD would be a difficult task to create.
+
+#### Redux
+
+
