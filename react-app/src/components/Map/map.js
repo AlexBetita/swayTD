@@ -5,6 +5,9 @@ class Node{
         this.south = null;
         this.east = null;
         this.west = null;
+
+        //dj
+        this.value = 1
     }
 }
 
@@ -13,6 +16,31 @@ class LinkedList {
         this.start = start
         this.end = end
     }
+}
+
+//djkstra
+class Graph {
+    constructor(){
+        this.graph = {
+            start: {},
+            end: {},
+        }
+
+        this.costs = {}
+        this.parents = {}
+        this.processed =  []
+    }
+
+    lowestCoseNode(){
+        return Object.keys(this.costs).reduce((lowest, node)=>{
+            if (lowest === null || this.costs[node] < this.costs[lowest]){
+                if(!this.processed.includes(node)){
+                    lowest = node;
+                }
+            }
+            return lowest;
+        }, null);
+    };
 }
 
 export default class Map{
@@ -44,7 +72,6 @@ export default class Map{
         this.start = null
         this.end = null
 
-
         //linked list
         this.linkedlist = new LinkedList()
 
@@ -52,6 +79,12 @@ export default class Map{
         this.pathBFS = []
         this.pathDFS = []
         this.pathLL = []
+
+        //djkstra
+
+        this.graph = new Graph()
+
+        this.pathDJ = []
 
         //north, east, west, south
         this.directions = {
@@ -735,21 +768,43 @@ export default class Map{
 
                 if (i === 0){
                     if(this.matrix[newY][newX] instanceof Node){
+                        //dj
+                        if(position === 'start'){
+                            this.graph.start[node.data] = node.value
+                        } else if (){
+
+                        }
+
                         node.east = this.matrix[newY][newX]
                         this.matrix[newY][newX].west = this.matrix[y][x]
                     }
                 } else if(i === 1){
                     if(this.matrix[newY][newX] instanceof Node){
+                        //dj
+                        if(position === 'start'){
+                            this.graph.start[node.data] = node.value
+                        }
+
                         node.south = this.matrix[newY][newX]
                         this.matrix[newY][newX].north = this.matrix[y][x]
                     }
                 } else if(i === 2){
                     if(this.matrix[newY][newX] instanceof Node){
+                        //dj
+                        if(position === 'start'){
+                            this.graph.start[node.data] = node.value
+                        }
+
                         node.north = this.matrix[newY][newX]
                         this.matrix[newY][newX].south = this.matrix[y][x]
                     }
                 } else if(i === 3){
                     if(this.matrix[newY][newX] instanceof Node){
+                        //dj
+                        if(position === 'start'){
+                            this.graph.start[node.data] = node.value
+                        }
+
                         node.west = this.matrix[newY][newX]
                         this.matrix[newY][newX].east = this.matrix[y][x]
                     }
@@ -933,6 +988,23 @@ export default class Map{
 
         }
         return false
+    }
+
+
+    //djkstra
+    startDJKSTRA(){
+        //reset path
+        this.pathDJ = []
+
+        if(!this.start){
+            return {
+                'status' : 'Please input a start node'
+            }
+        } else if (!this.end){
+            return {
+                'status' : 'Please input a end node'
+            }
+        }
     }
 
     static loadMap(mapData, canvas, grid = false){
