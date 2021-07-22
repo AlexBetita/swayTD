@@ -768,6 +768,7 @@ export default class Map{
     clearTile(x, y){
         try{
             let data = this.getTileNumber(x, y)
+            let currentDistance = this.matrix[y][x].distance
 
             this.context.fillStyle = this.tiles[8]
             this.context.fillRect(x * this.tileWidth, y * this.tileHeight, this.tileWidth, this.tileHeight)
@@ -789,6 +790,39 @@ export default class Map{
                 } else{
                     this.delStart = data
                     this.delGraph = data
+                }
+            }
+            //check surrounding tiles to properly reduce cost
+            for (let i = 0; i < 4; i++){
+                let newY = y + this.directions[i][0]
+                let newX = x + this.directions[i][1]
+                if(newY >= 0 && newY < this.matrix.length && newX >= 0 && newX < this.matrix[newY].length){
+
+                    if (i === 0){
+                        if(this.matrix[newY][newX] instanceof Node){
+                            if(this.djkstra.costs[this.matrix[newY][newX].data] - currentDistance >= 1){
+                                this.djkstra.costs[this.matrix[newY][newX].data] -= currentDistance
+                            }
+                        }
+                    } else if(i === 1){
+                        if(this.matrix[newY][newX] instanceof Node){
+                            if(this.djkstra.costs[this.matrix[newY][newX].data] - currentDistance >= 1){
+                                this.djkstra.costs[this.matrix[newY][newX].data] -= currentDistance
+                            }
+                        }
+                    } else if(i === 2){
+                        if(this.matrix[newY][newX] instanceof Node){
+                            if(this.djkstra.costs[this.matrix[newY][newX].data] - currentDistance >= 1){
+                                this.djkstra.costs[this.matrix[newY][newX].data] -= currentDistance
+                            }
+                        }
+                    } else if(i === 3){
+                        if(this.matrix[newY][newX] instanceof Node){
+                            if(this.djkstra.costs[this.matrix[newY][newX].data] - currentDistance >= 1){
+                                this.djkstra.costs[this.matrix[newY][newX].data] -= currentDistance
+                            }
+                        }
+                    }
                 }
             }
 
@@ -857,7 +891,7 @@ export default class Map{
                         }
                         //we increment the costs based on the distances from one another
                         //experimental
-                        // this.djkstra.costs[data] = this.matrix[y][x].distance + this.matrix[newY][newX].distance
+                        this.djkstra.costs[data] = this.matrix[y][x].distance + this.matrix[newY][newX].distance
 
                         node.east = this.matrix[newY][newX]
                         this.matrix[newY][newX].west = this.matrix[y][x]
@@ -881,7 +915,7 @@ export default class Map{
                         } else if (position === 'end'){
                             this.djkstra.graph[this.matrix[newY][newX].data]['end'] = this.matrix[y][x].distance
                         }
-                        // this.djkstra.costs[data] = this.matrix[y][x].distance + this.matrix[newY][newX].distance
+                        this.djkstra.costs[data] = this.matrix[y][x].distance + this.matrix[newY][newX].distance
 
                         node.south = this.matrix[newY][newX]
                         this.matrix[newY][newX].north = this.matrix[y][x]
@@ -905,7 +939,7 @@ export default class Map{
                         } else if (position === 'end'){
                             this.djkstra.graph[this.matrix[newY][newX].data]['end'] = this.matrix[y][x].distance
                         }
-                        // this.djkstra.costs[data] = this.matrix[y][x].distance + this.matrix[newY][newX].distance
+                        this.djkstra.costs[data] = this.matrix[y][x].distance + this.matrix[newY][newX].distance
 
                         node.north = this.matrix[newY][newX]
                         this.matrix[newY][newX].south = this.matrix[y][x]
@@ -929,7 +963,7 @@ export default class Map{
                         } else if (position === 'end'){
                             this.djkstra.graph[this.matrix[newY][newX].data]['end'] = this.matrix[y][x].distance
                         }
-                        // this.djkstra.costs[data] = this.matrix[y][x].distance + this.matrix[newY][newX].distance
+                        this.djkstra.costs[data] = this.matrix[y][x].distance + this.matrix[newY][newX].distance
 
                         node.west = this.matrix[newY][newX]
                         this.matrix[newY][newX].east = this.matrix[y][x]
