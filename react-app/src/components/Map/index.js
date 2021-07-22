@@ -874,6 +874,10 @@ const Map_ = () => {
     canvas.current.undoDraw();
   };
 
+  const showGraph = () => {
+    console.log(canvas.current.djkstraData)
+  };
+
   return (
     <>
       <div>
@@ -1061,6 +1065,9 @@ const Map_ = () => {
                     <div>
 
                       <div className='map__icon__container'>
+                        <button onClick={showGraph}>
+                          Show Graph
+                        </button>
                         <Tippy content="Undo"
                                 inertia={true}
                                 arrow={true}
