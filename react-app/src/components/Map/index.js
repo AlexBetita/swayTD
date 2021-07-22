@@ -876,6 +876,7 @@ const Map_ = () => {
 
   const showGraph = () => {
     console.log(canvas.current.djkstraData)
+    console.log(canvas.current.startDJKSTRA())
   };
 
   return (
