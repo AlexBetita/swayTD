@@ -23,19 +23,19 @@ export function ModalProvider({ children }) {
 }
 
 export function Modal({ toggleModal, children }) {
-    const modalNode = useContext(ModalContext);
-    if (!modalNode) return null;
+  const modalNode = useContext(ModalContext);
+  if (!modalNode) return null;
 
-    return ReactDOM.createPortal(
-      <div id="modal">
-        <div id="modal-background" onClick={toggleModal}/>
-        <div id="modal-content">
-          {children}
-        </div>
-      </div>,
-      modalNode
-    );
-  }
+  return ReactDOM.createPortal(
+    <div id="modal">
+      <div id="modal-background" onClick={toggleModal}/>
+      <div id="modal-content">
+        {children}
+      </div>
+    </div>,
+    modalNode
+  );
+}
 
 
 /*

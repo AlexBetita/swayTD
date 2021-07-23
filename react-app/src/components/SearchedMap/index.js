@@ -78,6 +78,10 @@ const SearchedMap = () => {
     const speedScrollBFS = useRef();
     const speedScrollLL = useRef();
 
+    //dj
+    const djkstraB = useRef();
+    const undoDJKSTRAB = useRef();
+
     const [canvas, setCanvas] = useState()
     const [name, setName] = useState('')
     const [errors, setErrors] = useState([]);
@@ -93,6 +97,13 @@ const SearchedMap = () => {
     const [bfsSpeed, setBFSSpeed] = useState(0);
     const [llSpeed, setLLSpeed] = useState(0);
     const [llColor, setLLColor] = useState('#000000');
+
+    //dj
+    const colorPickerDJKSTRA = useRef();
+    const speedScrollDJKSTRA = useRef();
+
+    const [djkstraSpeed, setDJKSTRASpeed] = useState(0);
+    const [djkstraColor, setDJKSTRAColor] = useState('#000000');
 
     const [searchResultElements, setSearchResultElements] = useState();
 
@@ -149,35 +160,47 @@ const SearchedMap = () => {
     //CHANGES
     const isTraversing = () => {
         if (dfsB.current && bfsB.current && llB.current) {
-          dfsB.current.setAttribute('disabled', true);
-          bfsB.current.setAttribute('disabled', true);
-          llB.current.setAttribute('disabled', true);
-          colorPickerDFSB.current.setAttribute('disabled', true)
-          colorPickerBFSB.current.setAttribute('disabled', true)
-          colorPickerLLB.current.setAttribute('disabled', true)
-          speedScrollDFS.current.setAttribute('disabled', true)
-          speedScrollBFS.current.setAttribute('disabled', true)
-          speedScrollLL.current.setAttribute('disabled', true)
-          undoBFSB.current.classList.add('disabled');
-          undoDFSB.current.classList.add('disabled');
-          undoLLB.current.classList.add('disabled');
+            dfsB.current.setAttribute('disabled', true);
+            bfsB.current.setAttribute('disabled', true);
+            llB.current.setAttribute('disabled', true);
+            colorPickerDFSB.current.setAttribute('disabled', true)
+            colorPickerBFSB.current.setAttribute('disabled', true)
+            colorPickerLLB.current.setAttribute('disabled', true)
+            speedScrollDFS.current.setAttribute('disabled', true)
+            speedScrollBFS.current.setAttribute('disabled', true)
+            speedScrollLL.current.setAttribute('disabled', true)
+            undoBFSB.current.classList.add('disabled');
+            undoDFSB.current.classList.add('disabled');
+            undoLLB.current.classList.add('disabled');
+
+            //dj
+            djkstraB.current.setAttribute('disabled', true);
+            colorPickerDJKSTRA.current.setAttribute('disabled', true)
+            speedScrollDJKSTRA.current.setAttribute('disabled', true)
+            undoDJKSTRAB.current.classList.add('disabled');
         }
       };
 
       const finishedTraversing = () => {
         if (dfsB.current && bfsB.current && llB.current) {
-          dfsB.current.removeAttribute('disabled');
-          bfsB.current.removeAttribute('disabled');
-          llB.current.removeAttribute('disabled');
-          colorPickerDFSB.current.removeAttribute('disabled');
-          colorPickerBFSB.current.removeAttribute('disabled')
-          colorPickerLLB.current.removeAttribute('disabled');
-          speedScrollDFS.current.removeAttribute('disabled')
-          speedScrollBFS.current.removeAttribute('disabled');
-          speedScrollLL.current.removeAttribute('disabled')
-          undoBFSB.current.classList.remove('disabled');
-          undoDFSB.current.classList.remove('disabled');
-          undoLLB.current.classList.remove('disabled');
+            dfsB.current.removeAttribute('disabled');
+            bfsB.current.removeAttribute('disabled');
+            llB.current.removeAttribute('disabled');
+            colorPickerDFSB.current.removeAttribute('disabled');
+            colorPickerBFSB.current.removeAttribute('disabled')
+            colorPickerLLB.current.removeAttribute('disabled');
+            speedScrollDFS.current.removeAttribute('disabled')
+            speedScrollBFS.current.removeAttribute('disabled');
+            speedScrollLL.current.removeAttribute('disabled')
+            undoBFSB.current.classList.remove('disabled');
+            undoDFSB.current.classList.remove('disabled');
+            undoLLB.current.classList.remove('disabled');
+
+            //dj
+            djkstraB.current.removeAttribute('disabled');
+            colorPickerDJKSTRA.current.removeAttribute('disabled');
+            speedScrollDJKSTRA.current.removeAttribute('disabled')
+            undoDJKSTRAB.current.classList.remove('disabled');
         }
       };
 
@@ -340,13 +363,36 @@ const SearchedMap = () => {
         }
     }
 
+    //dj
+    const startDJKSTRA = () => {
+        setErrors([]);
+        isTraversing();
+        const djkstra = canvas.startDJKSTRA();
+        if (djkstra === Infinity){
+            alert('Start and end nodes are not connected so no path found.');
+            finishedTraversing();
+        } else if (typeof djkstra === 'object') {
+            setErrors(['Please provide a start and end node.']);
+            finishedTraversing();
+        } else if (djkstra) {
+        const res = canvas.drawPath('djkstra', djkstraSpeed, djkstraColor);
+        if (res) {
+                Promise.all(res).then(()=>{
+                    finishedTraversing();
+                });
+            }
+        }
+    };
+
+
+    //Undo functions
     const undoDFS = async () => {
         setErrors([])
         if(undoDFSB.current.classList.contains('disabled')){
             return
         }
         isTraversing();
-        const res = canvas.undoPath(true, false, false, dfsSpeed)
+        const res = canvas.undoPath(true, false, false, false, dfsSpeed)
         if(res){
             Promise.all(res).then(()=>{
                 finishedTraversing();
@@ -363,7 +409,7 @@ const SearchedMap = () => {
             return
         }
         isTraversing();
-        const res = canvas.undoPath(false, true, false, bfsSpeed)
+        const res = canvas.undoPath(false, true, false, false, bfsSpeed)
         if(res){
             Promise.all(res).then(()=>{
                 finishedTraversing();
@@ -380,7 +426,7 @@ const SearchedMap = () => {
             return
         }
         isTraversing();
-        const res = canvas.undoPath(false, false, true, llSpeed)
+        const res = canvas.undoPath(false, false, true, false, llSpeed)
         if(res){
             Promise.all(res).then(()=>{
                 finishedTraversing();
@@ -389,6 +435,25 @@ const SearchedMap = () => {
             setErrors(['No LL path to undo'])
             finishedTraversing();
         }
+    }
+
+    //dj
+
+    const undoDJSKTRA = () => {
+        setErrors([]);
+        if (undoLLB.current.classList.contains('disabled')) {
+            return;
+        }
+        isTraversing();
+        const res = canvas.undoPath(false, false, false, true, djkstraSpeed);
+        if (res) {
+            Promise.all(res).then(()=>{
+                finishedTraversing();
+            });
+        } else {
+            setErrors(['No DJKSTRA SHORTEST path to undo']);
+            finishedTraversing();
+        };
     }
 
     return (
@@ -636,6 +701,54 @@ const SearchedMap = () => {
                             type='color'
                             onChange={(e)=>setLLColor(e.target.value)}
                             ref={colorPickerLLB}
+                          >
+                          </input>
+                        </Tippy>
+                         {/* dj */}
+                         <div>
+                          <Tippy content="Start DJKSTRA traversal"
+                                inertia={true}
+                                arrow={true}
+                                theme='sway'
+                                >
+                            <button onClick={startDJKSTRA} ref={djkstraB}>
+                                              DJKSTRA
+
+                          </button>
+                          </Tippy>
+
+                          <Tippy content="Undo DJKSTRA Traversal"
+                               inertia={true}
+                               arrow={true}
+                               theme='sway'
+                               >
+                          <img src={undo} alt='undo' onClick={undoDJSKTRA} ref={undoDJKSTRAB}/>
+                          </Tippy>
+                        </div>
+                                    DJSKTRA Speed: {djkstraSpeed}
+                        <Tippy content="Adjust DJKSTRA Speed"
+                               inertia={true}
+                               arrow={true}
+                               theme='sway'
+                               >
+                          <input
+                            type="range" min="0" max="100" value={djkstraSpeed}
+                            onChange={(e)=> setDJKSTRASpeed(e.target.value)}
+                            ref={speedScrollDJKSTRA}
+                          >
+                          </input>
+                        </Tippy>
+
+                        <Tippy content="Adjust DJKSTRA Color"
+                               inertia={true}
+                               arrow={true}
+                               theme='sway'
+                               >
+                          <input
+                            className='color__picker'
+                            type='color'
+                            onChange={(e)=>setDJKSTRAColor(e.target.value)}
+                            ref={colorPickerDJKSTRA}
                           >
                           </input>
                         </Tippy>

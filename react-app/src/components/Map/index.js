@@ -94,6 +94,10 @@ const Map_ = () => {
   const undoBFSB = useRef();
   const undoLLB = useRef();
 
+  //dj
+  const djkstraB = useRef();
+  const undoDJKSTRAB = useRef();
+
   const canvasElement = useRef();
   const startB = useRef();
   const endB = useRef();
@@ -116,6 +120,10 @@ const Map_ = () => {
   const speedScrollDFS = useRef();
   const speedScrollBFS = useRef();
   const speedScrollLL = useRef();
+
+  //dj
+  const colorPickerDJKSTRA = useRef();
+  const speedScrollDJKSTRA = useRef();
 
   // const [canvas, setCanvas] = useState();
   const canvas = useRef()
@@ -143,6 +151,11 @@ const Map_ = () => {
   const [bfsSpeed, setBFSSpeed] = useState(0);
   const [llSpeed, setLLSpeed] = useState(0);
   const [llColor, setLLColor] = useState('#000000');
+
+  //dj
+  const [djkstraSpeed, setDJKSTRASpeed] = useState(0);
+  const [djkstraColor, setDJKSTRAColor] = useState('#000000');
+
   const [remounted, setRemounted] = useState(false);
 
   const [searchResultElements, setSearchResultElements] = useState();
@@ -181,7 +194,7 @@ const Map_ = () => {
   };
 
   const isTraversing = () => {
-    if (dfsB.current && bfsB.current && llB.current) {
+    if (dfsB.current && bfsB.current && llB.current && djkstraB.current) {
       dfsB.current.setAttribute('disabled', true);
       bfsB.current.setAttribute('disabled', true);
       llB.current.setAttribute('disabled', true);
@@ -194,11 +207,17 @@ const Map_ = () => {
       undoBFSB.current.classList.add('disabled');
       undoDFSB.current.classList.add('disabled');
       undoLLB.current.classList.add('disabled');
+
+      //dj
+      djkstraB.current.setAttribute('disabled', true);
+      colorPickerDJKSTRA.current.setAttribute('disabled', true)
+      speedScrollDJKSTRA.current.setAttribute('disabled', true)
+      undoDJKSTRAB.current.classList.add('disabled');
     }
   };
 
   const finishedTraversing = () => {
-    if (dfsB.current && bfsB.current && llB.current) {
+    if (dfsB.current && bfsB.current && llB.current && djkstraB.current) {
       dfsB.current.removeAttribute('disabled');
       bfsB.current.removeAttribute('disabled');
       llB.current.removeAttribute('disabled');
@@ -211,6 +230,12 @@ const Map_ = () => {
       undoBFSB.current.classList.remove('disabled');
       undoDFSB.current.classList.remove('disabled');
       undoLLB.current.classList.remove('disabled');
+
+      //dj
+      djkstraB.current.removeAttribute('disabled');
+      colorPickerDJKSTRA.current.removeAttribute('disabled');
+      speedScrollDJKSTRA.current.removeAttribute('disabled')
+      undoDJKSTRAB.current.classList.remove('disabled');
     }
   };
 
@@ -618,6 +643,28 @@ const Map_ = () => {
     }
   };
 
+
+  //dj
+  const startDJKSTRA = () => {
+    setErrors([]);
+    isTraversing();
+    const djkstra = canvas.current.startDJKSTRA();
+    if (djkstra === Infinity){
+      alert('Start and end nodes are not connected so no path found.');
+      finishedTraversing();
+    } else if (typeof djkstra === 'object') {
+      setErrors(['Please provide a start and end node.']);
+      finishedTraversing();
+    } else if (djkstra) {
+      const res = canvas.current.drawPath('djkstra', djkstraSpeed, djkstraColor);
+      if (res) {
+        Promise.all(res).then(()=>{
+          finishedTraversing();
+        });
+      }
+    }
+  };
+
   // TOGGLERS
 
   const toggleStart = () => {
@@ -825,7 +872,7 @@ const Map_ = () => {
       return;
     }
     isTraversing();
-    const res = canvas.current.undoPath(true, false, false, dfsSpeed);
+    const res = canvas.current.undoPath(true, false, false, false, dfsSpeed);
     if (res) {
       Promise.all(res).then(()=>{
         finishedTraversing();
@@ -842,7 +889,7 @@ const Map_ = () => {
       return;
     }
     isTraversing();
-    const res = canvas.current.undoPath(false, true, false, bfsSpeed);
+    const res = canvas.current.undoPath(false, true, false, false, bfsSpeed);
     if (res) {
       Promise.all(res).then(()=>{
         finishedTraversing();
@@ -859,7 +906,7 @@ const Map_ = () => {
       return;
     }
     isTraversing();
-    const res = canvas.current.undoPath(false, false, true, llSpeed);
+    const res = canvas.current.undoPath(false, false, true, false, llSpeed);
     if (res) {
       Promise.all(res).then(()=>{
         finishedTraversing();
@@ -870,13 +917,27 @@ const Map_ = () => {
     }
   };
 
+  //dj
+
+  const undoDJSKTRA = () => {
+    setErrors([]);
+    if (undoLLB.current.classList.contains('disabled')) {
+      return;
+    }
+    isTraversing();
+    const res = canvas.current.undoPath(false, false, false, true, djkstraSpeed);
+    if (res) {
+      Promise.all(res).then(()=>{
+        finishedTraversing();
+      });
+    } else {
+      setErrors(['No DJKSTRA SHORTEST path to undo']);
+      finishedTraversing();
+    };
+  }
+
   const undoDraw = () =>{
     canvas.current.undoDraw();
-  };
-
-  const showGraph = () => {
-    console.log(canvas.current.djkstraData)
-    console.log(canvas.current.startDJKSTRA())
   };
 
   return (
@@ -1066,9 +1127,7 @@ const Map_ = () => {
                     <div>
 
                       <div className='map__icon__container'>
-                        <button onClick={showGraph}>
-                          Show Graph
-                        </button>
+
                         <Tippy content="Undo"
                                 inertia={true}
                                 arrow={true}
@@ -1242,13 +1301,13 @@ const Map_ = () => {
                         </input>
                         </Tippy>
                         <div>
-                        <Tippy content="Start Linked List Traversal"
-                               inertia={true}
-                               arrow={true}
-                               theme='sway'
-                               >
-                          <button onClick={traverseLL} ref={llB}>
-                                            LinkedList
+                          <Tippy content="Start Linked List Traversal"
+                                inertia={true}
+                                arrow={true}
+                                theme='sway'
+                                >
+                            <button onClick={traverseLL} ref={llB}>
+                                              LinkedList
 
                           </button>
                           </Tippy>
@@ -1285,6 +1344,54 @@ const Map_ = () => {
                             type='color'
                             onChange={(e)=>setLLColor(e.target.value)}
                             ref={colorPickerLLB}
+                          >
+                          </input>
+                        </Tippy>
+                        {/* dj */}
+                        <div>
+                          <Tippy content="Start DJKSTRA traversal"
+                                inertia={true}
+                                arrow={true}
+                                theme='sway'
+                                >
+                            <button onClick={startDJKSTRA} ref={djkstraB}>
+                                              DJKSTRA
+
+                          </button>
+                          </Tippy>
+
+                          <Tippy content="Undo DJKSTRA Traversal"
+                               inertia={true}
+                               arrow={true}
+                               theme='sway'
+                               >
+                          <img src={undo} alt='undo' onClick={undoDJSKTRA} ref={undoDJKSTRAB}/>
+                          </Tippy>
+                        </div>
+                                    DJSKTRA Speed: {djkstraSpeed}
+                        <Tippy content="Adjust DJKSTRA Speed"
+                               inertia={true}
+                               arrow={true}
+                               theme='sway'
+                               >
+                          <input
+                            type="range" min="0" max="100" value={djkstraSpeed}
+                            onChange={(e)=> setDJKSTRASpeed(e.target.value)}
+                            ref={speedScrollDJKSTRA}
+                          >
+                          </input>
+                        </Tippy>
+
+                        <Tippy content="Adjust DJKSTRA Color"
+                               inertia={true}
+                               arrow={true}
+                               theme='sway'
+                               >
+                          <input
+                            className='color__picker'
+                            type='color'
+                            onChange={(e)=>setDJKSTRAColor(e.target.value)}
+                            ref={colorPickerDJKSTRA}
                           >
                           </input>
                         </Tippy>
@@ -1752,6 +1859,54 @@ const Map_ = () => {
                             type='color'
                             onChange={(e)=>setLLColor(e.target.value)}
                             ref={colorPickerLLB}
+                          >
+                          </input>
+                        </Tippy>
+                        {/* dj */}
+                        <div>
+                          <Tippy content="Start DJKSTRA traversal"
+                                inertia={true}
+                                arrow={true}
+                                theme='sway'
+                                >
+                            <button onClick={startDJKSTRA} ref={djkstraB}>
+                                              DJKSTRA
+
+                          </button>
+                          </Tippy>
+
+                          <Tippy content="Undo DJKSTRA Traversal"
+                               inertia={true}
+                               arrow={true}
+                               theme='sway'
+                               >
+                          <img src={undo} alt='undo' onClick={undoDJSKTRA} ref={undoDJKSTRAB}/>
+                          </Tippy>
+                        </div>
+                                    DJSKTRA Speed: {djkstraSpeed}
+                        <Tippy content="Adjust DJKSTRA Speed"
+                               inertia={true}
+                               arrow={true}
+                               theme='sway'
+                               >
+                          <input
+                            type="range" min="0" max="100" value={djkstraSpeed}
+                            onChange={(e)=> setDJKSTRASpeed(e.target.value)}
+                            ref={speedScrollDJKSTRA}
+                          >
+                          </input>
+                        </Tippy>
+
+                        <Tippy content="Adjust DJKSTRA Color"
+                               inertia={true}
+                               arrow={true}
+                               theme='sway'
+                               >
+                          <input
+                            className='color__picker'
+                            type='color'
+                            onChange={(e)=>setDJKSTRAColor(e.target.value)}
+                            ref={colorPickerDJKSTRA}
                           >
                           </input>
                         </Tippy>

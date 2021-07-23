@@ -32,8 +32,56 @@ class Djkstra {
         this.parents = {
             end: null
         }
+
+        //should only run when i change start node and plot node
+        // this._trackParents = {
+        //     end: null
+        // }
+
+        // this._trackProcessed = []
+
+        // this._trackCosts = {
+        //     end: Infinity
+        // }
+
         this.processed =  []
     }
+
+    // get trackParents(){
+    //     return this._trackParents
+    // }
+
+    // get trackCosts(){
+    //     return this._trackCosts
+    // }
+
+    // get trackProcessed(){
+    //     return this._trackProcessed
+    // }
+
+    // set trackParents(arr){
+    //     this._trackParents[arr[0]] = arr[1]
+    // }
+
+    // set trackProcessed(value){
+    //     this._trackProcessed.push(value)
+    // }
+
+    // set trackCosts(arr){
+    //     this._trackCosts[arr[0]] = arr[1]
+    // }
+
+    // set resetParents(value){
+    //     this._trackParents = value
+    // }
+
+    // set resetProcessed(value){
+    //     this._trackProcessed = value
+    // }
+
+    // set resetCosts(value){
+    //     this._trackCosts = value
+    // }
 
     lowestCoseNode(){
         return Object.keys(this.costs).reduce((lowest, node)=>{
@@ -45,6 +93,7 @@ class Djkstra {
             return lowest;
         }, null);
     };
+
 }
 
 export default class Map{
@@ -135,12 +184,14 @@ export default class Map{
             'bfs' : false,
             'dfs' : false,
             'll' : false,
+            'djkstra' : false,
             'paths' : {
                 /*
                 'x,y': {
                     'bfs': false,
                     'dfs': false,
                     'll': false,
+                    'djkstra': false,
                     'fill_color': 'rgb(r, g, b, o / 255)'
                 }
                 */
@@ -149,6 +200,59 @@ export default class Map{
 
         this.undo = []
         this.drawing = false;
+
+        // trackers for class graph
+        this._trackParents = {
+            end: null
+        }
+
+        this._trackProcessed = []
+
+        this._trackCosts = {
+            end: Infinity
+        }
+
+        // track trackers
+        this.pa = null;
+        this.pp = null;
+        this.c = null;
+    }
+
+    //trackers for class graph
+    get trackParents(){
+        return this._trackParents
+    }
+
+    get trackCosts(){
+        return this._trackCosts
+    }
+
+    get trackProcessed(){
+        return this._trackProcessed
+    }
+
+    set trackParents(arr){
+        this._trackParents[arr[0]] = arr[1]
+    }
+
+    set trackProcessed(value){
+        this._trackProcessed.push(value)
+    }
+
+    set trackCosts(arr){
+        this._trackCosts[arr[0]] = arr[1]
+    }
+
+    set resetParents(value){
+        this._trackParents = value
+    }
+
+    set resetProcessed(value){
+        this._trackProcessed = value
+    }
+
+    set resetCosts(value){
+        this._trackCosts = value
     }
 
     //get shortest path
@@ -368,6 +472,22 @@ export default class Map{
                 this.djkstra.parents = {
                     end: null
                 }
+                this.djkstra.costs = {
+                    end: Infinity
+                }
+
+                //trackers
+                this.trackParents = {
+                    end: null
+                }
+                //reset
+                this.resetParents = {
+                    end:null
+                }
+                this.resetCosts = {
+                    end: Infinity
+                }
+                this.resetProcessed = []
             }
         }
 
@@ -380,6 +500,8 @@ export default class Map{
 
         //dj
         this.djkstra.processed.push('start')
+        //trackers
+        this.trackProcessed.push('start')
     }
 
     //draw end
@@ -388,9 +510,21 @@ export default class Map{
 
         if(this.end){
             if(this.matrix[this.end[1]][this.end[0]] instanceof Node){
-
                 this.clearTile(this.end[0], this.end[1])
                 this.delMapKey = this.getTileNumber(this.end[0], this.end[1])
+
+                //dj
+                if(this.start){
+                    this.drawStart(this.start[0], this.start[1])
+                }
+
+                for (const [key, value] of Object.entries(this.djkstra.graph)){
+                    for (const [key2, value2] of Object.entries(this.djkstra.graph[key])){
+                        if(key2 === 'end'){
+                            delete this.djkstra.graph[key][key2]
+                        }
+                    }
+                }
 
             }
         }
@@ -416,7 +550,7 @@ export default class Map{
         this.undo = []
     }
 
-    saveUndoData(x, y, dfs = false, bfs = false, ll = false){
+    saveUndoData(x, y, dfs = false, bfs = false, ll = false, djkstra = false){
         //initialize defaults
         if(!this._undoPath['paths'][`${x},${y}`]){
             this._undoPath['paths'][`${x},${y}`] = {
@@ -424,6 +558,7 @@ export default class Map{
                 'bfs' : false,
                 'dfs' : false,
                 'll' : false,
+                'djkstra' : false,
                 'fille_color' : 'rgb(0,0,0,1)' //default to black
             }
         }
@@ -438,7 +573,9 @@ export default class Map{
             }
             this._undoPath['paths'][`${x},${y}`]['bfs'] = true;
 
-            if(!this._undoPath['paths'][`${x},${y}`]['dfs'] && !this._undoPath['paths'][`${x},${y}`]['ll']){
+            if(!this._undoPath['paths'][`${x},${y}`]['dfs'] && !this._undoPath['paths'][`${x},${y}`]['ll']
+                && !this._undoPath['paths'][`${x},${y}`]['djkstra']
+                ){
                 this._undoPath['paths'][`${x},${y}`]['fill_color'] = this.getRGBAOfPixel(x, y)
             }
 
@@ -453,7 +590,9 @@ export default class Map{
 
             this._undoPath['paths'][`${x},${y}`]['dfs'] = true;
 
-            if(!this._undoPath['paths'][`${x},${y}`]['bfs'] && !this._undoPath['paths'][`${x},${y}`]['ll']){
+            if(!this._undoPath['paths'][`${x},${y}`]['bfs'] && !this._undoPath['paths'][`${x},${y}`]['ll']
+                && !this._undoPath['paths'][`${x},${y}`]['djkstra']
+                ){
                 this._undoPath['paths'][`${x},${y}`]['fill_color'] = this.getRGBAOfPixel(x, y)
             }
 
@@ -468,7 +607,25 @@ export default class Map{
 
             this._undoPath['paths'][`${x},${y}`]['ll'] = true;
 
-            if(!this._undoPath['paths'][`${x},${y}`]['dfs'] && !this._undoPath['paths'][`${x},${y}`]['bfs']){
+            if(!this._undoPath['paths'][`${x},${y}`]['dfs'] && !this._undoPath['paths'][`${x},${y}`]['bfs']
+                && !this._undoPath['paths'][`${x},${y}`]['djkstra']
+                ){
+                this._undoPath['paths'][`${x},${y}`]['fill_color'] = this.getRGBAOfPixel(x, y)
+            }
+        } else if (djkstra){
+            if(!this._undoPath['djkstra']){
+                this._undoPath['djkstra'] = true;
+            }
+
+            if(this._undoPath['paths'][`${x},${y}`]['djkstra']){
+                return
+            }
+
+            this._undoPath['paths'][`${x},${y}`]['djkstra'] = true;
+
+            if(!this._undoPath['paths'][`${x},${y}`]['dfs'] && !this._undoPath['paths'][`${x},${y}`]['bfs']
+                && !this._undoPath['paths'][`${x},${y}`]['ll']
+                ){
                 this._undoPath['paths'][`${x},${y}`]['fill_color'] = this.getRGBAOfPixel(x, y)
             }
         }
@@ -580,19 +737,46 @@ export default class Map{
                 }
             }
         } else if(type === 'djkstra'){
+
             //disregard start
             let pathDJ = this.pathDJ.slice(1, this.pathDJ.length)
 
-            for (let i = 0; i < pathDJ.length; i++){
-                this.context.fillStyle = this.tiles[6]
-                this.fillRect(pathDJ[i][0], pathDJ[i][1])
+            if(!color){
+                color = this.tiles[7]
             }
+
+            if(speed){
+                for (let i = 0; i < pathDJ.length; i++){
+                    this.context.fillStyle = color
+                    promises.push(new Promise((res, rej) =>{
+                        setTimeout(()=>{
+
+                            //track undo
+                            this.saveUndoData(pathDJ[i][0], pathDJ[i][1], false, false, false, true)
+
+                            this.fillRect(pathDJ[i][0], pathDJ[i][1])
+                            res('true')
+                        }, i * speed)
+                    }))
+                }
+                return promises
+            } else {
+                for (let i = 0; i < pathDJ.length; i++){
+
+                    //track undo
+                    this.saveUndoData(pathDJ[i][0], pathDJ[i][1], false, false, false, true)
+
+                    this.context.fillStyle = color
+                    this.fillRect(pathDJ[i][0], pathDJ[i][1])
+                }
+            }
+
         }
 
         return promises
     }
 
-    undoPath(dfs = false, bfs = false, ll = false, speed = 0){
+    undoPath(dfs = false, bfs = false, ll = false, djkstra = false, speed = 0){
         let reverse;
         let color;
         let promises = []
@@ -677,6 +861,31 @@ export default class Map{
             }
 
             this._undoPath['ll'] = false
+
+            return promises
+        } else if(djkstra){
+            if(!this._undoPath['djkstra']){
+                return false
+            }
+            reverse = this.pathDJ.slice(1, this.pathDJ.length);
+            reverse = reverse.reverse()
+
+            for(let i = 0; i < reverse.length; i++){
+                promises.push(new Promise((res, rej) =>{
+                    setTimeout(()=>{
+                        //set ll undo back to false
+                        this._undoPath['paths'][`${reverse[i][0]},${reverse[i][1]}`]['djkstra'] = false
+                        color = this._undoPath['paths'][`${reverse[i][0]},${reverse[i][1]}`]['fill_color']
+                        this.context.fillStyle = 'rgb(255,255,255,1)' //clear first
+                        this.fillRect(reverse[i][0], reverse[i][1])
+                        this.context.fillStyle = color //set back to initial color before traveling
+                        this.fillRect(reverse[i][0], reverse[i][1])
+                        res('true')
+                    }, i * speed)
+                }))
+            }
+
+            this._undoPath['djkstra'] = false
 
             return promises
         }
@@ -847,6 +1056,48 @@ export default class Map{
         return (y * this.columns) + (x + 1)
     }
 
+
+    //plot node based on direction
+    plotNodeWithDirection(x, y, newX, newY, data, position = null){
+
+        if(position === 'start'){
+            //we add the adjacent cells to the start of the graph
+            this.djkstra.graph.start[this.matrix[newY][newX].data] = this.matrix[newY][newX].distance
+            //we add them to the processed/visited array
+            this.djkstra.processed.push(this.matrix[newY][newX].data)
+            //we add their parents
+            this.djkstra.parents[this.matrix[newY][newX].data] = 'start'
+            //cost
+            this.djkstra.costs[this.matrix[newY][newX].data] = this.matrix[newY][newX].distance
+
+            //tracker
+            this.trackProcessed = this.matrix[newY][newX].data
+            this.trackParents = [this.matrix[newY][newX].data, 'start']
+            this.trackCosts = [this.matrix[newY][newX].data, this.matrix[newY][newX].distance]
+
+            // this.djkstra.costs[this.matrix[newY][newX].data] = this.matrix[newY][newX].distance + this.djkstra.costs[this.matrix[y][x].data]
+        } else if (this.matrix[newY][newX] === this.linkedlist.start){
+            this.djkstra.graph.start[this.matrix[y][x].data] = this.matrix[y][x].distance
+            this.djkstra.processed.push(this.matrix[y][x].data)
+            this.djkstra.parents[this.matrix[y][x].data] = this.matrix[newY][newX].data
+            this.djkstra.costs[data] = this.matrix[y][x].distance
+
+            //tracker
+            this.trackProcessed = this.matrix[y][x].data
+            this.trackParents =  [this.matrix[y][x].data , this.matrix[newY][newX].data]
+            this.trackCosts = [data, this.matrix[y][x].distance]
+
+            // this.djkstra.costs[data] = this.matrix[y][x].distance + this.djkstra.costs[this.matrix[newY][newX].data]
+        } else if (this.matrix[newY][newX] === this.linkedlist.end){
+            this.djkstra.graph[data]['end'] = this.matrix[newY][newX].distance
+        } else if (position !== 'end'){
+            this.djkstra.graph[data][this.matrix[newY][newX].data] = this.matrix[newY][newX].distance
+            this.djkstra.graph[this.matrix[newY][newX].data][data] = this.matrix[y][x].distance
+        } else if (position === 'end'){
+            this.djkstra.graph[this.matrix[newY][newX].data]['end'] = this.matrix[y][x].distance
+        }
+    }
+
     //plot node in the nodematrix
     plotNode(x, y, position = null){
 
@@ -880,31 +1131,7 @@ export default class Map{
                 if (i === 0){
                     if(this.matrix[newY][newX] instanceof Node){
                         //dj
-                        if(position === 'start'){
-                            //we add the adjacent cells to the start of the graph
-                            this.djkstra.graph.start[this.matrix[newY][newX].data] = this.matrix[newY][newX].distance
-                            //we add them to the processed/visited array
-                            this.djkstra.processed.push(this.matrix[newY][newX].data)
-                            //we add their parents
-                            this.djkstra.parents[this.matrix[newY][newX].data] = 'start'
-
-                            // this.djkstra.costs[this.matrix[newY][newX].data] = this.matrix[newY][newX].distance
-                            // this.djkstra.costs[this.matrix[newY][newX].data] = this.matrix[newY][newX].distance + this.djkstra.costs[this.matrix[y][x].data]
-                        } else if (this.matrix[newY][newX] === this.linkedlist.start){
-                            this.djkstra.graph.start[this.matrix[y][x].data] = this.matrix[y][x].distance
-                            this.djkstra.processed.push(this.matrix[y][x].data)
-                            this.djkstra.parents[this.matrix[y][x].data] = this.matrix[newY][newX].data
-
-                            this.djkstra.costs[data] = this.matrix[y][x].distance
-                            // this.djkstra.costs[data] = this.matrix[y][x].distance + this.djkstra.costs[this.matrix[newY][newX].data]
-                        } else if (this.matrix[newY][newX] === this.linkedlist.end){
-                            this.djkstra.graph[data]['end'] = this.matrix[newY][newX].distance
-                        } else if (position !== 'end'){
-                            this.djkstra.graph[data][this.matrix[newY][newX].data] = this.matrix[newY][newX].distance
-                            this.djkstra.graph[this.matrix[newY][newX].data][data] = this.matrix[y][x].distance
-                        } else if (position === 'end'){
-                            this.djkstra.graph[this.matrix[newY][newX].data]['end'] = this.matrix[y][x].distance
-                        }
+                        this.plotNodeWithDirection(x, y, newX, newY, data, position)
                         //we increment the costs based on the distances from one another
                         //experimental
                         // this.djkstra.costs[data] = this.matrix[y][x].distance + this.djkstra.costs[this.matrix[newY][newX].data]
@@ -915,31 +1142,7 @@ export default class Map{
                 } else if(i === 1){
                     if(this.matrix[newY][newX] instanceof Node){
                         //dj
-                        if(position === 'start'){
-                            //we add the adjacent cells to the start of the graph
-                            this.djkstra.graph.start[this.matrix[newY][newX].data] = this.matrix[newY][newX].distance
-                            //we add them to the processed/visited array
-                            this.djkstra.processed.push(this.matrix[newY][newX].data)
-                            //we add their parents
-                            this.djkstra.parents[this.matrix[newY][newX].data] = 'start'
-
-                            // this.djkstra.costs[this.matrix[newY][newX].data] = this.matrix[newY][newX].distance
-                            // this.djkstra.costs[this.matrix[newY][newX].data] = this.matrix[newY][newX].distance + this.djkstra.costs[this.matrix[y][x].data]
-                        } else if (this.matrix[newY][newX] === this.linkedlist.start){
-                            this.djkstra.graph.start[this.matrix[y][x].data] = this.matrix[y][x].distance
-                            this.djkstra.processed.push(this.matrix[y][x].data)
-                            this.djkstra.parents[this.matrix[y][x].data] = this.matrix[newY][newX].data
-
-                            this.djkstra.costs[data] = this.matrix[y][x].distance
-                            // this.djkstra.costs[data] = this.matrix[y][x].distance + this.djkstra.costs[this.matrix[newY][newX].data]
-                        } else if (this.matrix[newY][newX] === this.linkedlist.end){
-                            this.djkstra.graph[data]['end'] = this.matrix[newY][newX].distance
-                        } else if (position !== 'end'){
-                            this.djkstra.graph[data][this.matrix[newY][newX].data] = this.matrix[newY][newX].distance
-                            this.djkstra.graph[this.matrix[newY][newX].data][data] = this.matrix[y][x].distance
-                        } else if (position === 'end'){
-                            this.djkstra.graph[this.matrix[newY][newX].data]['end'] = this.matrix[y][x].distance
-                        }
+                        this.plotNodeWithDirection(x, y, newX, newY, data, position)
                         // this.djkstra.costs[data] = this.matrix[y][x].distance + this.djkstra.costs[this.matrix[newY][newX].data]
 
                         node.south = this.matrix[newY][newX]
@@ -948,31 +1151,7 @@ export default class Map{
                 } else if(i === 2){
                     if(this.matrix[newY][newX] instanceof Node){
                         //dj
-                        if(position === 'start'){
-                            //we add the adjacent cells to the start of the graph
-                            this.djkstra.graph.start[this.matrix[newY][newX].data] = this.matrix[newY][newX].distance
-                            //we add them to the processed/visited array
-                            this.djkstra.processed.push(this.matrix[newY][newX].data)
-                            //we add their parents
-                            this.djkstra.parents[this.matrix[newY][newX].data] = 'start'
-
-                            // this.djkstra.costs[this.matrix[newY][newX].data] = this.matrix[newY][newX].distance
-                            // this.djkstra.costs[this.matrix[newY][newX].data] = this.matrix[newY][newX].distance + this.djkstra.costs[this.matrix[y][x].data]
-                        } else if (this.matrix[newY][newX] === this.linkedlist.start){
-                            this.djkstra.graph.start[this.matrix[y][x].data] = this.matrix[y][x].distance
-                            this.djkstra.processed.push(this.matrix[y][x].data)
-                            this.djkstra.parents[this.matrix[y][x].data] = this.matrix[newY][newX].data
-
-                            this.djkstra.costs[data] = this.matrix[y][x].distance
-                            // this.djkstra.costs[data] = this.matrix[y][x].distance + this.djkstra.costs[this.matrix[newY][newX].data]
-                        } else if (this.matrix[newY][newX] === this.linkedlist.end){
-                            this.djkstra.graph[data]['end'] = this.matrix[newY][newX].distance
-                        } else if (position !== 'end'){
-                            this.djkstra.graph[data][this.matrix[newY][newX].data] = this.matrix[newY][newX].distance
-                            this.djkstra.graph[this.matrix[newY][newX].data][data] = this.matrix[y][x].distance
-                        } else if (position === 'end'){
-                            this.djkstra.graph[this.matrix[newY][newX].data]['end'] = this.matrix[y][x].distance
-                        }
+                        this.plotNodeWithDirection(x, y, newX, newY, data, position)
                         // this.djkstra.costs[data] = this.matrix[y][x].distance + this.djkstra.costs[this.matrix[newY][newX].data]
 
                         node.north = this.matrix[newY][newX]
@@ -981,31 +1160,7 @@ export default class Map{
                 } else if(i === 3){
                     if(this.matrix[newY][newX] instanceof Node){
                         //dj
-                        if(position === 'start'){
-                            //we add the adjacent cells to the start of the graph
-                            this.djkstra.graph.start[this.matrix[newY][newX].data] = this.matrix[newY][newX].distance
-                            //we add them to the processed/visited array
-                            this.djkstra.processed.push(this.matrix[newY][newX].data)
-                            //we add their parents
-                            this.djkstra.parents[this.matrix[newY][newX].data] = 'start'
-
-                            // this.djkstra.costs[this.matrix[newY][newX].data] = this.matrix[newY][newX].distance
-                            // this.djkstra.costs[this.matrix[newY][newX].data] = this.matrix[newY][newX].distance + this.djkstra.costs[this.matrix[y][x].data]
-                        } else if (this.matrix[newY][newX] === this.linkedlist.start){
-                            this.djkstra.graph.start[this.matrix[y][x].data] = this.matrix[y][x].distance
-                            this.djkstra.processed.push(this.matrix[y][x].data)
-                            this.djkstra.parents[this.matrix[y][x].data] = this.matrix[newY][newX].data
-
-                            this.djkstra.costs[data] = this.matrix[y][x].distance
-                            // this.djkstra.costs[data] = this.matrix[y][x].distance + this.djkstra.costs[this.matrix[newY][newX].data]
-                        } else if (this.matrix[newY][newX] === this.linkedlist.end){
-                            this.djkstra.graph[data]['end'] = this.matrix[newY][newX].distance
-                        } else if (position !== 'end'){
-                            this.djkstra.graph[data][this.matrix[newY][newX].data] = this.matrix[newY][newX].distance
-                            this.djkstra.graph[this.matrix[newY][newX].data][data] = this.matrix[y][x].distance
-                        } else if (position === 'end'){
-                            this.djkstra.graph[this.matrix[newY][newX].data]['end'] = this.matrix[y][x].distance
-                        }
+                        this.plotNodeWithDirection(x, y, newX, newY, data, position)
                         // this.djkstra.costs[data] = this.matrix[y][x].distance + this.djkstra.costs[this.matrix[newY][newX].data]
 
                         node.west = this.matrix[newY][newX]
@@ -1184,8 +1339,7 @@ export default class Map{
     //djkstra
     startDJKSTRA(){
         //reset path
-        this.pathDJ = ['end']
-
+        this.pathDJ = []
         if(!this.start){
             return {
                 'status' : 'Please input a start node'
@@ -1228,9 +1382,8 @@ export default class Map{
 
             this.pathDJ = this.convertPathDataToXY(result)
 
-            this.drawPath('djkstra')
-
-            return results
+            // this.drawPath('djkstra')
+            return results.distance
         }
     }
 
