@@ -24,7 +24,7 @@ def user(id):
     user = User.query.get(id)
     return user.to_dict()
 
-
+#https://hackmd.io/@jpshafto/SyWY45KGu
 @user_routes.route('/<int:id>', methods=['PUT'])
 @login_required
 def edit_user(id):
