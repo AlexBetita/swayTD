@@ -130,6 +130,16 @@ const MapHome = () => {
         }
     },[dispatch])
 
+    async function loadMoreMaps(){
+        searchMapIndex.current += 1
+        isLoading()
+        const data = await dispatch(setMapData(searchMapIndex.current))
+        finishedLoading()
+        if(!Object.keys(data.maps).length){
+            searchMapIndex.current -= 1
+        }
+    }
+
     const onSearch = async () =>{
         if(searchImage.current.classList.contains('disabled')){
             return
@@ -182,17 +192,7 @@ const MapHome = () => {
             // loadMapByIndex(false, newMapIndex)
         }
     }
-
-    async function loadMoreMaps(){
-        searchMapIndex.current += 1
-        isLoading()
-        const data = await dispatch(setMapData(searchMapIndex.current))
-        finishedLoading()
-        if(!Object.keys(data.maps).length){
-            searchMapIndex.current -= 1
-        }
-    }
-
+    
     return (
         <>
         {user &&
