@@ -514,9 +514,9 @@ export default class Map{
                 this.delMapKey = this.getTileNumber(this.end[0], this.end[1])
 
                 //dj
-                if(this.start){
-                    this.drawStart(this.start[0], this.start[1])
-                }
+                // if(this.start){
+                //     this.drawStart(this.start[0], this.start[1])
+                // }
 
                 for (const [key, value] of Object.entries(this.djkstra.graph)){
                     for (const [key2, value2] of Object.entries(this.djkstra.graph[key])){
@@ -1204,6 +1204,9 @@ export default class Map{
             }
         }
 
+        //reconfigure start
+        this.drawStart(this.start[0], this.start[1])
+
         visited[`${current[0]}, ${current[1]}`] = true
         this.pathDFS.push(current)
         this.DFS(current, visited)
@@ -1249,6 +1252,9 @@ export default class Map{
                 'status' : 'Please input a end node even though its not necessary for bfs'
             }
         }
+
+        //reconfigure start
+        this.drawStart(this.start[0], this.start[1])
 
         visited[`${current[0]}, ${current[1]}`] = true
         this.pathBFS.push(current)
@@ -1296,6 +1302,9 @@ export default class Map{
                 'status' : 'Please input a end node'
             }
         }
+
+        //reconfigure start
+        this.drawStart(this.start[0], this.start[1])
 
         const visited = {}
         visited[`${this.start[0]}, ${this.start[1]}`] = true
@@ -1349,6 +1358,10 @@ export default class Map{
                 'status' : 'Please input a end node'
             }
         } else {
+
+            //reconfigure start
+            this.drawStart(this.start[0], this.start[1])
+
             let node = this.djkstra.lowestCoseNode();
             while (node){
                 let cost = this.djkstra.costs[node];
