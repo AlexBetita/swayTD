@@ -653,7 +653,7 @@ const Map_ = () => {
       alert('Start and end nodes are not connected so no path found.');
       finishedTraversing();
     } else if (typeof djkstra === 'object') {
-      setErrors(['Please provide a start and end node.']);
+      setErrors(['Please provide a start and end node for LL and make sure they are connected.']);
       finishedTraversing();
     } else if (djkstra) {
       const res = canvas.current.drawPath('djkstra', djkstraSpeed, djkstraColor);
