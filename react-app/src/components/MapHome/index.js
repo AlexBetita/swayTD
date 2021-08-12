@@ -111,8 +111,6 @@ const MapHome = () => {
         history.push('/login')
     }
 
-
-
     useEffect(()=>{
         searchContainer.current.addEventListener('scroll', ()=>{
             if(searchContainer.current.scrollTop + searchContainer.current.clientHeight >=
@@ -188,11 +186,9 @@ const MapHome = () => {
         if(newMapIndex !== 0 && (newMapIndex < currentPage.current)){
             currentPage.current = newMapIndex
             loadMapByIndex(false, newMapIndex)
-        } else {
-            // loadMapByIndex(false, newMapIndex)
-        }
+        } 
     }
-    
+
     return (
         <>
         {user &&
