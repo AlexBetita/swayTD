@@ -395,23 +395,20 @@ export default class Map{
     drawEnd(x, y){
         let data = this.getTileNumber(x, y)
 
+        //dj
+        for (const [key, value] of Object.entries(this.djkstra.graph)){
+            for (const [key2, value2] of Object.entries(this.djkstra.graph[key])){
+                if(key2 === 'end'){
+                    delete this.djkstra.graph[key][key2]
+                }
+            }
+        }
+
         if(this.end){
             if(this.matrix[this.end[1]][this.end[0]] instanceof Node){
+
                 this.delMapKey = this.getTileNumber(this.end[0], this.end[1])
                 this.clearTile(this.end[0], this.end[1], true)
-
-                //dj
-                // if(this.start){
-                //     this.drawStart(this.start[0], this.start[1])
-                // }
-
-                for (const [key, value] of Object.entries(this.djkstra.graph)){
-                    for (const [key2, value2] of Object.entries(this.djkstra.graph[key])){
-                        if(key2 === 'end'){
-                            delete this.djkstra.graph[key][key2]
-                        }
-                    }
-                }
 
             }
         }
@@ -422,6 +419,7 @@ export default class Map{
         this.plotNode(x, y, 'end')
         this.fillRect(x, y)
         this.mapData = [data, data, false, true, x, y, this.tiles[4]]
+
     }
 
     //undo
