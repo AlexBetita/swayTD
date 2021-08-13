@@ -33,55 +33,8 @@ class Djkstra {
             end: null
         }
 
-        //should only run when i change start node and plot node
-        // this._trackParents = {
-        //     end: null
-        // }
-
-        // this._trackProcessed = []
-
-        // this._trackCosts = {
-        //     end: Infinity
-        // }
-
         this.processed =  []
     }
-
-    // get trackParents(){
-    //     return this._trackParents
-    // }
-
-    // get trackCosts(){
-    //     return this._trackCosts
-    // }
-
-    // get trackProcessed(){
-    //     return this._trackProcessed
-    // }
-
-    // set trackParents(arr){
-    //     this._trackParents[arr[0]] = arr[1]
-    // }
-
-    // set trackProcessed(value){
-    //     this._trackProcessed.push(value)
-    // }
-
-    // set trackCosts(arr){
-    //     this._trackCosts[arr[0]] = arr[1]
-    // }
-
-    // set resetParents(value){
-    //     this._trackParents = value
-    // }
-
-    // set resetProcessed(value){
-    //     this._trackProcessed = value
-    // }
-
-    // set resetCosts(value){
-    //     this._trackCosts = value
-    // }
 
     lowestCoseNode(){
         return Object.keys(this.costs).reduce((lowest, node)=>{
@@ -200,59 +153,6 @@ export default class Map{
 
         this.undo = []
         this.drawing = false;
-
-        // trackers for class graph
-        this._trackParents = {
-            end: null
-        }
-
-        this._trackProcessed = []
-
-        this._trackCosts = {
-            end: Infinity
-        }
-
-        // track trackers
-        this.pa = null;
-        this.pp = null;
-        this.c = null;
-    }
-
-    //trackers for class graph
-    get trackParents(){
-        return this._trackParents
-    }
-
-    get trackCosts(){
-        return this._trackCosts
-    }
-
-    get trackProcessed(){
-        return this._trackProcessed
-    }
-
-    set trackParents(arr){
-        this._trackParents[arr[0]] = arr[1]
-    }
-
-    set trackProcessed(value){
-        this._trackProcessed.push(value)
-    }
-
-    set trackCosts(arr){
-        this._trackCosts[arr[0]] = arr[1]
-    }
-
-    set resetParents(value){
-        this._trackParents = value
-    }
-
-    set resetProcessed(value){
-        this._trackProcessed = value
-    }
-
-    set resetCosts(value){
-        this._trackCosts = value
     }
 
     //get shortest path
@@ -476,17 +376,6 @@ export default class Map{
                     end: Infinity
                 }
 
-                //trackers
-                this.trackParents = {
-                    end: null
-                }
-                //reset
-                this.resetParents = {
-                    end:null
-                }
-                this.resetCosts = {
-                    end: Infinity
-                }
                 this.resetProcessed = []
             }
         }
@@ -500,8 +389,6 @@ export default class Map{
 
         //dj
         this.djkstra.processed.push('start')
-        //trackers
-        this.trackProcessed.push('start')
     }
 
     //draw end
@@ -1027,6 +914,8 @@ export default class Map{
                             if(this.djkstra.costs[this.matrix[newY][newX].data] - currentDistance >= 1){
                                 this.djkstra.costs[this.matrix[newY][newX].data] -= currentDistance
                             }
+
+
                         }
                     } else if(i === 1){
                         if(this.matrix[newY][newX] instanceof Node){
@@ -1077,6 +966,7 @@ export default class Map{
     //plot node based on direction
     plotNodeWithDirection(x, y, newX, newY, data, position = null){
 
+        //position is being passed
         if(position === 'start'){
             //we add the adjacent cells to the start of the graph
             this.djkstra.graph.start[this.matrix[newY][newX].data] = this.matrix[newY][newX].distance
@@ -1087,22 +977,12 @@ export default class Map{
             //cost
             this.djkstra.costs[this.matrix[newY][newX].data] = this.matrix[newY][newX].distance
 
-            //tracker
-            this.trackProcessed = this.matrix[newY][newX].data
-            this.trackParents = [this.matrix[newY][newX].data, 'start']
-            this.trackCosts = [this.matrix[newY][newX].data, this.matrix[newY][newX].distance]
-
             // this.djkstra.costs[this.matrix[newY][newX].data] = this.matrix[newY][newX].distance + this.djkstra.costs[this.matrix[y][x].data]
         } else if (this.matrix[newY][newX] === this.linkedlist.start){
             this.djkstra.graph.start[this.matrix[y][x].data] = this.matrix[y][x].distance
             this.djkstra.processed.push(this.matrix[y][x].data)
             this.djkstra.parents[this.matrix[y][x].data] = this.matrix[newY][newX].data
             this.djkstra.costs[data] = this.matrix[y][x].distance
-
-            //tracker
-            this.trackProcessed = this.matrix[y][x].data
-            this.trackParents =  [this.matrix[y][x].data , this.matrix[newY][newX].data]
-            this.trackCosts = [data, this.matrix[y][x].distance]
 
             // this.djkstra.costs[data] = this.matrix[y][x].distance + this.djkstra.costs[this.matrix[newY][newX].data]
         } else if (this.matrix[newY][newX] === this.linkedlist.end){
