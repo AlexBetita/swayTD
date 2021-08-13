@@ -382,7 +382,7 @@ const Map_ = () => {
     isPathing && (trigger === 'move' || trigger === 'down')) {
       const y = Math.ceil(e.offsetY / (canvas.current.height / canvas.current.rows)) - 1;
       const x = Math.ceil(e.offsetX / (canvas.current.width/ canvas.current.columns)) - 1;
-
+  
       if (colorPickerB.current.classList.contains('active')) {
         color = canvas.current.getRGBAToHex(x, y);
         setStateColor(canvas.current.getRGBAToHex(x, y));

@@ -1011,6 +1011,7 @@ export default class Map{
                     this.delGraph = data
                 }
             }
+
             //check surrounding tiles to properly reduce cost
             for (let i = 0; i < 4; i++){
                 let newY = y + this.directions[i][0]
@@ -1019,24 +1020,40 @@ export default class Map{
 
                     if (i === 0){
                         if(this.matrix[newY][newX] instanceof Node){
+                            //node
+                            this.matrix[newY][newX].west = null
+
+                            //dj
                             if(this.djkstra.costs[this.matrix[newY][newX].data] - currentDistance >= 1){
                                 this.djkstra.costs[this.matrix[newY][newX].data] -= currentDistance
                             }
                         }
                     } else if(i === 1){
                         if(this.matrix[newY][newX] instanceof Node){
+                            //node
+                            this.matrix[newY][newX].north = null
+
+                            //dj
                             if(this.djkstra.costs[this.matrix[newY][newX].data] - currentDistance >= 1){
                                 this.djkstra.costs[this.matrix[newY][newX].data] -= currentDistance
                             }
                         }
                     } else if(i === 2){
                         if(this.matrix[newY][newX] instanceof Node){
+                            //node
+                            this.matrix[newY][newX].south = null
+
+                            //dj
                             if(this.djkstra.costs[this.matrix[newY][newX].data] - currentDistance >= 1){
                                 this.djkstra.costs[this.matrix[newY][newX].data] -= currentDistance
                             }
                         }
                     } else if(i === 3){
                         if(this.matrix[newY][newX] instanceof Node){
+                            //node
+                            this.matrix[newY][newX].east = null
+
+                            //dj
                             if(this.djkstra.costs[this.matrix[newY][newX].data] - currentDistance >= 1){
                                 this.djkstra.costs[this.matrix[newY][newX].data] -= currentDistance
                             }
@@ -1306,6 +1323,7 @@ export default class Map{
         //reconfigure start
         this.drawStart(this.start[0], this.start[1])
 
+
         const visited = {}
         visited[`${this.start[0]}, ${this.start[1]}`] = true
         const result = this.LL(this.linkedlist.start, visited)
@@ -1339,8 +1357,9 @@ export default class Map{
                     }
                 }
             }
-
         }
+
+        console.log(visited, 'visited end')
         return false
     }
 
