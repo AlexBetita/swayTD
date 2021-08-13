@@ -1238,8 +1238,6 @@ export default class Map{
                 }
             }
         }
-
-        console.log(visited, 'visited end')
         return false
     }
 
