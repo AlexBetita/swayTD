@@ -363,7 +363,7 @@ export default class Map{
         if(this.start){
             if(this.matrix[this.start[1]][this.start[0]] instanceof Node){
 
-                this.clearTile(this.start[0], this.start[1])
+                this.clearTile(this.start[0], this.start[1], true)
                 this.delMapKey = this.getTileNumber(this.start[0], this.start[1])
 
                 //dj
@@ -397,8 +397,8 @@ export default class Map{
 
         if(this.end){
             if(this.matrix[this.end[1]][this.end[0]] instanceof Node){
-                this.clearTile(this.end[0], this.end[1])
                 this.delMapKey = this.getTileNumber(this.end[0], this.end[1])
+                this.clearTile(this.end[0], this.end[1], true)
 
                 //dj
                 // if(this.start){
@@ -871,8 +871,11 @@ export default class Map{
     }
 
     //remove fill rect
-    clearTile(x, y){
-        try{
+    clearTile(x, y, draw = false){
+            if(x < 0 || y < 0){
+                return
+            }
+
             let data = this.getTileNumber(x, y)
             let currentDistance = this.matrix[y][x].distance
 
@@ -897,6 +900,39 @@ export default class Map{
                     this.delStart = data
                     this.delGraph = data
                 }
+            } else {
+                //we wanna remove the node that was cleared from the costs
+                delete this.djkstra.costs[data]
+                //we wanna remove the node that was cleared from the graph and its surrounding nodes
+                if(this.djkstra.graph[data]){
+                    const surroundingKeys = Object.keys(this.djkstra.graph[data])
+                    for (let i = 0; i < surroundingKeys.length; i++){
+                        delete this.djkstra.graph[surroundingKeys[i]][data]
+                    }
+                }
+                //we wanna remove the node from the start if in the start
+                delete this.djkstra.graph.start[data]
+                //we wanna remove the node from the parents
+                delete this.djkstra.parents[data]
+
+                //we wanna remove the node from the processed
+                const indexOfKeyToDelete = this.djkstra.processed.indexOf(data)
+                if (indexOfKeyToDelete > -1){
+                    this.djkstra.processed.splice(indexOfKeyToDelete, 1);
+                }
+            }
+
+            //delete start
+            if(this.start){
+                if (this.start[0] === x && this.start[1] === y && !draw){
+                    this.start = null;
+                }
+            }
+            //delete end
+            if(this.end){
+                if (this.end[0] === x && this.end[1] === y && !draw){
+                    this.end = null;
+                }
             }
 
             //check surrounding tiles to properly reduce cost
@@ -914,8 +950,6 @@ export default class Map{
                             if(this.djkstra.costs[this.matrix[newY][newX].data] - currentDistance >= 1){
                                 this.djkstra.costs[this.matrix[newY][newX].data] -= currentDistance
                             }
-
-
                         }
                     } else if(i === 1){
                         if(this.matrix[newY][newX] instanceof Node){
@@ -951,10 +985,7 @@ export default class Map{
                 }
             }
 
-        } catch {
-            //out of bounds
-            return false
-        }
+
     }
 
     //get exact number of tile in grid
@@ -1245,6 +1276,7 @@ export default class Map{
     //djkstra
     startDJKSTRA(){
         //reset path
+        // console.log(this.djkstra, 'djkstra')
         this.pathDJ = []
         if(!this.start){
             return {
