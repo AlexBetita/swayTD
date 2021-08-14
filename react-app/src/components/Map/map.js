@@ -329,6 +329,9 @@ export default class Map{
         }
         //HAD TO PUT IN TRY CATCH CAUSE MY INITIAL SOLUTION WAS NOT WORKING ON BIG BOY ROWS AND GRID
         //When Y is bigger than column and you go out of bounds an error happens
+
+        //try to find a way to fix this
+        // if x < 0 or y < 0 could be the fix
         try{
             if(!(this.matrix[y][x] instanceof Node)){
 
