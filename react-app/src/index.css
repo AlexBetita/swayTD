@@ -664,6 +664,10 @@ a{
         height: 45%;
     }
 
+    .edit__profile__button{
+        position: relative;
+        left: -20px;
+    }
 }
 
 @media only screen and (max-height: 1000px) {
