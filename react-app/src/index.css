@@ -91,6 +91,9 @@ a{
     color: rgb(94, 8, 86);
 }
 
+.errors{
+    color: red;
+}
 
 /*
     LOADING ANIMATION
