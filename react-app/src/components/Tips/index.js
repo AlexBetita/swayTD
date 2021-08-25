@@ -43,6 +43,7 @@ function TipsModal() {
   const button7 = useRef();
   const button8 = useRef();
 
+  //probably a better way to do this?
   const navigateSlider = (e) => {
     if(e.target.classList.contains('1')){
       button1.current.classList.add('active')

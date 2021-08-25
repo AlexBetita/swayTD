@@ -161,6 +161,7 @@ const MapHome = () => {
         }
     }
 
+    //e is element
     async function loadMapByIndex(e, newIndex = false){
         setErrors([])
         isLoadingMain()
@@ -186,7 +187,7 @@ const MapHome = () => {
         if(newMapIndex !== 0 && (newMapIndex < currentPage.current)){
             currentPage.current = newMapIndex
             loadMapByIndex(false, newMapIndex)
-        } 
+        }
     }
 
     return (
